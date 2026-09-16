@@ -9,6 +9,6 @@
     "test:browser": "npm run build && node tests/browser.cjs",
     "test:dist": "node tests/check-dist.cjs"
   },
-  "devDependencies": {"playwright": "1.62.1"},
+  "devDependencies": {"playwright": "1.61.1"},
   "engines": {"node": ">=20"}
 }

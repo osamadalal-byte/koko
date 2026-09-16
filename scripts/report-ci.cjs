@@ -14,11 +14,17 @@ async function check(name,conclusion,output){
  const summary='Browser automation results. This does not verify physical iPhone installation or external video playback.\n\n```json\n'+JSON.stringify(report,null,2)+'\n```';
  if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,summary+'\n');
  await check('Browser diagnostics',passed?'success':'failure',{title:passed?'All six browser scenarios passed':'Browser checks need attention',summary:summary.slice(0,65000)});
- for(const file of ['iphone-today.jpg','iphone-session.jpg']){
+  const auditPath='test-results/video-browser-audit.json';
+  if(fs.existsSync(auditPath)){
+    const audit=JSON.parse(fs.readFileSync(auditPath,'utf8'));
+    await check('Video source inspection','neutral',{title:'Source-page and playback observations; visual matching is separate',summary:'These observations do not certify human instruction or exact movement variants.',text:JSON.stringify({date:audit.date,scope:audit.scope,pages:audit.pages},null,2).slice(0,65000)});
+  }
+  for(const file of ['iphone-today.jpg','iphone-session.jpg',...fs.readdirSync('test-results').filter(f=>/^video-.*\.jpg$/.test(f))]){
   const filename='test-results/'+file;if(!fs.existsSync(filename))continue;
   const data=fs.readFileSync(filename);
   if(data.length>45000){console.log(`${file}: see full artifact (preview exceeds check output limit).`);continue}
-  await check('UI preview: '+file,'neutral',{title:'Captured WebKit iPhone viewport',summary:'Screenshot from the /koko/ deployment-artifact browser scenario. Rendering evidence only; not a physical iPhone test.',text:JSON.stringify({filename:file,mimeType:'image/jpeg',base64:data.toString('base64')})});
+    const video=file.startsWith('video-');
+    await check((video?'Video frame: ':'UI preview: ')+file,'neutral',{title:video?'Captured external media frame':'Captured WebKit iPhone viewport',summary:video?'Captured while media time advanced. Visually review before claiming an exact human movement match.':'Screenshot from the /koko/ deployment-artifact browser scenario. Rendering evidence only; not a physical iPhone test.',text:JSON.stringify({filename:file,mimeType:'image/jpeg',base64:data.toString('base64')})});
  }
  console.log('Browser diagnostics and available UI previews published to GitHub Checks.');
 })().catch(error=>{console.error(error.message);process.exitCode=1});

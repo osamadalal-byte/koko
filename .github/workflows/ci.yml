@@ -24,6 +24,9 @@ jobs:
       - run: npm run build
       - run: node tests/check-preview.cjs
       - run: npm run test:dist
+      - name: Inspect public video sources
+        if: always()
+        run: node scripts/audit-videos.cjs
       - name: Publish browser diagnostics
         if: always()
         env:

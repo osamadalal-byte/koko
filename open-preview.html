@@ -32,6 +32,8 @@
 aside .personal-session-grid{grid-template-columns:repeat(2,minmax(0,1fr))}aside .personal-plan h3{font-size:20px}
 
 .video-label{display:inline-flex;align-items:center;gap:5px;color:var(--forest);font-size:11px;font-weight:650;margin:10px 0}.video-label .icon{width:13px;height:13px}.compact-demo{display:flex;align-items:center;justify-content:space-between;gap:14px}.compact-demo .btn{white-space:normal;flex-shrink:0}.compact-demo p{margin:3px 0}.preflight-button{margin:22px 0 0}.cycle-card{margin:24px 0}.cycle-list details{margin:12px 0}.connection-status{padding:0 22px 26px;text-align:center;font-size:12px;color:var(--muted)}.preview-moves{margin-bottom:20px}.preview-moves .exercise-info .small{display:block}.session-body{padding-bottom:12px}a.btn{min-height:44px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #314a36;outline-offset:3px}@media(max-width:720px){.connection-status{padding-bottom:calc(95px + env(safe-area-inset-bottom))}.compact-demo{align-items:stretch;flex-direction:column}.compact-demo .btn{align-self:start;min-height:44px}.modal-inner{padding:22px}.preview-moves .exercise-row{padding:13px 0}.session-body .timer{font-variant-numeric:tabular-nums}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+/* Illustration sizing must not enlarge the video button's control icon. */
+.session-art .btn .icon{width:20px;height:20px;flex:0 0 20px}
 
 </style>
 </head>

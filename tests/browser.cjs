@@ -78,6 +78,8 @@ async function run(browserType,device,name,folder,basePath){
     await page.waitForTimeout(350);assert.equal(await page.evaluate(()=>session.remaining),pausedRemaining);
     await page.locator('#session-exit').click();const remaining=await page.evaluate(()=>state.draft.remaining);
     await page.reload();await page.locator('[data-action="resume"]').click();await readiness();assert.equal(await page.evaluate(()=>session.remaining),remaining);
+    const timerButton=await page.locator('#timer-toggle').boundingBox();
+    assert(timerButton.y>=0&&timerButton.y+timerButton.height<=page.viewportSize().height,'Timer control fits the initial workout viewport');
     await page.screenshot({path:path.join(results,name+'-session.png'),fullPage:true});
     if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-session.jpg'),type:'jpeg',quality:55,scale:'css'});
     await page.locator('#timer-toggle').click();await page.waitForFunction(saved=>session.remaining<saved,remaining);
@@ -112,9 +114,11 @@ async function run(browserType,device,name,folder,basePath){
     const manifest=await manifestResponse.json();assert.equal(new URL(manifest.scope,url).href,url);assert(new URL(manifest.start_url,url).href.startsWith(url));
     assert.equal(manifest.display,'standalone');
     for(const icon of manifest.icons)assert.equal((await context.request.get(new URL(icon.src,url).href)).status(),200);
-    await page.evaluate(()=>navigator.serviceWorker.ready);await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+    await page.evaluate(()=>Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>setTimeout(()=>reject(Error('Service worker readiness timed out')),15000))]));await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
     assert.equal(await page.evaluate(async()=>(await navigator.serviceWorker.ready).scope),url);
     checks.push('manifest, icons and exact service-worker scope');
+    // Remove third-party interception before testing the browser's actual offline stack.
+    await context.unrouteAll({behavior:'wait'});
     await context.setOffline(true);await page.reload();await page.waitForSelector('#connection-status');
     assert.equal(await page.evaluate(()=>!!state.completed[1]),true);assert((await page.locator('#connection-status').textContent()).includes('Offline'));
     // Back up saved progress, then use a fresh local training fixture to test offline exercise UI.
