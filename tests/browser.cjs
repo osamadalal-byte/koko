@@ -7,11 +7,12 @@ const types={'.html':'text/html; charset=utf-8','.js':'application/javascript','
 const report={date:new Date().toISOString(),playwright:require('playwright/package.json').version,scope:'Real browser automation. External video playback, physical iPhone installation, app switching and screen locking require separate checks.',results:[]};
 async function run(browserType,device,name,folder,basePath){
   const checks=[],entry={name,folder,basePath,checks};report.results.push(entry);
-  let browser,server,page;
+  let browser,server,page,originUnavailable=false;
   try{browser=await browserType.launch({headless:true})}catch(error){Object.assign(entry,{status:'blocked',reason:error.message.split('\n')[0]});throw error}
   try{
     const served=path.join(root,folder);
     server=http.createServer((req,res)=>{
+      if(originUnavailable){req.socket.destroy();return}
       let requestPath;try{requestPath=decodeURIComponent(new URL(req.url,'http://localhost').pathname)}catch{return res.writeHead(400).end()}
       if(!requestPath.startsWith(basePath))return res.writeHead(404).end();
       const relative=requestPath.slice(basePath.length)||'index.html',file=path.resolve(served,relative);
@@ -119,7 +120,15 @@ async function run(browserType,device,name,folder,basePath){
     checks.push('manifest, icons and exact service-worker scope');
     // Remove third-party interception before testing the browser's actual offline stack.
     await context.unrouteAll({behavior:'wait'});
-    await context.setOffline(true);await page.reload();await page.waitForSelector('#connection-status');
+    // First verify the browser offline event and app indicator on the loaded page.
+    await context.setOffline(true);
+    await page.waitForFunction(()=>document.querySelector('#connection-status').textContent.includes('Offline'));
+    // WebKit's Playwright offline emulation rejects even a synthetic SW response.
+    // offline-probe.cjs reproduces this independently. Disconnect the actual origin
+    // for BOTH engines, verify an uncached request fails, then exercise native caches.
+    originUnavailable=true;server.closeAllConnections();await context.setOffline(false);
+    assert(await page.evaluate(async()=>{try{await fetch('uncached-network-probe',{cache:'no-store'});return false}catch{return true}}),'The app origin is genuinely unreachable');
+    await page.reload();await page.waitForFunction(()=>document.querySelector('#connection-status')?.textContent.includes('Offline'));
     assert.equal(await page.evaluate(()=>!!state.completed[1]),true);assert((await page.locator('#connection-status').textContent()).includes('Offline'));
     // Back up saved progress, then use a fresh local training fixture to test offline exercise UI.
     await page.evaluate(()=>{state.completed={};state.draft=null;selected=1;persist();render()});
@@ -128,7 +137,7 @@ async function run(browserType,device,name,folder,basePath){
     assert(await page.locator('#detail-dialog .steps').isVisible());assert.equal(await page.evaluate(()=>session.paused),true);
     await page.locator('[data-close="detail-dialog"]').click();await page.locator('#session-exit').click();
     await page.reload();assert(await page.locator('[data-action="resume"]').count());await context.setOffline(false);
-    checks.push('offline reload, retained progress, workout timer, written guidance and draft persistence');
+    checks.push('offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence');
     assert.deepEqual(errors,[]);assert.deepEqual(failedAssets,[]);entry.status='passed';
   }catch(error){Object.assign(entry,{status:'failed',reason:error.stack});if(page)await page.screenshot({path:path.join(results,name+'-failure.png'),fullPage:true}).catch(()=>{});throw error}
   finally{await browser.close();if(server)await new Promise(resolve=>server.close(resolve))}

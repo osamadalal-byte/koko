@@ -16,12 +16,17 @@ fs.mkdirSync('test-results',{recursive:true});
         const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:25000});
         entry.httpStatus=response?.status();entry.finalURL=page.url();
         await page.waitForTimeout(1500);
+        const rejectCookies=page.getByRole('button',{name:/^Reject (additional|analytics) cookies$/i}).first();
+        if(await rejectCookies.isVisible())await rejectCookies.click();
         entry.title=await page.title();
         entry.headings=await page.locator('h1,h2,h3').allTextContents();
         entry.iframes=await page.locator('iframe').evaluateAll(es=>es.map(e=>({title:e.title,src:e.src})));
         entry.pageExcerpt=(await page.locator('body').innerText()).slice(0,700);
         entry.media=[];
         for(const frame of page.frames()){
+          if(frame.url().includes('player.vimeo.com')){
+            try{await frame.getByRole('button',{name:/^Play( video)?$/i}).first().click();await page.waitForTimeout(1200)}catch(error){entry.playInteractionError=error.message.split('\n')[0]}
+          }
           const videos=frame.locator('video');
           for(let i=0;i<await videos.count();i++){
             const video=videos.nth(i);
@@ -38,7 +43,7 @@ fs.mkdirSync('test-results',{recursive:true});
               if(observed){
                 entry.playbackObserved=true;
                 const shots=[];
-                for(const fraction of [0.3,0.65]){
+                for(const fraction of (/warm-up/i.test(label)?[0.3,0.65,0.8]:[0.3,0.65])){
                   if(after.duration){await video.evaluate((v,f)=>{v.currentTime=v.duration*f},fraction);await page.waitForTimeout(1200)}
                   const filename=`video-${ids[0]}-${entry.media.length}-${fraction}.jpg`;
                   await video.screenshot({path:'test-results/'+filename,type:'jpeg',quality:40});

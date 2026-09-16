@@ -4,9 +4,21 @@ const baseStateValidator=validState;
 function validCycle(c){return c&&typeof c.date==='string'&&Number.isFinite(Date.parse(c.date))&&baseStateValidator({version:1,name:'',pace:'beginner',sound:false,completed:c.completed})&&Object.keys(c.completed).length===28}
 validState=function(s){return baseStateValidator(s)&&(!('cycles' in s)||(Array.isArray(s.cycles)&&s.cycles.length<=12&&s.cycles.every(validCycle)))};
 state.cycles=Array.isArray(state.cycles)?state.cycles.filter(validCycle).slice(-12):[];
-let offlineReady=false;
-function connectionText(){if(localPreview())return 'Preview · publish the mobile package for iPhone installation';if(navigator.onLine===false)return offlineReady?'Offline · workouts available; videos need internet':'Offline · videos need internet';return offlineReady?'Workouts available offline · videos use internet':'Online · preparing offline workouts'}
+let offlineReady=false,networkAvailable=null,networkCheckId=0;
+function connectionText(){if(localPreview())return 'Preview · publish the mobile package for iPhone installation';if(navigator.onLine===false||networkAvailable===false)return offlineReady?'Offline · workouts available; videos need internet':'Offline · videos need internet';return offlineReady?'Workouts available offline · videos use internet':'Online · preparing offline workouts'}
 function updateConnection(){const el=$('#connection-status');if(el)el.textContent=connectionText()}
+async function checkNetwork(){
+  if(localPreview()||typeof fetch!=='function'||typeof AbortController!=='function')return;
+  const checkId=++networkCheckId;
+  if(navigator.onLine===false){networkAvailable=false;updateConnection();return}
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),3500);
+  try{
+    // HEAD bypasses our service worker's GET-only cache; no personal data is sent.
+    const response=await fetch('./manifest.webmanifest?network-check',{method:'HEAD',cache:'no-store',signal:controller.signal});
+    if(checkId===networkCheckId)networkAvailable=response.ok;
+  }catch{if(checkId===networkCheckId)networkAvailable=false}
+  finally{clearTimeout(timeout);if(checkId===networkCheckId)updateConnection()}
+}
 const renderTodayBeforeRelease=renderToday;
 renderToday=function(){let html=renderTodayBeforeRelease();if(getDay(selected).type!=='rest')html=html.replace('<div class="section-head"><h2>',`<button class="btn outline wide preflight-button" data-review-workout>${icon('play')} Preview all exercises & videos</button><div class="section-head"><h2>`);return html};
 const renderProgressBeforeRelease=renderProgress;
@@ -26,6 +38,8 @@ document.addEventListener('click',event=>{
 });
 const renderBeforeRelease=render;
 render=function(){renderBeforeRelease();updateConnection()};
-window.addEventListener('online',updateConnection);window.addEventListener('offline',updateConnection);
+window.addEventListener('online',()=>{networkAvailable=null;updateConnection();checkNetwork()});
+window.addEventListener('offline',()=>{networkCheckId++;networkAvailable=false;updateConnection()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkNetwork()});
 if(!localPreview()&&'serviceWorker' in navigator){navigator.serviceWorker.ready.then(()=>{offlineReady=true;updateConnection()}).catch(()=>{})}
-persist();render();
+persist();render();checkNetwork();
