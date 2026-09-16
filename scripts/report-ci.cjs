@@ -14,6 +14,7 @@ async function check(name,conclusion,output){
  const summary='Browser automation results. This does not verify physical iPhone installation or external video playback.\n\n```json\n'+JSON.stringify(report,null,2)+'\n```';
  if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,summary+'\n');
  if(!process.argv.includes('--video-only'))await check('Browser diagnostics',passed?'success':'failure',{title:passed?'All six browser scenarios passed':'Browser checks need attention',summary:summary.slice(0,65000)});
+  if(fs.existsSync('test-results/offline-probe.json'))await check('Offline diagnostic control','neutral',{title:'Independent worker and unavailable-origin comparison',summary:'Diagnostic evidence; the browser release gate remains unchanged.',text:fs.readFileSync('test-results/offline-probe.json','utf8')});
   const auditPath='test-results/video-browser-audit.json';
   if(fs.existsSync(auditPath)){
     const audit=JSON.parse(fs.readFileSync(auditPath,'utf8'));
