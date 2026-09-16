@@ -25,11 +25,11 @@ npm run test:dist
 
 `test:browser` builds and checks Chromium and WebKit at source root, built root and `/koko/`, including narrow layouts, timer, backup/restore and offline use. WebKit iPhone emulation is not a physical device test. External video playback is a separate check.
 
-The local Node and static HTTP checks passed. Local browser execution was blocked by missing engines and denied downloads. The **Validate FORM 28** workflow runs the full checks on GitHub; consult its actual result rather than treating the prepared workflow as a pass.
+All six browser scenarios and the build/Node/artifact checks passed in [GitHub Actions](https://github.com/osamadalal-byte/koko/actions/runs/35104289642). Offline loading uses a genuinely disconnected origin plus a failing uncached-request assertion; an independent control reproduces WebKit’s Playwright offline-emulation error. See [the evidence](validation/github-2026-09-16/). Local engine-installation failures are retained as historical records. Full video matching and physical iPhone checks remain incomplete.
 
 ## Publish
 
-The **Test and publish FORM 28** workflow is manual and publishes only `dist/`, after all checks pass. In Settings → Pages, select GitHub Actions as the source, then run that workflow. Use the URL reported by a successful deployment; no live URL has been verified yet.
+The **Test and publish FORM 28** workflow is manual and publishes only `dist/`, after all checks pass. Merge [PR #1](https://github.com/osamadalal-byte/koko/pull/1), then in Settings → Pages select GitHub Actions as the source and run that workflow on main. The connected tools cannot configure Pages or dispatch the workflow; automatic approval review rejected auto-merge. Use the URL reported by a successful deployment; no live URL has been verified yet.
 
 On iPhone, open the deployed HTTPS URL in Safari → Share → Add to Home Screen → Open as Web App (if shown) → Add. First open online and wait for the offline-ready message. Videos are not stored offline.
 

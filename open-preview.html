@@ -283,7 +283,7 @@ pose=function(id){const labels={kneepush:'PUSH',deadbug:'CORE',plankknees:'CORE'
 </script>
 <script>
 'use strict';
-// Provider pages reviewed on 2026-09-16. Playback and exact filmed variants remain unverified.
+// Provider pages and sampled playback reviewed on 2026-09-16. The full set is not verified; see validation/.
 // No third-party media is bundled.
 const PLANNED_EXERCISES=['march','circles','hinge','side','push','kneepush','squat','bridge','bird','dead','plankknees','prone','calf','cat','cheststretch','stretch','calfhold','breath'];
 const southTees='South Tees Hospitals NHS Foundation Trust';
@@ -300,7 +300,7 @@ Object.assign(DEMO_SOURCES,{
   prone:{provider:southTees,url:'https://www.southtees.nhs.uk/resources/shoulder-posture/',embed:'hNseglwRJhY',type:'video',label:'Shoulder-blade control tutorial',note:'Gently bring the shoulder blades toward each other, pause briefly and relax. Avoid shrugging or arching your back.'},
   bird:{provider:'Hospital for Special Surgery',url:'https://www.youtube.com/watch?v=xo7Qpb_NTKE',embed:'xo7Qpb_NTKE',type:'video',label:'Bird-dog tutorial',note:'Learn the opposite-arm-and-leg movement. Start with a smaller reach or one limb at a time if needed.'},
   dead:{provider:'Nottingham University Hospitals NHS Trust',url:'https://www.nuh.nhs.uk/exercise-videos-spine-school/',embed:'t2sYmCjr7Hs',type:'video',label:'Supported heel-slide tutorial',note:'Keep the sliding heel supported on the floor. Use this supported version, not the unsupported progression.'},
-  breath:{provider:'The Royal Marsden NHS Foundation Trust',url:'https://patientinfolibrary.royalmarsden.nhs.uk/royal-mile-prehabilitation-programme-video-7c-diaphragmatic-breathing',type:'video',label:'Relaxed diaphragmatic breathing · Video 7c',note:'Open Video 7c (diaphragmatic breathing). Let your breath settle gently during the cool-down. Do not force deep breaths or hold your breath. The written steps below remain available offline.'}
+  breath:{provider:'The Royal Marsden NHS Foundation Trust',url:'https://patientinfolibrary.royalmarsden.nhs.uk/royal-mile-prehabilitation-programme-video-7c-diaphragmatic-breathing',type:'video',label:'Relaxed diaphragmatic breathing · Video 7c',note:'Open Video 7c. This clinician-led explanation combines a presenter with breathing diagrams; it is not a full-body demonstration. For your cool-down, breathe gently without forcing deep breaths or holding your breath. The written steps below remain available offline.'}
 });
 EX.breath={name:'Relaxed belly breathing',area:'Cool-down · recovery',cue:'Let your breath settle. Keep the breaths gentle and unforced.',steps:['Lie comfortably with knees bent, or sit in a comfortable position. Rest a hand lightly on your belly.','Breathe in gently and notice a small movement under your hand, then breathe out slowly.','Keep breathing naturally without holding your breath. Rest normally if this feels uncomfortable.'],easy:'Skip the hand placement and simply let your breathing return to normal.',pose:'stand'};
 for(const id of PLANNED_EXERCISES){DEMO_SOURCES[id].checked='2026-09-16';DEMO_SOURCES[id].playbackVerified=false;}
