@@ -36,6 +36,7 @@ async function run(browserType,device,name,folder,basePath){
     await page.goto(url);await page.waitForSelector('[data-action="start"]');
     assert.equal(await page.evaluate(()=>state.coach.profile.days),4);await fit();
     await page.screenshot({path:path.join(results,name+'-today.png'),fullPage:true});
+    if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-today.jpg'),type:'jpeg',quality:55,scale:'css'});
     const originalViewport=page.viewportSize();
     for(const width of [320,375,390]){
       await page.setViewportSize({width,height:844});
@@ -78,6 +79,7 @@ async function run(browserType,device,name,folder,basePath){
     await page.locator('#session-exit').click();const remaining=await page.evaluate(()=>state.draft.remaining);
     await page.reload();await page.locator('[data-action="resume"]').click();await readiness();assert.equal(await page.evaluate(()=>session.remaining),remaining);
     await page.screenshot({path:path.join(results,name+'-session.png'),fullPage:true});
+    if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-session.jpg'),type:'jpeg',quality:55,scale:'css'});
     await page.locator('#timer-toggle').click();await page.waitForFunction(saved=>session.remaining<saved,remaining);
     // Real pagehide/unload, then re-open: no synthetic visibility event or iPhone background claim.
     await page.goto('about:blank');await page.goto(url);await page.locator('[data-action="resume"]').click();await readiness();
@@ -93,7 +95,7 @@ async function run(browserType,device,name,folder,basePath){
     assert.equal(await download.failure(),null);const backup=fs.readFileSync(await download.path());const parsed=JSON.parse(backup);
     assert.equal(parsed.completed[1].note,'Browser-verified check-in');
     await page.locator('[data-close="settings-dialog"]').click();
-    await page.locator('.nav [data-tab="today"]').click();await page.locator('[data-coach-profile]').click();
+    await page.locator('.nav [data-tab="today"]').click();await page.locator('#view [data-coach-profile]').click();
     await page.locator('#profile-name').fill('Changed after backup');await page.locator('#profile-minutes').selectOption('15');await page.locator('#profile-days').selectOption('3');
     await page.locator('#profile-form button[type=submit]').click();assert.equal(await page.evaluate(()=>state.coach.profile.days),3);
     await page.locator('#settings-open').click();
