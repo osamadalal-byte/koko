@@ -26,17 +26,25 @@ fs.mkdirSync('test-results',{recursive:true});
           for(let i=0;i<await videos.count();i++){
             const video=videos.nth(i);
             try{
+              if(!await video.isVisible())continue;
+              const label=await video.evaluate(v=>[...v.ownerDocument.querySelectorAll('h2,h3')].filter(h=>h.compareDocumentPosition(v)&4).at(-1)?.textContent.trim()||'');
+              if(ids.includes('squat')&&!/warm-up|standing press-up| - squat$|chest stretch|upper back stretch|calf stretch/i.test(label))continue;
               await video.scrollIntoViewIfNeeded();
               const before=await video.evaluate(async v=>{v.muted=true;let playError=null;try{await Promise.race([v.play(),new Promise((_,reject)=>setTimeout(()=>reject(Error('Playback timeout')),4000))])}catch(e){playError=e.message}return {src:v.currentSrc,time:v.currentTime,duration:Number.isFinite(v.duration)?v.duration:null,readyState:v.readyState,error:playError}});
               await page.waitForTimeout(2200);
-              const after=await video.evaluate(v=>({time:v.currentTime,readyState:v.readyState,paused:v.paused,width:v.videoWidth,height:v.videoHeight}));
+              const after=await video.evaluate(v=>({time:v.currentTime,duration:Number.isFinite(v.duration)?v.duration:null,readyState:v.readyState,paused:v.paused,width:v.videoWidth,height:v.videoHeight}));
               const observed=after.time>before.time+0.5&&after.width>0;
-              entry.media.push({frame:frame.url(),before,after,observed});
+              entry.media.push({label,frame:frame.url(),before,after,observed});
               if(observed){
                 entry.playbackObserved=true;
-                const filename=`video-${ids[0]}-${entry.media.length}.jpg`;
-                await video.screenshot({path:'test-results/'+filename,type:'jpeg',quality:45});
-                entry.media.at(-1).screenshot=filename;
+                const shots=[];
+                for(const fraction of [0.3,0.65]){
+                  if(after.duration){await video.evaluate((v,f)=>{v.currentTime=v.duration*f},fraction);await page.waitForTimeout(1200)}
+                  const filename=`video-${ids[0]}-${entry.media.length}-${fraction}.jpg`;
+                  await video.screenshot({path:'test-results/'+filename,type:'jpeg',quality:40});
+                  shots.push({filename,time:await video.evaluate(v=>v.currentTime)});
+                }
+                entry.media.at(-1).screenshots=shots;
               }
             }catch(error){entry.media.push({frame:frame.url(),error:error.message.split('\n')[0]})}
           }
