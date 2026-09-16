@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-16T12:32:09.169Z",
+  "playwright": "1.62.1",
+  "scope": "Real browser automation. External video playback, physical iPhone installation, app switching and screen locking require separate checks.",
+  "results": [
+    {
+      "name": "chromium-desktop-source-root",
+      "folder": ".",
+      "basePath": "/",
+      "checks": [],
+      "status": "blocked",
+      "reason": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell"
+    },
+    {
+      "name": "chromium-desktop-dist-root",
+      "folder": "dist",
+      "basePath": "/",
+      "checks": [],
+      "status": "blocked",
+      "reason": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell"
+    },
+    {
+      "name": "chromium-desktop-dist-subpath",
+      "folder": "dist",
+      "basePath": "/form28-mobile/",
+      "checks": [],
+      "status": "blocked",
+      "reason": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell"
+    },
+    {
+      "name": "webkit-iphone-source-root",
+      "folder": ".",
+      "basePath": "/",
+      "checks": [],
+      "status": "blocked",
+      "reason": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/webkit-2336/pw_run.sh"
+    },
+    {
+      "name": "webkit-iphone-dist-root",
+      "folder": "dist",
+      "basePath": "/",
+      "checks": [],
+      "status": "blocked",
+      "reason": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/webkit-2336/pw_run.sh"
+    },
+    {
+      "name": "webkit-iphone-dist-subpath",
+      "folder": "dist",
+      "basePath": "/form28-mobile/",
+      "checks": [],
+      "status": "blocked",
+      "reason": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/webkit-2336/pw_run.sh"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "form28-strength-mobility",
+  "version": "1.0.1-rc",
+  "private": true,
+  "description": "Personal 28-day strength and mobility web app",
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "test": "node tests/check-personal.cjs && node tests/service-worker.cjs",
+    "test:browser": "npm run build && node tests/browser.cjs",
+    "test:dist": "node tests/check-dist.cjs"
+  },
+  "devDependencies": {"playwright": "1.62.1"},
+  "engines": {"node": ">=20"}
+}

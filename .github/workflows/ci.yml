@@ -1,0 +1,30 @@
+name: Validate FORM 28
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: form28-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm test
+      - run: npm run test:browser
+      - run: npm run build
+      - run: node tests/check-preview.cjs
+      - run: npm run test:dist
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-results-${{ github.run_id }}
+          path: test-results/

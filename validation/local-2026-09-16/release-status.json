@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-16",
+  "release": "1.0.1-rc",
+  "ready_for_iphone": false,
+  "logic": "passed in Node fixture",
+  "time_budget_scenarios": 280,
+  "backup_and_restore": "passed in Node fixture; browser blocked",
+  "cycle_archive": "passed in Node fixture",
+  "service_worker_model": "passed, including consistent cached document release",
+  "build": "passed",
+  "dist_http_root_and_repository_subpath": "passed; HTTP asset checks, not real browser",
+  "browser_validation": "blocked: engines absent; downloads denied with HTTP 403",
+  "browser_scenarios": 6,
+  "physical_iphone": "not tested",
+  "external_video_playback": "not tested; source audit only; exact variants unverified",
+  "deployment": "not performed: no repository; creation, Pages settings and workflow dispatch tools unavailable",
+  "github_authentication": "confirmed",
+  "github_accessible_repositories": 0,
+  "paid_services_enabled": false,
+  "visibility_changed": false
+}

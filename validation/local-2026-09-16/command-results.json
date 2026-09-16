@@ -1,0 +1,57 @@
+{
+  "date": "2026-09-16T12:32:09.879704+00:00",
+  "commands": [
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "test-results/command-1.log"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 1,
+      "status": "blocked",
+      "log": "test-results/command-2.log"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "test-results/command-3.log"
+    },
+    {
+      "command": "node tests/check-preview.cjs",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "test-results/command-4.log"
+    },
+    {
+      "command": "npm run test:dist",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "test-results/command-5.log"
+    }
+  ],
+  "earlier_install_attempts": [
+    {
+      "command": "npm install",
+      "exit_code": 1,
+      "reason": "HTTP 403 from registry.npmjs.org/playwright"
+    },
+    {
+      "command": "npx playwright install --with-deps chromium webkit",
+      "exit_code": 1,
+      "reason": "HTTP 403 from registry.npmjs.org/playwright"
+    },
+    {
+      "command": "preinstalled Playwright CLI install --with-deps chromium webkit",
+      "exit_code": 1,
+      "reason": "apt setgroups/setegid/seteuid not permitted"
+    },
+    {
+      "command": "preinstalled Playwright CLI install chromium webkit",
+      "exit_code": 1,
+      "reason": "HTTP 403 from cdn.playwright.dev"
+    }
+  ]
+}
