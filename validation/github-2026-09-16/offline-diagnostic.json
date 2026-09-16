@@ -1,0 +1,50 @@
+{
+  "date": "2026-09-16T13:45:18.446Z",
+  "platform": "darwin",
+  "cases": [
+    {
+      "kind": "control",
+      "before": {
+        "title": "Offline control",
+        "online": true,
+        "caches": [],
+        "scope": "http://127.0.0.1:49233/"
+      },
+      "emulatedOfflineReload": {
+        "loaded": false,
+        "error": "page.reload: WebKit encountered an internal error\nCall log:\n  - waiting for navigation until \"load\"\n"
+      },
+      "originUnreachable": true,
+      "originDownReload": {
+        "loaded": true,
+        "title": "Offline control",
+        "appLoaded": true
+      }
+    },
+    {
+      "kind": "form28",
+      "before": {
+        "title": "FORM / 28 — Personal coaching",
+        "online": true,
+        "caches": [
+          "form28::http://127.0.0.1:49237/::build-d185476cd02f79b8"
+        ],
+        "scope": "http://127.0.0.1:49237/"
+      },
+      "emulatedOfflineReload": {
+        "loaded": false,
+        "error": "page.reload: WebKit encountered an internal error\nCall log:\n  - waiting for navigation until \"load\"\n"
+      },
+      "originUnreachable": true,
+      "originDownReload": {
+        "loaded": true,
+        "title": "FORM / 28 — Personal coaching",
+        "appLoaded": true
+      }
+    }
+  ],
+  "evidence": {
+    "commit": "0bdc8d41d161853b42e3b79f953cbb4bd0267e0f",
+    "run": "https://github.com/osamadalal-byte/koko/actions/runs/35103752096"
+  }
+}

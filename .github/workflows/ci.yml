@@ -1,0 +1,63 @@
+name: Validate FORM 28
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+  checks: write
+concurrency:
+  group: form28-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm test
+      - run: npm run test:browser
+      - run: npm run build
+      - run: node tests/check-preview.cjs
+      - run: npm run test:dist
+      - name: Diagnose native offline loading
+        if: always()
+        run: node tests/offline-probe.cjs
+      - name: Publish browser diagnostics
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPORT_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/report-ci.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-results-${{ github.run_id }}
+          path: test-results/
+  video_audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Inspect public video sources
+        run: node scripts/audit-videos.cjs
+      - name: Publish source observations
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPORT_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/report-ci.cjs --video-only
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: video-observations-${{ github.run_id }}
+          path: test-results/

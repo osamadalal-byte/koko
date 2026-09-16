@@ -1,0 +1,25 @@
+{
+  "name": "FORM / 28 \u2014 Strength & Mobility",
+  "short_name": "FORM / 28",
+  "description": "Your personal 28-day no-equipment plan: three strength sessions and one mobility session, with preparation and stretching inside a 15\u201320 minute limit.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f4ef",
+  "theme_color": "#f5f4ef",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

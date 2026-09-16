@@ -1,0 +1,177 @@
+{
+  "date": "2026-09-16T13:48:56.168Z",
+  "commit": "ef97add870aba108035309a5e83719fe8edbd238",
+  "run": "https://github.com/osamadalal-byte/koko/actions/runs/35104289642",
+  "method": "Chromium provider-page opens, advancing HTML media time, and visual inspection of sampled frames. Not a full viewing of all demonstrations.",
+  "fullSetVerified": false,
+  "summary": {
+    "movements": 18,
+    "distinctSourcePages": 14,
+    "sourcePagesHTTP200": 14,
+    "pagesWithObservedPlayback": 7
+  },
+  "entries": [
+    {
+      "id": "march",
+      "url": "https://www.nhs.uk/live-well/exercise/how-to-warm-up-before-exercising/",
+      "title": "How to warm up before exercising - NHS",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "A filmed instructor marching was visible in the shared warm-up around 4:53. Other segments show different movements."
+    },
+    {
+      "id": "circles",
+      "url": "https://www.nhs.uk/live-well/exercise/how-to-warm-up-before-exercising/",
+      "title": "How to warm up before exercising - NHS",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "The shared warm-up plays, but an exact shoulder-roll segment has not been visually confirmed."
+    },
+    {
+      "id": "hinge",
+      "url": "https://www.hingehealth.com/resources/articles/hip-hinge/",
+      "title": "How to Do a Hip Hinge: Tips and Recommended Variations",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "A filmed standing hip hinge was visible. Multiple variations occur on the page; the complete base clip has not been watched."
+    },
+    {
+      "id": "side",
+      "url": "https://www.southtees.nhs.uk/resources/hip-abduction-in-standing/",
+      "title": "Hip abduction in standing - South Tees Hospitals NHS Foundation Trust",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": false,
+      "exactExercisePlaybackVerified": false,
+      "review": "The provider page opens. No playable media element was discovered there during this audit; linked footage remains unverified."
+    },
+    {
+      "id": "push",
+      "url": "https://www.youtube.com/watch?v=kmzcmFZ9NyY",
+      "title": "Wall press up - YouTube",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": false,
+      "exactExercisePlaybackVerified": false,
+      "review": "The YouTube page identifies Wall press up. Sign-in/bot verification prevented playback in CI."
+    },
+    {
+      "id": "kneepush",
+      "url": "https://www.youtube.com/watch?v=LD9qrH7o2fY",
+      "title": "Knee press up - YouTube",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": false,
+      "exactExercisePlaybackVerified": false,
+      "review": "The YouTube page identifies Knee press up. Sign-in/bot verification prevented playback in CI."
+    },
+    {
+      "id": "squat",
+      "url": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+      "title": "Strength and Flex exercise plan: How-to videos - NHS",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "Two sampled NHS frames show a person performing a standing bodyweight squat, with a bench behind her."
+    },
+    {
+      "id": "cheststretch",
+      "url": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+      "title": "Strength and Flex exercise plan: How-to videos - NHS",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "Sampled NHS frames show clasped hands behind the back, palms upward. Written instructions were aligned with this version, retaining hands-on-hips as the easier option."
+    },
+    {
+      "id": "stretch",
+      "url": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+      "title": "Strength and Flex exercise plan: How-to videos - NHS",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "Sampled NHS frames show hands joined in front and shoulders moving forward, matching the written upper-back stretch."
+    },
+    {
+      "id": "calfhold",
+      "url": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+      "title": "Strength and Flex exercise plan: How-to videos - NHS",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "Sampled NHS frames show a staggered stance with hands on hips. Written instructions were aligned; wall support remains the easier option."
+    },
+    {
+      "id": "bridge",
+      "url": "https://www.youtube.com/watch?v=iZ611vwxI4I",
+      "title": "Bridge - Spine School - YouTube",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": false,
+      "exactExercisePlaybackVerified": false,
+      "review": "The YouTube page identifies Bridge - Spine School. Sign-in/bot verification prevented playback in CI."
+    },
+    {
+      "id": "bird",
+      "url": "https://www.youtube.com/watch?v=xo7Qpb_NTKE",
+      "title": "Back Exercises to Strengthen and Stretch (Bird-Dog) | HSS - YouTube",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": false,
+      "exactExercisePlaybackVerified": false,
+      "review": "The YouTube page identifies the HSS bird-dog demonstration. Sign-in/bot verification prevented playback in CI."
+    },
+    {
+      "id": "dead",
+      "url": "https://www.youtube.com/watch?v=t2sYmCjr7Hs",
+      "title": "Trans Abdominal Heel Slide - Spine School - YouTube",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": false,
+      "exactExercisePlaybackVerified": false,
+      "review": "The YouTube page identifies Trans Abdominal Heel Slide - Spine School. Sign-in/bot verification prevented playback in CI."
+    },
+    {
+      "id": "plankknees",
+      "url": "https://www.hingehealth.com/resources/articles/plank-on-knees/",
+      "title": "How to Do a Plank on Knees: Tips and Knee Plank Variations",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "A sampled Hinge Health frame shows a person holding a knees-supported forearm plank."
+    },
+    {
+      "id": "prone",
+      "url": "https://www.youtube.com/watch?v=hNseglwRJhY",
+      "title": "Shoulder posture exercise - YouTube",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": false,
+      "exactExercisePlaybackVerified": false,
+      "review": "The YouTube page identifies Shoulder posture exercise. Sign-in/bot verification prevented playback. The exact arm position remains unverified."
+    },
+    {
+      "id": "calf",
+      "url": "https://www.hingehealth.com/resources/articles/calf-raises/",
+      "title": "How to Do Calf Raises: Tips and Recommended Variations",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "The basic filmed version uses two feet on the floor and a table for balance; the app uses a wall. Other clips show progressions to avoid."
+    },
+    {
+      "id": "cat",
+      "url": "https://www.hingehealth.com/resources/articles/cat-cow/",
+      "title": "How to Do a Cat Cow Stretch: Tips and Recommended Variations",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "A sampled frame shows a person rounding the back on hands and knees. The full flexion/extension sequence has not been watched."
+    },
+    {
+      "id": "breath",
+      "url": "https://patientinfolibrary.royalmarsden.nhs.uk/royal-mile-prehabilitation-programme-video-7c-diaphragmatic-breathing",
+      "title": "Royal MILE Prehabilitation Programme Video 7c: Diaphragmatic breathing | Royal Marsden Patient Information Library",
+      "httpStatus": 200,
+      "pageHasPlayingMedia": true,
+      "exactExercisePlaybackVerified": false,
+      "review": "Vimeo playback was observed after the Play interaction. The video uses a human presenter inset and breathing diagrams; it is not a full-body demonstration."
+    }
+  ]
+}
