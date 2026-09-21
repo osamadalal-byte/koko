@@ -20,7 +20,7 @@ async function check(name,conclusion,output){
     const audit=JSON.parse(fs.readFileSync(auditPath,'utf8'));
     await check('Video source inspection','neutral',{title:'Source-page and playback observations; visual matching is separate',summary:'These observations do not certify human instruction or exact movement variants.',text:JSON.stringify({date:audit.date,scope:audit.scope,pages:audit.pages},null,2).slice(0,65000)});
   }
-  for(const file of ['iphone-today.jpg','iphone-session.jpg',...fs.readdirSync('test-results').filter(f=>/^video-.*\.jpg$/.test(f))]){
+  for(const file of ['iphone-today.jpg','iphone-session.jpg','iphone-setup.jpg','iphone-library.jpg','iphone-progress.jpg',...fs.readdirSync('test-results').filter(f=>/^video-.*\.jpg$/.test(f))]){
   const filename='test-results/'+file;if(!fs.existsSync(filename))continue;
   const data=fs.readFileSync(filename);
   if(data.length>45000){console.log(`${file}: see full artifact (preview exceeds check output limit).`);continue}

@@ -1,6 +1,6 @@
 {
   "name": "form28-strength-mobility",
-  "version": "1.0.1-rc",
+  "version": "1.1.0",
   "private": true,
   "description": "Personal 28-day strength and mobility web app",
   "scripts": {
