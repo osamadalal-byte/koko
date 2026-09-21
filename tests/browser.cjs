@@ -36,6 +36,7 @@ async function run(browserType,device,name,folder,basePath){
     const readiness=async()=>{await page.locator('#ready-energy').selectOption('normal');await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('no');await page.locator('#readiness-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#session-dialog').open)};
     await page.goto(url);await page.waitForSelector('[data-action="start"]');
     assert.equal(await page.evaluate(()=>state.coach.profile.days),4);await fit();
+    if(page.viewportSize().width<=720){const startBox=await page.locator('[data-action="start"]').boundingBox(),navBox=await page.locator('.nav').boundingBox();assert(startBox.y>=0&&startBox.y+startBox.height<=navBox.y-6,'The first workout action must be fully visible above mobile navigation');checks.push('Start workout fully visible in the initial iPhone browser viewport')}
     await page.screenshot({path:path.join(results,name+'-today.png'),fullPage:true});
     if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-today.jpg'),type:'jpeg',quality:55,scale:'css'});
     const originalViewport=page.viewportSize();
