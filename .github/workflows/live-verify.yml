@@ -1,0 +1,30 @@
+name: Verify live FORM 28
+on:
+  push:
+    branches: [verification/live-pages]
+permissions:
+  contents: read
+  checks: write
+jobs:
+  live:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run build
+      - run: node tests/live-pages.cjs
+      - name: Publish live verification
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/report-live.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-verification-${{ github.run_id }}
+          path: test-results/
