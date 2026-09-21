@@ -1,0 +1,108 @@
+{
+  "date": "2026-09-16T13:27:33.644Z",
+  "playwright": "1.61.1",
+  "scope": "Real browser automation. External video playback, physical iPhone installation, app switching and screen locking require separate checks.",
+  "results": [
+    {
+      "name": "chromium-desktop-source-root",
+      "folder": ".",
+      "basePath": "/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "28 days, preflight and pain gate",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "chromium-desktop-dist-root",
+      "folder": "dist",
+      "basePath": "/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "28 days, preflight and pain gate",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "chromium-desktop-dist-subpath",
+      "folder": "dist",
+      "basePath": "/koko/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "28 days, preflight and pain gate",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "webkit-iphone-source-root",
+      "folder": ".",
+      "basePath": "/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "28 days, preflight and pain gate",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope"
+      ],
+      "status": "failed",
+      "reason": "page.reload: WebKit encountered an internal error\nCall log:\n  - waiting for navigation until \"load\"\n\n    at run (/home/runner/work/koko/koko/tests/browser.cjs:122:47)\n    at async /home/runner/work/koko/koko/tests/browser.cjs:139:11"
+    },
+    {
+      "name": "webkit-iphone-dist-root",
+      "folder": "dist",
+      "basePath": "/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "28 days, preflight and pain gate",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope"
+      ],
+      "status": "failed",
+      "reason": "page.reload: WebKit encountered an internal error\nCall log:\n  - waiting for navigation until \"load\"\n\n    at run (/home/runner/work/koko/koko/tests/browser.cjs:122:47)\n    at async /home/runner/work/koko/koko/tests/browser.cjs:139:11"
+    },
+    {
+      "name": "webkit-iphone-dist-subpath",
+      "folder": "dist",
+      "basePath": "/koko/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "28 days, preflight and pain gate",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope"
+      ],
+      "status": "failed",
+      "reason": "page.reload: WebKit encountered an internal error\nCall log:\n  - waiting for navigation until \"load\"\n\n    at run (/home/runner/work/koko/koko/tests/browser.cjs:122:47)\n    at async /home/runner/work/koko/koko/tests/browser.cjs:139:11"
+    }
+  ],
+  "evidence": {
+    "commit": "64dfc05f7633a0fcf828871d8bbea9690ae33a98",
+    "platform": "ubuntu-latest",
+    "run": "https://github.com/osamadalal-byte/koko/actions/runs/35101928072"
+  }
+}
