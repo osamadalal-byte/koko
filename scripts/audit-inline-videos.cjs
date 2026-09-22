@@ -60,6 +60,7 @@ const server=http.createServer((req,res)=>{
       row.after=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),state:workoutMedia.getPlayerState(),remaining:session.remaining}));
       row.played=row.before.time>=clip.start-.1&&row.after.time>row.before.time+.5&&row.after.remaining<row.before.remaining&&row.before.video.video_id===clip.videoId;
       if(!row.played)throw Error('Media identity, advancing frames and workout clock did not agree');
+      if(['march','cheststretch'].includes(clip.id)){const file=`${name}-player-${clip.id}.jpg`;await page.screenshot({path:path.join(out,file),type:'jpeg',quality:65});row.screens=[{file,time:row.after.time}];}
       await page.locator('#timer-toggle').click();await page.waitForTimeout(250);
       const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
       await page.waitForTimeout(800);

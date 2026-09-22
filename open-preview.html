@@ -754,6 +754,25 @@ let workoutMedia=null,workoutMediaReady=false,mediaLoadTimer=null,mediaWatchdog=
 let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0,workoutMediaError=null;
 let hlsLoad=null;
 let brightcoveLoad=null;
+// Safari does not consistently send a fresh PLAYING event after a seek in an
+// already-playing video. Confirm media-time progress before starting the clock,
+// including after looping, and stop spending workout time on a frozen picture.
+function monitorWorkoutMedia(media,valid,token,clip){
+  let previous=media.getCurrentTime(),lastMotion=performance.now();
+  clearInterval(mediaWatchdog);
+  mediaWatchdog=setInterval(()=>{
+    if(!valid())return;
+    const time=media.getCurrentTime(),now=performance.now(),delta=time-previous;
+    previous=time;
+    if(!workoutPlayback.wanted||document.hidden){lastMotion=now;return}
+    if(media.getPlayerState()===1&&delta>0&&delta<1&&time>=(clip.start||0)&&(!clip.end||time<clip.end)){
+      lastMotion=now;clearTimeout(mediaLoadTimer);
+      if(workoutPlayback.status!=='playing')workoutPlayback.event('playing',token);
+    }else if(workoutPlayback.status==='playing'&&now-lastMotion>600){
+      workoutPlayback.event('buffering',token);armMediaTimeout();
+    }
+  },200);
+}
 function brightcoveAPI(){
   if(window.bc)return Promise.resolve(window.bc);
   if(brightcoveLoad)return brightcoveLoad;
@@ -768,7 +787,7 @@ function brightcoveAPI(){
 }
 async function brightcoveWorkoutMedia(clip,token,attempt,owner){
   const valid=()=>token===workoutPlayback.generation&&attempt===mediaAttempt&&session===owner&&workoutPlayback.active;
-  const fail=error=>{if(!valid())return;clearMediaTimers();workoutMediaError={code:error?.code||error?.name||'brightcove',videoId:clip.mediaId};mediaFailure='This video could not play. Retry, or follow the written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
+  const fail=error=>{if(!valid())return;clearTimeout(mediaLoadTimer);workoutMediaError={code:error?.code||error?.name||'brightcove',videoId:clip.mediaId};mediaFailure='This video could not play. Retry, or follow the written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
   try{
     const bc=await brightcoveAPI();if(!valid())return;
     const host=$('#workout-video-host');if(!host)return;host.innerHTML='';
@@ -777,7 +796,8 @@ async function brightcoveWorkoutMedia(clip,token,attempt,owner){
     host.appendChild(video);const player=bc(video);
     const play=()=>{if(valid()&&workoutPlayback.wanted&&!document.hidden)player.play()?.catch(fail)};
     workoutMedia={playVideo:play,pauseVideo(){player.pause()},mute(){player.muted(true)},unMute(){player.muted(false)},seekTo(time){player.currentTime(time)},getCurrentTime(){return player.currentTime()},getDuration(){return player.duration()},getPlayerState(){return player.ended()?0:player.paused()?2:player.readyState()<3?3:1},getVideoData(){return {video_id:String(player.mediainfo?.id||''),title:player.mediainfo?.name,source:clip.source}},destroy(){player.dispose()}};
-    player.on('playing',()=>{if(valid()){clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}});
+    monitorWorkoutMedia(workoutMedia,valid,token,clip);
+    player.on('playing',()=>{if(valid()&&(!workoutPlayback.wanted||document.hidden))workoutPlayback.event('playing',token)});
     player.on('waiting',()=>{if(valid()&&workoutPlayback.wanted){workoutPlayback.event('buffering',token);armMediaTimeout()}});
     player.on('pause',()=>{if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
     player.on('ended',()=>{if(valid())workoutPlayback.event('ended',token)});
@@ -804,7 +824,7 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
   const video=document.createElement('video');video.controls=true;video.playsInline=true;video.muted=videoMuted;video.preload='auto';
   video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[owner.steps[owner.index].id].name+' — human demonstration');
   host.innerHTML='';host.appendChild(video);let streaming=null,disposed=false;
-  const fail=error=>{if(!valid())return;clearMediaTimers();workoutMediaError={code:error?.code||error?.name||'media',mediaId:clip.mediaId};mediaFailure='This video could not play. Retry, or use written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
+  const fail=error=>{if(!valid())return;clearTimeout(mediaLoadTimer);workoutMediaError={code:error?.code||error?.name||'media',mediaId:clip.mediaId};mediaFailure='This video could not play. Retry, or use written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
   const play=()=>{if(valid()&&workoutPlayback.wanted&&!document.hidden)video.play().catch(error=>{if(error.name!=='AbortError')fail(error)})};
   const adapter={
     playVideo:play,pauseVideo(){video.pause()},mute(){video.muted=true},unMute(){video.muted=false},
@@ -814,7 +834,8 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
     destroy(){disposed=true;streaming?.destroy();video.pause();video.removeAttribute('src');video.load();video.remove()}
   };
   workoutMedia=adapter;workoutMediaReady=true;
-  video.addEventListener('playing',()=>{if(valid()){clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}});
+  monitorWorkoutMedia(adapter,valid,token,clip);
+  video.addEventListener('playing',()=>{if(valid()&&(!workoutPlayback.wanted||document.hidden))workoutPlayback.event('playing',token)});
   video.addEventListener('waiting',()=>{if(valid()&&workoutPlayback.wanted){workoutPlayback.event('buffering',token);armMediaTimeout()}});
   video.addEventListener('pause',()=>{if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
   video.addEventListener('ended',()=>{if(valid())workoutPlayback.event('ended',token)});
