@@ -11,6 +11,19 @@ async function reportClip(engine,row){
  const response=await fetch(`${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/check-runs`,{method:'POST',headers:{Authorization:`Bearer ${process.env.GITHUB_TOKEN}`,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify({name:`Clip observation: ${engine}/${row.id}`,head_sha:process.env.REPORT_HEAD_SHA,status:'completed',conclusion:row.played?'neutral':'failure',output:{title:'Individual playback observation',summary:'Partial diagnostic only; all 18 clips and both engines must still pass. Visual review is separate.',text:JSON.stringify(row,null,2)}})});
  if(!response.ok)throw Error('Could not publish playback diagnostic: HTTP '+response.status);
 }
+async function contactSheets(page,name,row){
+ row.sheets=[];
+ for(let offset=0;offset<row.frames.length;offset+=6){
+  const frames=row.frames.slice(offset,offset+6).map(f=>({...f,data:fs.readFileSync(path.join(out,f.file)).toString('base64')}));
+  const data=await page.evaluate(async frames=>{
+   const canvas=document.createElement('canvas');canvas.width=900;canvas.height=Math.ceil(frames.length/3)*220;
+   const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+   for(let i=0;i<frames.length;i++){const f=frames[i],img=new Image();img.src='data:image/jpeg;base64,'+f.data;await img.decode();const x=(i%3)*300,y=Math.floor(i/3)*220;ctx.drawImage(img,x,y,300,190);ctx.fillStyle='#111';ctx.font='15px sans-serif';ctx.fillText(f.file+' ('+f.time.toFixed(2)+'s)',x+4,y+210)}
+   let quality=.65,data;do{data=canvas.toDataURL('image/jpeg',quality);quality-=.08}while(data.length>59000&&quality>.15);return data.split(',')[1];
+  },frames);
+  const file=`${name}-${row.id}-sheet-${offset/6+1}.jpg`;fs.writeFileSync(path.join(out,file),Buffer.from(data,'base64'));row.sheets.push({file,time:frames[0].time});
+ }
+}
 const types={'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png','.webmanifest':'application/manifest+json'};
 function bounded(promise,ms,label){let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(label+' timed out')),ms)})]).finally(()=>clearTimeout(timer))}
 const server=http.createServer((req,res)=>{
@@ -58,8 +71,8 @@ const server=http.createServer((req,res)=>{
       row.resumeControl=true;
       row.frames=[];
       // Sample the beginning plus early demonstration positions, always recording
-      // actual positions. Review all frames and watch the complete clip before approval.
-      const sampleTimes=clip.end?[clip.start,clip.start+(clip.end-clip.start)/3,clip.start+(clip.end-clip.start)*2/3,clip.end-1]:[clip.start,10,20,30,40,50,...(['march','circles','kneepush'].includes(clip.id)?[60,75,90,105,120,140]:[])];
+      // actual positions. These are visual frame samples, not a full audiovisual review.
+      const sampleTimes=clip.end?[...Array.from({length:Math.ceil((clip.end-clip.start)/2)},(_,i)=>clip.start+i*2),clip.end-.8]:[clip.start,10,20,30,40,50,...(['march','circles','kneepush'].includes(clip.id)?[60,75,90,105,120,140]:[])];
       for(const seconds of [...new Set(sampleTimes)]){
        if(seconds>=row.before.duration)continue;
        await page.evaluate(t=>workoutMedia.seekTo(t,true),seconds);await page.waitForTimeout(500);
@@ -67,6 +80,7 @@ const server=http.createServer((req,res)=>{
        await page.locator('#workout-video-host').screenshot({path:path.join(out,filename),type:'jpeg',quality:70});
        row.frames.push({file:filename,time:await page.evaluate(()=>workoutMedia.getCurrentTime())});
       }
+      await contactSheets(page,name,row);
       if(clip.end){
        await page.evaluate(t=>workoutMedia.seekTo(t,true),clip.end-.5);
        await page.waitForFunction(start=>workoutMedia.getCurrentTime()>=start-.1&&workoutMedia.getCurrentTime()<start+2&&!session.paused,clip.start,{timeout:18000});
@@ -86,6 +100,19 @@ const server=http.createServer((req,res)=>{
      await reportClip(name,row);
      console.log(JSON.stringify({engine:name,id:clip.id,played:row.played,error:row.error}));
     }
+    // Actual provider changes and the original clock, with short test intervals.
+    // No media stubs, manual advance, or synthetic tick calls are used here.
+    await page.evaluate(()=>{
+     pause();workoutPlayback.close();destroyWorkoutMedia();state.autoAdvance=true;
+     const steps=[['march','Warm-up'],['push','Work'],['rest','Rest'],['cheststretch','Cool-down']].map(([id,phase])=>({id,phase,seconds:3,round:0}));
+     session={day:1,mode:'full',pace:'beginner',steps,index:0,remaining:3000,elapsed:0,skipped:false,awaiting:false,paused:true,last:0};renderSession();
+     window.observedFlow=[];window.flowPoll=setInterval(()=>{if(session&&document.querySelector('#timer-toggle')&&!session.paused){const phase=session.steps[session.index].phase;if(!observedFlow.includes(phase))observedFlow.push(phase)}},100);
+    });
+    await page.locator('#timer-toggle').click();
+    await page.waitForSelector('#save-checkin',{timeout:70000});
+    engine.flow=await page.evaluate(()=>{clearInterval(flowPoll);return {phases:observedFlow,dialogs:document.querySelectorAll('dialog[open]').length,path:location.pathname}});
+    if(engine.flow.phases.join(',')!=='Warm-up,Work,Rest,Cool-down'||engine.flow.dialogs!==1||engine.flow.path!=='/koko/')throw Error('Continuous real-video session did not complete in one screen');
+    engine.flow.passed=true;
    }catch(error){engine.error=error.message.split('\n')[0];process.exitCode=1}
    finally{if(browser)await browser.close()}
   }

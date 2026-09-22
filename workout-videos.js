@@ -40,9 +40,26 @@ for(const [id,slug,mediaId,mp4] of [
  ['side','standing-side-leg-raise','O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ',true]
 ])Object.assign(WORKOUT_VIDEOS[id],{mediaId,src:'https://stream.mux.com/'+mediaId+(mp4?'/medium.mp4':'.m3u8'),provider:'Hinge Health',source:'https://www.hingehealth.com/resources/articles/'+slug+'/'});
 Object.assign(WORKOUT_VIDEOS.dead,{mediaId:'dd7b9bef-40cc-45ee-a7a7-0b6552605a41',src:'https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4',provider:'Physitrack',source:'https://us.physitrack.com/home-exercise-video/supine-heel-slides---movement-control'});
-for(const [id,mediaId] of [['march','1763945815001'],['circles','1763945815001'],['cheststretch','1763467661001'],['stretch','1763945821001'],['calfhold','1763467667001']]){
+for(const [id,mediaId] of [['cheststretch','1763467661001'],['stretch','1763945821001'],['calfhold','1763467667001']]){
   Object.assign(WORKOUT_VIDEOS[id],{brightcove:true,mediaId,provider:'NHS',source:'https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/'});
 }
+for(const [id,mediaId,slug] of [
+ ['march','71550880-a7cf-402d-9ada-938438d4ba38','standing-marching'],
+ ['circles','a267a10f-9cea-4312-abd0-402efdfa9bf7','shoulder-rolls']
+])Object.assign(WORKOUT_VIDEOS[id],{mediaId,src:'https://media.physitrack.com/exercises/'+mediaId+'/en/video_1280x720.mp4',provider:'Physitrack',source:'https://na.physitrack.com/home-exercise-video/'+slug});
+Object.assign(WORKOUT_VIDEOS.march,{title:'Standing marching',variant:'Supported standing march, use a comfortable low knee lift'});
+WORKOUT_VIDEOS.circles.title='Standing shoulder rolls';
+WORKOUT_VIDEOS.bridge.title='Supine bridge';WORKOUT_VIDEOS.prone.title='Standing scapular squeezes';
+WORKOUT_VIDEOS.cheststretch.title='NHS chest stretch';WORKOUT_VIDEOS.stretch.title='NHS upper back stretch';
+WORKOUT_VIDEOS.dead.title='Supine heel slides — movement control';
+// Candidate demonstration boundaries. Publishing remains blocked until the
+// exact excerpts have passed visual review and both real browser audits.
+for(const [id,start,end] of [
+ ['hinge',18,34],['side',15,33],['push',25,42],['kneepush',12,25],
+ ['squat',12,32],['bridge',18,42],['bird',27,53],['dead',12,50],
+ ['plankknees',18,32],['prone',15,32],['calf',15,32],['cat',18,38],
+ ['cheststretch',16,25],['stretch',17,28],['calfhold',23,35],['breath',14,26]
+])Object.assign(WORKOUT_VIDEOS[id],{start,end});
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
   entry.start??=0; // No guessed cue points. Replace only after watching the clip.

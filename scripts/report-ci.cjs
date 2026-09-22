@@ -13,9 +13,9 @@ async function check(name,conclusion,output){
   if(!fs.existsSync(file))throw Error('Inline audit did not produce a report');
   const audit=JSON.parse(fs.readFileSync(file,'utf8'));
   for(const engine of audit.engines){
-   const pass=engine.clips.length===18&&engine.clips.every(c=>c.played);
+   const pass=engine.clips.length===18&&engine.clips.every(c=>c.played)&&engine.flow?.passed===true;
    await check('Inline playback: '+engine.name,pass?'success':'failure',{title:'Actual embedded video playback — '+engine.name,summary:'Observed media progress only. Human variant and cue points require visual review.',text:JSON.stringify(engine,null,2).slice(0,65000)});
-   for(const clip of engine.clips)for(const frame of (clip.frames||[])){
+   for(const clip of engine.clips)for(const frame of (clip.sheets?.length?clip.sheets:clip.frames||[])){
     const bytes=fs.readFileSync(dir+'/'+frame.file);if(bytes.length>45000)continue;
     await check('Inline frame: '+frame.file,'neutral',{title:clip.id+' at '+frame.time+' seconds',summary:'Actual provider player screenshot. This does not certify a human demonstration or variant.',text:JSON.stringify({filename:frame.file,mimeType:'image/jpeg',base64:bytes.toString('base64')})});
    }
