@@ -6,6 +6,11 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'../dist'),out=path.resolve(__dirname,'../test-results/inline-video-audit');
 fs.mkdirSync(out,{recursive:true});
 const report={date:new Date().toISOString(),scope:'Real public provider media in the built app at /koko/. Playback observations are not exact-variant approval.',engines:[]};
+async function reportClip(engine,row){
+ if(!process.env.GITHUB_TOKEN)return;
+ const response=await fetch(`${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/check-runs`,{method:'POST',headers:{Authorization:`Bearer ${process.env.GITHUB_TOKEN}`,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify({name:`Clip observation: ${engine}/${row.id}`,head_sha:process.env.REPORT_HEAD_SHA,status:'completed',conclusion:row.played?'neutral':'failure',output:{title:'Individual playback observation',summary:'Partial diagnostic only; all 18 clips and both engines must still pass. Visual review is separate.',text:JSON.stringify(row,null,2)}})});
+ if(!response.ok)throw Error('Could not publish playback diagnostic: HTTP '+response.status);
+}
 const types={'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png','.webmanifest':'application/manifest+json'};
 const server=http.createServer((req,res)=>{
  const pathname=new URL(req.url,'http://local').pathname;
@@ -70,6 +75,7 @@ const server=http.createServer((req,res)=>{
      }
      if(!row.played)process.exitCode=1;
      fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(report,null,2));
+     await reportClip(name,row);
      console.log(JSON.stringify({engine:name,id:clip.id,played:row.played,error:row.error}));
     }
    }catch(error){engine.error=error.message.split('\n')[0];process.exitCode=1}

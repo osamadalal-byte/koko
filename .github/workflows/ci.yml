@@ -21,6 +21,9 @@ jobs:
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run build
       - name: Play every clip inside the actual workout player
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPORT_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: node scripts/audit-inline-videos.cjs
       - name: Publish inline playback observations
         if: always()
