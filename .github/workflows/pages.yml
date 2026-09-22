@@ -24,6 +24,8 @@ jobs:
       - run: npm run test:dist
       - name: Verify reviewed human videos before publication
         run: npm run test:video-release
+      - name: Verify current provider playback before publication
+        run: node scripts/audit-inline-videos.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

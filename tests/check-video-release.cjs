@@ -12,6 +12,7 @@ for(const [id,clip] of Object.entries(videos)){
  let evidence;try{evidence=JSON.parse(fs.readFileSync(file,'utf8'))}catch{missing.push(id);continue}
  const row=evidence.clips?.find(c=>c.id===id&&c.videoId===(clip.mediaId||clip.videoId));
  if(!row?.humanReview?.exactVariant||!row.humanReview.demonstrationVisibleAtStart||!row.playback?.chromium||!row.playback.webkit)missing.push(id);
+ else if(row.start!==clip.start||(row.end??null)!==(clip.end??null)||(row.src??null)!==(clip.src??null)||row.source!==clip.source)missing.push(id);
 }
 if(missing.length){console.error('RELEASE BLOCKED: exact human demonstration, cue point and real Chromium/WebKit inline playback evidence missing for: '+missing.join(', '));process.exitCode=1}
 else console.log('PASS: reviewed movement variants, cue points and browser playback evidence for all 18 clips.');

@@ -12,6 +12,7 @@ async function reportClip(engine,row){
  if(!response.ok)throw Error('Could not publish playback diagnostic: HTTP '+response.status);
 }
 const types={'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png','.webmanifest':'application/manifest+json'};
+function bounded(promise,ms,label){let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(label+' timed out')),ms)})]).finally(()=>clearTimeout(timer))}
 const server=http.createServer((req,res)=>{
  const pathname=new URL(req.url,'http://local').pathname;
  if(!pathname.startsWith('/koko/'))return res.writeHead(404).end();
@@ -27,16 +28,16 @@ const server=http.createServer((req,res)=>{
    const engine={name,clips:[]};report.engines.push(engine);let browser;
    try{
     browser=await type.launch();const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
-    await page.goto(url);const clips=await page.evaluate(()=>Object.entries(WORKOUT_VIDEOS).map(([id,c])=>({id,videoId:c.mediaId||c.videoId,src:c.src||null,start:c.start})));
+    await page.goto(url);const clips=await page.evaluate(()=>Object.entries(WORKOUT_VIDEOS).map(([id,c])=>({id,videoId:c.mediaId||c.videoId,src:c.src||null,source:c.source,start:c.start,end:c.end??null})));
     for(const clip of clips){
      const row={...clip,played:false,humanReview:'Pending visual inspection'};engine.clips.push(row);
      try{
-      await page.evaluate(({id})=>{
+      await bounded(page.evaluate(({id})=>{
        if(session)pause();workoutPlayback.close();destroyWorkoutMedia();state.completed={};state.cycles=[];state.draft=null;selected=1;
        const step={id,seconds:120,phase:['cheststretch','stretch','calfhold','breath'].includes(id)?'Cool-down':'Work',round:0};
        session={day:1,mode:'full',pace:'beginner',steps:[step],index:0,remaining:120000,elapsed:0,skipped:false,awaiting:false,paused:true,last:0};
        renderSession();if(!document.querySelector('#session-dialog').open)document.querySelector('#session-dialog').showModal();
-      },clip);
+      },clip),12000,'Preparing the next movement');
       await page.locator('#timer-toggle').click();
       await page.waitForFunction(()=>(workoutMediaReady&&workoutMedia.getPlayerState()===1&&!session.paused)||['error','blocked'].includes(workoutPlayback.status),{},{timeout:18000});
       const failure=await page.evaluate(()=>['error','blocked'].includes(workoutPlayback.status)?{status:workoutPlayback.status,detail:workoutMediaError}:null);
@@ -44,7 +45,7 @@ const server=http.createServer((req,res)=>{
       row.before=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),video:workoutMedia.getVideoData(),remaining:session.remaining,duration:workoutMedia.getDuration()}));
       await page.waitForTimeout(1800);
       row.after=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),state:workoutMedia.getPlayerState(),remaining:session.remaining}));
-      row.played=row.after.time>row.before.time+.5&&row.after.remaining<row.before.remaining&&row.before.video.video_id===clip.videoId;
+      row.played=row.before.time>=clip.start-.1&&row.after.time>row.before.time+.5&&row.after.remaining<row.before.remaining&&row.before.video.video_id===clip.videoId;
       if(!row.played)throw Error('Media identity, advancing frames and workout clock did not agree');
       await page.locator('#timer-toggle').click();await page.waitForTimeout(250);
       const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
@@ -58,12 +59,19 @@ const server=http.createServer((req,res)=>{
       row.frames=[];
       // Sample the beginning plus early demonstration positions, always recording
       // actual positions. Review all frames and watch the complete clip before approval.
-      for(const seconds of [...new Set([clip.start,10,20,30,40,50,...(['march','circles','kneepush'].includes(clip.id)?[60,75,90,105,120,140]:[])])]){
+      const sampleTimes=clip.end?[clip.start,clip.start+(clip.end-clip.start)/3,clip.start+(clip.end-clip.start)*2/3,clip.end-1]:[clip.start,10,20,30,40,50,...(['march','circles','kneepush'].includes(clip.id)?[60,75,90,105,120,140]:[])];
+      for(const seconds of [...new Set(sampleTimes)]){
        if(seconds>=row.before.duration)continue;
        await page.evaluate(t=>workoutMedia.seekTo(t,true),seconds);await page.waitForTimeout(500);
        const filename=`${name}-${clip.id}-${seconds}.jpg`;
        await page.locator('#workout-video-host').screenshot({path:path.join(out,filename),type:'jpeg',quality:70});
        row.frames.push({file:filename,time:await page.evaluate(()=>workoutMedia.getCurrentTime())});
+      }
+      if(clip.end){
+       await page.evaluate(t=>workoutMedia.seekTo(t,true),clip.end-.5);
+       await page.waitForFunction(start=>workoutMedia.getCurrentTime()>=start-.1&&workoutMedia.getCurrentTime()<start+2&&!session.paused,clip.start,{timeout:18000});
+       row.loopControl=await page.evaluate(()=>session.index===0&&workoutPlayback.wanted);
+       if(!row.loopControl)throw Error('The demonstration did not repeat inside the same workout interval');
       }
      }catch(error){
       row.played=false;

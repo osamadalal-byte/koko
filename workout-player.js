@@ -76,6 +76,11 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
   video.addEventListener('timeupdate',()=>{if(valid()&&clip.end&&video.currentTime>=clip.end&&workoutPlayback.wanted){workoutPlayback.event('ended',token)}});
   try{
     if(clip.src.includes('.m3u8')){
+      // Safari/WebKit has a native HLS pipeline. Keep its video element on that
+      // pipeline instead of constructing a second MSE player. Chromium's
+      // canPlayType result alone is not reliable for HLS, so it uses HLS.js.
+      const ua=navigator.userAgent||'';
+      if(video.canPlayType('application/vnd.apple.mpegurl')&&/AppleWebKit/.test(ua)&&!/(Chrome|Chromium|Edg|OPR)\//.test(ua)){video.src=clip.src;play();return}
       const Hls=await hlsAPI();if(!valid()||disposed)return;
       if(Hls.isSupported()){
         streaming=new Hls({startPosition:clip.start||0,maxBufferLength:15});

@@ -1,7 +1,8 @@
 # FORM 28 — continuous workout player (development draft)
 
-Status on 2026-09-22: implementation prepared for upload. GitHub connectivity
-has been restored; real-browser and video review are now queued. This document does not certify readiness for use.
+Status on 2026-09-22: the continuous player is uploaded to PR #2. The application
+checks pass in real Chromium and WebKit. Provider playback and visual movement
+review are still in progress; the upgrade is not deployed.
 
 ## What changed
 
@@ -28,38 +29,37 @@ recovery spacing, workload adaptation, saved drafts, backup/restore, cycle histo
 voice settings and 15/20-minute planned budgets remain in place. Pauses and media
 loading add to wall-clock time.
 
-## Evidence and blockers
+## Evidence and remaining work
 
-- `npm test`: passed locally, including 280 plan timing cases, storage and backup
-  checks, the playback gate, and simulated media integrated with the real clock.
-- `npm run build`, `node tests/check-preview.cjs`, `npm run test:dist`: passed
-  locally. Deployment assets and offline paths work over local HTTP at `/` and
-  `/koko/`; this is not browser/offline/iPhone certification.
-- `npm install` and `npx playwright install --with-deps chromium webkit`: blocked
-  by HTTP 403 from the package registry. An attempt with the runtime's installed
-  Playwright CLI also received HTTP 403 from the browser CDN.
-- `npm run test:browser`: all six real-browser scenarios blocked before launch
-  because Chromium/WebKit executables are absent. New simulated-media browser
-  interactions are prepared but have not run. Previously passing v1.1 browser
-  results do not verify v1.2.
-- Live inline-video audit attempted: both engines blocked before launch. All
-  18 clip entries are candidates, not visually approved demonstrations. Exact
-  exercise variant, provider/author, cue point, duration, framing and actual
-  iframe playback must be reviewed. No start time has been guessed.
-- The Pages workflow now requires `npm run test:video-release`, which correctly
-  fails while that evidence is missing. Do not remove this gate to publish.
-- Earlier GitHub read calls failed before execution with HTTP 400
-  `Invalid MCP request metadata`. Retrying restored access. PR #2 is confirmed
-  unchanged at the source revision used by this draft:
-  `feature/guided-experience`, commit
-  `6700ef37bdb48f1a992c5a4b268cb221949c6b23`; it remains open and unmerged.
+- `npm test` passes, including 280 plan timing cases, data and backup checks,
+  media/clock integration, background pause, and stale media callback handling.
+- The GitHub Actions `validate` jobs passed at
+  `ce4c3e398de88964133911cb4171871ec69134f1`: dependency installation, Chromium
+  and WebKit installation, all six source/dist/subpath browser scenarios, build,
+  standalone preview and deployment asset checks. The browser suite covers narrow
+  layouts, settings, progress, backup/restore and actual service-worker offline
+  navigation. Its deterministic media API scenarios are explicitly simulated.
+- Separately, real provider playback at that revision passed for 13 movements
+  in Chromium, including Pause/Resume and actual media-time advancement.
+  Some Vimeo sources refused embedding, and YouTube required sign-in in CI.
+  Those failures are recorded; they are not bypassed or counted as passing.
+- The candidate catalog at `1627c73719781048eb19680f7543ca994ea00f45` uses public
+  Hinge Health streams, NHS Brightcove embeds and a public Physitrack MP4.
+  All 18 replacements are undergoing playback and frame review in the app.
+- The local scratch environment cannot download browser binaries (HTTP 403).
+  Real-browser results come from GitHub Actions, not local browser execution.
+- `npm run test:video-release` intentionally fails until every movement has
+  exact-variant, reviewed cue-point and Chromium/WebKit playback evidence.
+  The release check binds evidence to the current URL and excerpt bounds.
+- The existing live site remains on `main`; this feature branch is not merged.
+  Pages publication remains a manual workflow with all validation gates intact.
 
 ## Continuing verification
 
 The CI workflow includes a real inline-video audit on Chromium and WebKit,
 separate from deterministic interaction tests. It records actual media progress,
-video identity and frame samples in `test-results/inline-video-audit/`. Watch the
-complete clips as well as the samples: a playing iframe is not proof of a matching
+video identity and frame samples in `test-results/inline-video-audit/`. Review the
+complete selected demonstration excerpts as well as the samples: a playing iframe is not proof of a matching
 human demonstration. Replace unsuitable candidates and record reviewed cue points
 in `workout-videos.js`. Keep playback/visual evidence beside the review manifest.
 
@@ -71,4 +71,7 @@ need device verification.
 
 Implementation references: [YouTube IFrame API](https://developers.google.com/youtube/iframe_api_reference),
 [YouTube embed parameters](https://developers.google.com/youtube/player_parameters),
-[WebKit inline-video policies](https://webkit.org/blog/6784/new-video-policies-for-ios/).
+[WebKit inline-video policies](https://webkit.org/blog/6784/new-video-policies-for-ios/),
+[Brightcove dynamic players](https://player.support.brightcove.com/code-samples/brightcove-player-sample-loading-player-dynamically.html),
+[HLS.js](https://github.com/video-dev/hls.js),
+[Mux public MP4 renditions](https://www.mux.com/docs/guides/enable-static-mp4-renditions).
