@@ -1,77 +1,89 @@
-# FORM 28 — continuous workout player (development draft)
+# FORM 28 — continuous workout player
 
-Status on 2026-09-22: the continuous player is uploaded to PR #2. The application
-checks pass in real Chromium and WebKit. Provider playback and visual movement
-review are still in progress; the upgrade is not deployed.
+The 1.2 upgrade is uploaded in PR #2 and is ready for publication review. It is
+not merged or deployed. The existing HTTPS site remains on the previous release.
 
-## What changed
+## The workout experience
 
-Selecting an unfinished training day enters the existing readiness check. After
-that one check, the workout opens directly in a single full-screen player:
-warm-up → exercises and recovery intervals → cool-down → saved feedback.
+Choose a training day and complete the existing short readiness check. Warm-up,
+exercise and recovery intervals, cool-down and feedback then share one screen.
+Human video, a large timer, phase progress, next movement, Pause, Skip and
+expandable technique instructions stay inside the workout. There are no provider
+page redirects in this flow.
 
-The current human video, large timer, next movement, phase progress and technique
-notes share the same screen. There is no provider-page redirect in this flow.
-Demonstrations repeat within their timed interval; ending a video does not skip
-the movement. The original plan still determines interval lengths and workload.
+Each selected demonstration repeats until its interval ends. The timer advances
+only when media time advances, and pauses for loading, buffering, errors, explicit
+pause or backgrounding. Returning to the app requires Resume. This also handles
+Safari seeking without a new PLAYING event. Old players cannot restart a later
+interval. Skipping still records a partial session.
 
-The timer waits for the player's PLAYING event and pauses on buffering, autoplay
-refusal, media failure, explicit pause or backgrounding. Foregrounding requires
-a deliberate resume. Old or destroyed players cannot restart another interval.
-Skip continues the sequence when it was running and still records a partial
-session. Video starts muted for inline autoplay; sound can be enabled. Browser
-policy may require an additional tap. Ads or provider restrictions can still
-interrupt externally hosted videos.
+Playback starts muted; the user can enable video sound. Browser policy can require
+an extra tap. If video is unavailable or the device is offline, written guidance
+is an explicit option in the same screen. Videos are streamed from public Hinge
+Health, NHS and Physitrack sources, not downloaded into the app or offline cache.
 
-Written guidance is an explicit fallback for offline or failed media. It remains
-in the workout screen and never pretends to be a human video. Existing readiness,
-recovery spacing, workload adaptation, saved drafts, backup/restore, cycle history,
-voice settings and 15/20-minute planned budgets remain in place. Pauses and media
-loading add to wall-clock time.
+The original readiness and recovery-spacing checks, conservative load adaptation,
+15/20-minute guided budgets, three strength sessions plus optional mobility,
+local progress, saved drafts, backup/restore, favorites and cycle archive remain.
+Pauses, learning and media loading add to elapsed wall-clock time.
 
-## Evidence and remaining work
+## Verification
 
-- `npm test` passes, including 280 plan timing cases, data and backup checks,
-  media/clock integration, background pause, and stale media callback handling.
-- The GitHub Actions `validate` jobs passed at
-  `ce4c3e398de88964133911cb4171871ec69134f1`: dependency installation, Chromium
-  and WebKit installation, all six source/dist/subpath browser scenarios, build,
-  standalone preview and deployment asset checks. The browser suite covers narrow
-  layouts, settings, progress, backup/restore and actual service-worker offline
-  navigation. Its deterministic media API scenarios are explicitly simulated.
-- Separately, real provider playback at that revision passed for 13 movements
-  in Chromium, including Pause/Resume and actual media-time advancement.
-  Some Vimeo sources refused embedding, and YouTube required sign-in in CI.
-  Those failures are recorded; they are not bypassed or counted as passing.
-- The candidate catalog at `1627c73719781048eb19680f7543ca994ea00f45` uses public
-  Hinge Health streams, NHS Brightcove embeds and a public Physitrack MP4.
-  All 18 replacements are undergoing playback and frame review in the app.
-- The local scratch environment cannot download browser binaries (HTTP 403).
-  Real-browser results come from GitHub Actions, not local browser execution.
-- `npm run test:video-release` intentionally fails until every movement has
-  exact-variant, reviewed cue-point and Chromium/WebKit playback evidence.
-  The release check binds evidence to the current URL and excerpt bounds.
-- The existing live site remains on `main`; this feature branch is not merged.
-  Pages publication remains a manual workflow with all validation gates intact.
+At runtime revision `42a63b1fac13daa33ea4f12ce23c4686713fc546`, both
+[push validation](https://github.com/osamadalal-byte/koko/actions/runs/35719375473)
+and [PR validation](https://github.com/osamadalal-byte/koko/actions/runs/35719378548)
+passed:
 
-## Continuing verification
+- Dependency and Chromium/WebKit installation in GitHub Actions.
+- Node tests, including 280 timing plans, coaching, persistence, backup validation,
+  media/clock integration and stale-event/background handling.
+- All six browser scenarios: Chromium and WebKit iPhone emulation against source,
+  built root and `/koko/`. Narrow layouts, scrolling, controls, settings, progress,
+  backup/restore and actual service-worker offline loading passed. Media doubles
+  in this deterministic suite are explicitly labeled; they do not certify videos.
+- The separate real-provider audit passed all 18 movements in both engines:
+  advancing media and workout time, Pause/Resume, reviewed start points and loops.
+  A short automatic warm-up/work/rest/cool-down sequence also reached feedback
+  without leaving the screen. It used real media, not simulated player events.
+- Build, standalone preview, deployment allowlist, manifest/icon/script paths and
+  content-derived service-worker revision checks passed at both `/` and `/koko/`.
 
-The CI workflow includes a real inline-video audit on Chromium and WebKit,
-separate from deterministic interaction tests. It records actual media progress,
-video identity and frame samples in `test-results/inline-video-audit/`. Review the
-complete selected demonstration excerpts as well as the samples: a playing iframe is not proof of a matching
-human demonstration. Replace unsuitable candidates and record reviewed cue points
-in `workout-videos.js`. Keep playback/visual evidence beside the review manifest.
+[Saved browser report](validation/player-2026-09-22/browser-results.json) and
+[video review/playback evidence](validation/player-2026-09-22/video-review.json)
+record the source revision and observations. Visual review used rendered browser
+frames sampled every two seconds and at excerpt boundaries. It is not a physical
+phone test, full audio review or clinical assessment. All 18 selected excerpts
+show the intended human movement. The knee push-up ends before the harder floor
+variation; the chest stretch ends before the source's incorrect-form example.
 
-Before publication, rerun all existing browser/build checks, review iPhone-size
-screenshots, verify the 18 clips, and pass the release gate. After publication,
-check the actual HTTPS `/koko/` URL and service-worker update. Physical iPhone
-installation, real app switching/screen locking, sound and inline autoplay still
-need device verification.
+`npm run test:video-release` binds each approval to its variant, URL, exact
+start/end positions, actual Chromium/WebKit pause/resume/loop evidence and both
+completed phase flows. It runs in CI and before Pages publication. Publication
+also repeats the real media audit. Initial YouTube/Vimeo sign-in, privacy and
+connection failures were replaced with different public provider sources; no
+access restrictions were bypassed.
 
-Implementation references: [YouTube IFrame API](https://developers.google.com/youtube/iframe_api_reference),
-[YouTube embed parameters](https://developers.google.com/youtube/player_parameters),
-[WebKit inline-video policies](https://webkit.org/blog/6784/new-video-policies-for-ios/),
+The scratch environment cannot download browser binaries (HTTP 403). Real
+browser results above come from GitHub Actions. Local Node/build/preview/dist and
+release-evidence checks pass independently.
+
+## Publication and remaining device checks
+
+The connected tools cannot dispatch the manual Pages workflow. Merge PR #2 and
+run **Actions → Test and publish FORM 28 → Run workflow → main**. No repository
+visibility or paid-service change is needed.
+
+The workflow now includes a post-publication job that compares live bytes with
+`dist`, verifies HTTPS and the manifest/service-worker scope and cache, exercises
+the deployed player and saved draft, checks Chromium offline fallback, and runs
+all 18 video checks again on the actual HTTPS origin. This new live-site job has
+not run for 1.2 yet. Its success is required before claiming verified deployment.
+
+On a physical iPhone, check Add to Home Screen, one complete workout, sound,
+switching apps, screen locking, and airplane-mode written guidance. WebKit
+emulation does not prove those device behaviors. Provider availability may change.
+
+Implementation references: [WebKit inline-video policy](https://webkit.org/blog/6784/new-video-policies-for-ios/),
 [Brightcove dynamic players](https://player.support.brightcove.com/code-samples/brightcove-player-sample-loading-player-dynamically.html),
 [HLS.js](https://github.com/video-dev/hls.js),
 [Mux public MP4 renditions](https://www.mux.com/docs/guides/enable-static-mp4-renditions).

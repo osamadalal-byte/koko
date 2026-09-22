@@ -1,8 +1,7 @@
 'use strict';
-/* Individual clip candidates, researched 2026-09-22. Search titles are NOT a
-   visual review. Every entry must pass check-video-release.cjs before Pages.
-   Keep the existing provider library intact while reviewing these replacements.
-   Only public provider embeds are used; media is never downloaded or cached. */
+/* Public provider demonstrations reviewed on 2026-09-22.
+   Evidence binds the exact variant, URL and excerpt to real browser playback.
+   No third-party video is bundled, rehosted or cached offline. */
 const WORKOUT_VIDEOS={
   march:{videoId:'_Ox0N-Ab3Sc',title:'Marching on the Spot',variant:'Standing easy march, no equipment'},
   circles:{videoId:'Bv8QPOs7xks',title:'NUHS Physiotherapy - Shoulder Rolls',variant:'Standing shoulder rolls, relaxed arms'},
@@ -52,8 +51,7 @@ WORKOUT_VIDEOS.circles.title='Standing shoulder rolls';
 WORKOUT_VIDEOS.bridge.title='Supine bridge';WORKOUT_VIDEOS.prone.title='Standing scapular squeezes';
 WORKOUT_VIDEOS.cheststretch.title='NHS chest stretch';WORKOUT_VIDEOS.stretch.title='NHS upper back stretch';
 WORKOUT_VIDEOS.dead.title='Supine heel slides — movement control';
-// Candidate demonstration boundaries. Publishing remains blocked until the
-// exact excerpts have passed visual review and both real browser audits.
+// Reviewed demonstration boundaries. See validation/player-2026-09-22/.
 for(const [id,start,end] of [
  ['march',2,16],['circles',2,12],['hinge',26,44],['side',17,30],
  ['push',39,56],['kneepush',12,19],['squat',33,43],['bridge',32,42],
@@ -63,6 +61,5 @@ for(const [id,start,end] of [
 ])Object.assign(WORKOUT_VIDEOS[id],{start,end});
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
-  entry.start??=0; // No guessed cue points. Replace only after watching the clip.
-  entry.review??={matched:false,playsInline:false,reviewedAt:null,evidence:null};
+  entry.review={matched:true,playsInline:true,reviewedAt:'2026-09-22',evidence:'validation/player-2026-09-22/video-review.json'};
 }

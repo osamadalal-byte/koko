@@ -51,6 +51,7 @@ jobs:
       - run: npm run build
       - run: node tests/check-preview.cjs
       - run: npm run test:dist
+      - run: npm run test:video-release
       - name: Diagnose native offline loading
         if: always()
         run: node tests/offline-probe.cjs

@@ -48,3 +48,27 @@ jobs:
       - name: Publish tested app
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify_deployment:
+    needs: deploy
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run build
+      - name: Verify deployed bytes, HTTPS, app flow and offline cache
+        run: node tests/verify-published.cjs
+      - name: Play all demonstrations on the live origin
+        env:
+          FORM28_AUDIT_URL: https://osamadalal-byte.github.io/koko/
+        run: node scripts/audit-inline-videos.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: published-app-verification
+          path: test-results/

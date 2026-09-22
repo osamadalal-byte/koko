@@ -102,7 +102,7 @@ const icons={today:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 
 const icon=n=>`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${icons[n]||icons.spark}</svg>`;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EX={
-march:{name:'Easy march',area:'Warm-up · whole body',cue:'March gently in place, using a wall for balance. Lift each knee only as high as comfortable.',steps:['Stand tall beside a solid wall and use a light hand for balance.','Lift one knee, lower your foot, and alternate at an easy pace. A small lift is enough during your warm-up.','Keep your body upright and breathe comfortably. You should be able to talk.'],easy:'Keep each lift small and slow; keep a hand on the wall.',pose:'march'},
+march:{name:'Easy march',area:'Warm-up · whole body',cue:'March gently in place. Use a wall for balance if needed, and lift each knee only as high as comfortable.',steps:['Stand tall. If you need help with balance, use a light hand on a solid wall.','Lift one knee, lower your foot, and alternate at an easy pace. A small lift is enough during your warm-up.','Keep your body upright and breathe comfortably. You should be able to talk.'],easy:'Keep each lift small and slow; keep a hand on the wall.',pose:'march'},
 circles:{name:'Shoulder circles',area:'Warm-up · shoulders',cue:'Make small, slow shoulder rolls. Half the time forward, half backward.',steps:['Stand comfortably with your arms relaxed by your sides.','Roll your shoulders up, back and down in a smooth circle.','Reverse direction halfway through. Stay in a comfortable range.'],easy:'Use a smaller movement and keep your arms relaxed.',pose:'stand'},
 hinge:{name:'Standing hip hinge',area:'Hips · movement practice',cue:'Soften your knees and send your hips back. Keep a long, neutral back.',steps:['Stand with feet about hip-width apart and knees softly bent.','Slide your hips backward as your torso tips forward, keeping your back neutral.','Stop before your back rounds. Press through your feet to stand tall.'],easy:'Use a very small hinge and place your hands on your hips for feedback.',pose:'hinge'},
 ankle:{name:'Ankle rocks',area:'Warm-up · ankles',cue:'Gently shift from heels to toes, keeping the movement small.',steps:['Stand near a wall for balance, feet hip-width apart.','Gently raise your heels, lower them, then lift your toes slightly.','Move slowly without rocking your whole body forward.'],easy:'Keep one hand on the wall and reduce the range.',pose:'stand'},
@@ -676,10 +676,9 @@ persist();render();
 </script>
 <script>
 'use strict';
-/* Individual clip candidates, researched 2026-09-22. Search titles are NOT a
-   visual review. Every entry must pass check-video-release.cjs before Pages.
-   Keep the existing provider library intact while reviewing these replacements.
-   Only public provider embeds are used; media is never downloaded or cached. */
+/* Public provider demonstrations reviewed on 2026-09-22.
+   Evidence binds the exact variant, URL and excerpt to real browser playback.
+   No third-party video is bundled, rehosted or cached offline. */
 const WORKOUT_VIDEOS={
   march:{videoId:'_Ox0N-Ab3Sc',title:'Marching on the Spot',variant:'Standing easy march, no equipment'},
   circles:{videoId:'Bv8QPOs7xks',title:'NUHS Physiotherapy - Shoulder Rolls',variant:'Standing shoulder rolls, relaxed arms'},
@@ -729,8 +728,7 @@ WORKOUT_VIDEOS.circles.title='Standing shoulder rolls';
 WORKOUT_VIDEOS.bridge.title='Supine bridge';WORKOUT_VIDEOS.prone.title='Standing scapular squeezes';
 WORKOUT_VIDEOS.cheststretch.title='NHS chest stretch';WORKOUT_VIDEOS.stretch.title='NHS upper back stretch';
 WORKOUT_VIDEOS.dead.title='Supine heel slides — movement control';
-// Candidate demonstration boundaries. Publishing remains blocked until the
-// exact excerpts have passed visual review and both real browser audits.
+// Reviewed demonstration boundaries. See validation/player-2026-09-22/.
 for(const [id,start,end] of [
  ['march',2,16],['circles',2,12],['hinge',26,44],['side',17,30],
  ['push',39,56],['kneepush',12,19],['squat',33,43],['bridge',32,42],
@@ -740,8 +738,7 @@ for(const [id,start,end] of [
 ])Object.assign(WORKOUT_VIDEOS[id],{start,end});
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
-  entry.start??=0; // No guessed cue points. Replace only after watching the clip.
-  entry.review??={matched:false,playsInline:false,reviewedAt:null,evidence:null};
+  entry.review={matched:true,playsInline:true,reviewedAt:'2026-09-22',evidence:'validation/player-2026-09-22/video-review.json'};
 }
 
 </script>

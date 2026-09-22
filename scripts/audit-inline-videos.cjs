@@ -35,7 +35,8 @@ const server=http.createServer((req,res)=>{
 });
 (async()=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
- const url=`http://127.0.0.1:${server.address().port}/koko/`;
+ const url=process.env.FORM28_AUDIT_URL||`http://127.0.0.1:${server.address().port}/koko/`;
+ report.url=url;
  try{
   await Promise.all([['chromium',chromium,{viewport:{width:390,height:844}}],['webkit',webkit,devices['iPhone 13']]].map(async ([name,type,device])=>{
    const engine={name,clips:[]};report.engines.push(engine);let browser;
@@ -47,7 +48,7 @@ const server=http.createServer((req,res)=>{
      try{
       await bounded(page.evaluate(({id})=>{
        if(session)pause();workoutPlayback.close();destroyWorkoutMedia();state.completed={};state.cycles=[];state.draft=null;selected=1;
-       const step={id,seconds:120,phase:['cheststretch','stretch','calfhold','breath'].includes(id)?'Cool-down':'Work',round:0};
+       const step={id,seconds:120,phase:['cheststretch','stretch','calfhold','breath'].includes(id)?'Cool-down':['march','circles','hinge'].includes(id)?'Warm-up':'Work',round:0};
        session={day:1,mode:'full',pace:'beginner',steps:[step],index:0,remaining:120000,elapsed:0,skipped:false,awaiting:false,paused:true,last:0};
        renderSession();if(!document.querySelector('#session-dialog').open)document.querySelector('#session-dialog').showModal();
       },clip),12000,'Preparing the next movement');
@@ -60,7 +61,7 @@ const server=http.createServer((req,res)=>{
       row.after=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),state:workoutMedia.getPlayerState(),remaining:session.remaining}));
       row.played=row.before.time>=clip.start-.1&&row.after.time>row.before.time+.5&&row.after.remaining<row.before.remaining&&row.before.video.video_id===clip.videoId;
       if(!row.played)throw Error('Media identity, advancing frames and workout clock did not agree');
-      if(['march','cheststretch'].includes(clip.id)){const file=`${name}-player-${clip.id}.jpg`;await page.screenshot({path:path.join(out,file),type:'jpeg',quality:65});row.screens=[{file,time:row.after.time}];}
+      if(['march','cheststretch'].includes(clip.id)){const file=`${name}-player-${clip.id}.jpg`;await page.screenshot({path:path.join(out,file),type:'jpeg',quality:65,scale:'css'});row.screens=[{file,time:row.after.time}];}
       await page.locator('#timer-toggle').click();await page.waitForTimeout(250);
       const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
       await page.waitForTimeout(800);
