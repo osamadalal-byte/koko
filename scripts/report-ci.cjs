@@ -8,6 +8,20 @@ async function check(name,conclusion,output){
  if(!response.ok)throw Error(`Could not publish ${name}: HTTP ${response.status}`);
 }
 (async()=>{
+ if(process.argv.includes('--inline-only')){
+  const dir='test-results/inline-video-audit',file=dir+'/observations.json';
+  if(!fs.existsSync(file))throw Error('Inline audit did not produce a report');
+  const audit=JSON.parse(fs.readFileSync(file,'utf8'));
+  for(const engine of audit.engines){
+   const pass=engine.clips.length===18&&engine.clips.every(c=>c.played);
+   await check('Inline playback: '+engine.name,pass?'success':'failure',{title:'Actual embedded video playback — '+engine.name,summary:'Observed media progress only. Human variant and cue points require visual review.',text:JSON.stringify(engine,null,2).slice(0,65000)});
+   for(const clip of engine.clips)for(const frame of (clip.frames||[])){
+    const bytes=fs.readFileSync(dir+'/'+frame.file);if(bytes.length>45000)continue;
+    await check('Inline frame: '+frame.file,'neutral',{title:clip.id+' at '+frame.time+' seconds',summary:'Actual provider player screenshot. This does not certify a human demonstration or variant.',text:JSON.stringify({filename:frame.file,mimeType:'image/jpeg',base64:bytes.toString('base64')})});
+   }
+  }
+  return;
+ }
  const reportPath='test-results/browser-results.json';
  const report=fs.existsSync(reportPath)?JSON.parse(fs.readFileSync(reportPath,'utf8')):{results:[],error:'The browser test report was not produced.'};
  const passed=report.results.length===6&&report.results.every(r=>r.status==='passed');

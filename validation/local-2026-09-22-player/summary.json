@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-22T05:54:55.369797+00:00",
+  "checks": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "node tests/check-preview.cjs",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "npm run test:dist",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "npm run test:video-release",
+      "exitCode": 1,
+      "status": "blocked"
+    }
+  ],
+  "browsers": "Blocked before launch: missing engines; installation downloads HTTP 403",
+  "videoReview": "All 18 inline candidates pending actual playback and visual matching",
+  "github": "HTTP 400 Invalid MCP request metadata; no upload performed"
+}

@@ -33,7 +33,7 @@ async function run(browserType,device,name,folder,basePath){
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Page overflows viewport');
       for(const dialog of await page.locator('dialog[open]').all())assert(await dialog.evaluate(e=>e.scrollWidth<=e.clientWidth+1),'Dialog overflows horizontally');
     };
-    const readiness=async()=>{await page.locator('#ready-energy').selectOption('normal');await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('no');await page.locator('#readiness-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#session-dialog').open)};
+    const readiness=async()=>{await page.locator('#ready-energy').selectOption('normal');await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('no');await page.locator('#readiness-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#session-dialog').open);await page.locator('#written-mode').click();assert.equal(await page.evaluate(()=>session.guidanceMode),'written')};
     await page.goto(url);await page.waitForSelector('[data-action="start"]');
     assert.equal(await page.evaluate(()=>state.coach.profile.days),4);await fit();
     if(page.viewportSize().width<=720){const startBox=await page.locator('[data-action="start"]').boundingBox(),navBox=await page.locator('.nav').boundingBox();assert(startBox.y>=0&&startBox.y+startBox.height<=navBox.y-6,'The first workout action must be fully visible above mobile navigation');checks.push('Start workout fully visible in the initial iPhone browser viewport')}
@@ -99,7 +99,7 @@ async function run(browserType,device,name,folder,basePath){
     await page.locator('[data-action="start"]').click();await page.locator('#ready-energy').selectOption('normal');
     await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('yes');
     await page.locator('#readiness-form button[type=submit]').click();assert.equal(await page.evaluate(()=>session),null);await readiness();
-    checks.push('28 days, preflight and pain gate');
+    checks.push('28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked');
     const initialRemaining=await page.evaluate(()=>session.remaining);
     assert.equal(await page.evaluate(()=>window.voiceTest.filter(e=>e.event==='speak').length),0,'Spoken cues are opt-in');
     await page.locator('#voice-toggle').click();assert.equal(await page.evaluate(()=>state.experience.voice),true);
@@ -163,6 +163,7 @@ async function run(browserType,device,name,folder,basePath){
     await page.evaluate(()=>Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>setTimeout(()=>reject(Error('Service worker readiness timed out')),15000))]));await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
     assert.equal(await page.evaluate(async()=>(await navigator.serviceWorker.ready).scope),url);
     checks.push('manifest, icons and exact service-worker scope');
+    await require('./player-browser.cjs')(page,checks);
     // Remove third-party interception before testing the browser's actual offline stack.
     await context.unrouteAll({behavior:'wait'});
     // First verify the browser offline event and app indicator on the loaded page.
@@ -178,9 +179,9 @@ async function run(browserType,device,name,folder,basePath){
     // Back up saved progress, then use a fresh local training fixture to test offline exercise UI.
     await page.evaluate(()=>{state.completed={};state.draft=null;selected=1;persist();render()});
     await page.locator('[data-action="start"]').click();await readiness();await page.locator('#timer-toggle').click();
-    await page.waitForFunction(()=>session.elapsed>=1);await page.locator('#session-how').click();
-    assert(await page.locator('#detail-dialog .steps').isVisible());assert.equal(await page.evaluate(()=>session.paused),true);
-    await page.locator('[data-close="detail-dialog"]').click();await page.locator('#session-exit').click();
+    await page.waitForFunction(()=>session.elapsed>=1);await page.locator('#player-instructions summary').click();
+    assert(await page.locator('#player-instructions .steps').isVisible());assert.equal(await page.evaluate(()=>session.paused),true);
+    await page.locator('#session-exit').click();
     await page.reload();assert(await page.locator('[data-action="resume"]').count());await context.setOffline(false);
     checks.push('offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence');
     assert.deepEqual(errors,[]);assert.deepEqual(failedAssets,[]);entry.status='passed';

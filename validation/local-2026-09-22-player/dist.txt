@@ -1,0 +1,8 @@
+
+> form28-strength-mobility@1.2.0 test:dist
+> node tests/check-dist.cjs
+
+PASS: dist over HTTP at /, manifest, icons, scripts, styles and offline asset paths.
+PASS: dist over HTTP at /koko/, manifest, icons, scripts, styles and offline asset paths.
+PASS: clean deployment allowlist, current source bytes and content-derived cache revision. This is not a browser or HTTPS deployment test.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

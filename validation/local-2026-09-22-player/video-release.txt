@@ -1,0 +1,6 @@
+
+> form28-strength-mobility@1.2.0 test:video-release
+> node tests/check-video-release.cjs
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+RELEASE BLOCKED: exact human demonstration, cue point and real Chromium/WebKit inline playback evidence missing for: march, circles, hinge, side, push, kneepush, squat, bridge, bird, dead, plankknees, prone, calf, cat, cheststretch, stretch, calfhold, breath

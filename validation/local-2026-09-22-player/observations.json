@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-22T05:52:35.213Z",
+  "scope": "Real public YouTube embeds in the built app at /koko/. Playback observations are not exact-variant approval.",
+  "engines": [
+    {
+      "name": "chromium",
+      "clips": [],
+      "error": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell"
+    },
+    {
+      "name": "webkit",
+      "clips": [],
+      "error": "browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/webkit-2336/pw_run.sh"
+    }
+  ]
+}

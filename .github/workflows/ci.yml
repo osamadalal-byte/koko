@@ -9,6 +9,30 @@ concurrency:
   group: form28-ci-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  inline_video_audit:
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run build
+      - name: Play every clip inside the actual workout player
+        run: node scripts/audit-inline-videos.cjs
+      - name: Publish inline playback observations
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPORT_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/report-ci.cjs --inline-only
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: inline-video-evidence-${{ github.run_id }}
+          path: test-results/inline-video-audit/
   validate:
     runs-on: macos-latest
     timeout-minutes: 20

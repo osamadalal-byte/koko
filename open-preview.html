@@ -48,6 +48,38 @@ body{background:var(--paper)}button,a{touch-action:manipulation}h1,h2,h3{letter-
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
 </style>
+<style>
+/* Full-screen, thumb-friendly guided workout. Provider controls remain visible. */
+#session-dialog[data-player=follow]{width:min(100%,600px);max-width:600px;max-height:100dvh;padding:0;background:#fcfbfe;border-radius:24px;overscroll-behavior:contain}
+.follow-player{padding:20px 24px 18px;color:#252031}
+.follow-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.follow-header .label{font-size:10px;letter-spacing:1.6px;color:#67567e}
+.follow-header p{margin:5px 0 0;font-size:12px;color:#777081}
+.follow-header .icon-btn{min-width:44px;min-height:44px;border:1px solid #e7e2ed;border-radius:50%}
+.follow-stages{display:flex;gap:6px;margin:16px 0 20px}
+.follow-stages span{flex:1;border-top:3px solid #e8e3ef;padding-top:9px;font-size:11px;display:flex;align-items:center;gap:6px;color:#88828e}
+.follow-stages b{font-size:10px;border:1px solid #d7d0e1;border-radius:50%;width:18px;height:18px;display:grid;place-items:center}
+.follow-stages .current{border-color:#7950db;color:#5c2ec3;font-weight:700}.follow-stages .current b{background:#7950db;color:white;border-color:#7950db}.follow-stages .complete{border-color:#b9d992;color:#476c2d}
+.follow-heading{margin-bottom:14px}.follow-heading #session-status{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#7354a1;background:none;padding:0}
+.follow-heading h2{font-size:28px;letter-spacing:-.8px;line-height:1.12;margin:7px 0 0}
+.follow-media{width:100%;height:250px;min-height:200px;border-radius:16px;background:#171221;color:#f8f5ff;overflow:hidden}
+.follow-media iframe,.follow-media>div:not(.video-placeholder):not(.rest-message):not(.written-guidance){width:100%;height:100%;border:0}
+.video-placeholder,.rest-message,.written-guidance{height:100%;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.play-outline{font-size:46px;color:#c8b5f0}.video-placeholder p{font-size:13px;color:#d6cce6;margin:0}.rest-message span{font-size:11px;letter-spacing:3px;color:#c4e2a5}.rest-message h3{font-size:32px;color:white;margin:0}.rest-message p{font-size:14px;line-height:1.5;color:#d8cfdf;max-width:240px;margin:0}
+.written-guidance{background:#f0eaf9;color:#392651;gap:9px}.written-guidance h3{margin:0;font-size:20px}.written-guidance p{margin:0;font-size:13px;line-height:1.5}.written-guidance .label{font-size:10px;letter-spacing:1px}
+.follow-media-message{font-size:11px;line-height:1.4;min-height:18px;padding-top:7px;color:#756985}
+.follow-clock{display:flex;align-items:center;gap:18px;margin-top:9px}.follow-clock .timer{font-size:58px;line-height:1;letter-spacing:-3px;font-variant-numeric:tabular-nums;margin:0;color:#292132}.follow-clock b{font-size:13px}.follow-clock p{font-size:11px;margin:6px 0 0;color:#7b7185}
+.follow-cue{font-size:13px;line-height:1.5;color:#63586f;margin:12px 0 15px;min-height:20px}
+.follow-actions{display:flex;gap:10px}.follow-actions .btn{min-height:50px;border-radius:14px}.follow-actions .primary{flex:1;background:#7950db;color:white}.follow-actions .outline{min-width:72px}
+.follow-next{display:flex;align-items:center;gap:10px;background:#f0edf5;border-radius:13px;margin:15px 0;padding:13px 14px}.follow-next>span{font-size:8px;font-weight:800;letter-spacing:1px;color:#857a95;white-space:nowrap}.follow-next b{font-size:12px;flex:1}.follow-next small{display:flex;align-items:center;font-size:11px;color:#7d6d91;gap:6px}.follow-next svg{width:15px;height:15px}
+.follow-instructions{margin:12px 0;padding:0;border-top:1px solid #e6deef;border-bottom:1px solid #e6deef}.follow-instructions summary{padding:14px 0;font-size:12px;color:#5b4779}.follow-instructions .steps{margin:0 0 15px;padding-left:22px}.follow-instructions .steps li{font-size:13px}.follow-instructions .easier{margin-bottom:14px;font-size:13px}
+.follow-options{display:flex;justify-content:center;flex-wrap:wrap;gap:2px 16px}.follow-options .text-btn{min-height:44px;font-size:11px;color:#725393}.follow-options [hidden]{display:none}
+.follow-footnote{font-size:10px;color:#89808f;line-height:1.5;text-align:center;margin:10px 0 0}.follow-player .screen-controls{padding:8px 0 0;background:none}.follow-player .screen-controls .small{font-size:10px;margin:4px 0}
+@media(max-width:640px){#session-dialog[data-player=follow]{width:100%;max-width:100%;height:100dvh;max-height:100dvh;max-height:100%;margin:0;border-radius:0}.follow-player{padding:calc(14px + env(safe-area-inset-top)) 20px calc(16px + env(safe-area-inset-bottom))}.follow-media{height:220px}.follow-heading h2{font-size:26px}.follow-stages{margin:12px 0 16px}}
+@media(max-width:640px) and (max-height:740px){.follow-player{padding-top:calc(8px + env(safe-area-inset-top))}.follow-stages{margin:8px 0 12px;padding:0}.follow-heading{margin-bottom:10px}.follow-heading h2{font-size:24px}.follow-media{height:200px}.follow-clock{margin-top:7px}.follow-clock .timer{font-size:46px}.follow-cue{margin:9px 0 11px}.follow-next{margin:10px 0}.follow-header .icon-btn{min-height:40px}.follow-media-message{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.follow-player *{animation:none!important;transition:none!important}}
+
+</style>
 </head>
 <body>
 <header class="topbar"><div class="logo" aria-label="Form 28"><span class="brandmark" aria-hidden="true"></span>FORM<em>/ 28</em></div><nav class="nav" aria-label="Main navigation"><button data-tab="today" aria-current="page"></button><button data-tab="plan"></button><button data-tab="progress"></button><button data-tab="moves"></button></nav><div class="row"><span class="top-note">A little stronger, every week.</span><button id="settings-open" class="icon-btn" aria-label="App settings"></button></div></header>
@@ -471,7 +503,7 @@ window.addEventListener('pagehide',releaseWorkoutScreen);
 </script>
 <script>
 'use strict';
-const APP_RELEASE='1.1.0';
+const APP_RELEASE='1.2.0';
 const baseStateValidator=validState;
 function validCycle(c){return c&&typeof c.date==='string'&&Number.isFinite(Date.parse(c.date))&&baseStateValidator({version:1,name:'',pace:'beginner',sound:false,completed:c.completed})&&Object.keys(c.completed).length===28}
 validState=function(s){return baseStateValidator(s)&&(!('cycles' in s)||(Array.isArray(s.cycles)&&s.cycles.length<=12&&s.cycles.every(validCycle)))};
@@ -598,6 +630,240 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopVoice()
 $('#session-dialog').addEventListener('close',()=>{stopVoice();spokenInterval=''});
 window.addEventListener('pagehide',stopVoice);
 persist();render();
+
+</script>
+<script>
+/* A media event cannot start the clock without current, visible user intent. */
+(function(root){
+  'use strict';
+  class PlaybackGate {
+    constructor(hooks){this.hooks=hooks;this.generation=0;this.kind='video';this.status='idle';this.wanted=false;this.hidden=false;this.active=false}
+    select(kind){this.close();this.active=true;this.kind=kind;this.status='ready';this.hidden=false;this.notify();return this.generation}
+    notify(){this.hooks.change?.(this)}
+    play(){
+      if(!this.active||this.hidden)return;
+      this.wanted=true;
+      if(this.kind==='timer'){this.status='playing';this.hooks.start();this.notify();return}
+      this.status='loading';this.notify();this.hooks.play();
+    }
+    pause(){if(!this.active)return;this.wanted=false;this.hooks.stop();this.status='paused';this.hooks.pause();this.notify()}
+    visibility(hidden){this.hidden=hidden;if(hidden)this.pause()}
+    event(name,generation=this.generation){
+      if(!this.active||generation!==this.generation||this.kind!=='video')return false;
+      if(name==='playing'){
+        if(!this.wanted||this.hidden){this.hooks.pause();return false}
+        this.status='playing';this.hooks.start();
+      }else if(name==='buffering'){
+        this.hooks.stop();if(this.wanted)this.status='buffering';
+      }else if(name==='ended'){
+        this.hooks.stop();if(this.wanted&&!this.hidden){this.status='loading';this.hooks.replay()}else this.status='paused';
+      }else if(name==='paused'){
+        this.hooks.stop();this.wanted=false;this.status='paused';
+      }else if(name==='blocked'||name==='error'){
+        this.hooks.stop();this.wanted=false;this.status=name;
+      }else return false;
+      this.notify();return true;
+    }
+    close(){this.wanted=false;this.active=false;this.generation++;this.hooks.stop();this.hooks.pause();this.status='idle'}
+  }
+  root.PlaybackGate=PlaybackGate;
+  if(typeof module!=='undefined'&&module.exports)module.exports=PlaybackGate;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+</script>
+<script>
+'use strict';
+/* Individual clip candidates, researched 2026-09-22. Search titles are NOT a
+   visual review. Every entry must pass check-video-release.cjs before Pages.
+   Keep the existing provider library intact while reviewing these replacements.
+   Only public provider embeds are used; media is never downloaded or cached. */
+const WORKOUT_VIDEOS={
+  march:{videoId:'_Ox0N-Ab3Sc',title:'Marching on the Spot',variant:'Standing easy march, no equipment'},
+  circles:{videoId:'Bv8QPOs7xks',title:'NUHS Physiotherapy - Shoulder Rolls',variant:'Standing shoulder rolls, relaxed arms'},
+  hinge:{videoId:'2W_gXhut5S8',title:'How to Do a Hip Hinge: A Guide from Physical Therapists',variant:'Standing unweighted hip hinge'},
+  side:{videoId:'oKzLYBh4Ui0',title:'Hip abduction in standing',variant:'Supported standing side leg raise',source:'https://www.southtees.nhs.uk/resources/hip-abduction-in-standing/'},
+  push:{videoId:'kmzcmFZ9NyY',title:'Wall press-up',variant:'Standing press-up against a solid wall',source:'https://www.southtees.nhs.uk/resources/combined-press-ups/'},
+  kneepush:{videoId:'LD9qrH7o2fY',title:'Knee-supported press-up',variant:'Floor press-up with knees supported',source:'https://www.southtees.nhs.uk/resources/combined-press-ups/'},
+  squat:{videoId:'L61HQqjYFdQ',title:'How to Do Squats: A Guide from Physical Therapists',variant:'Bodyweight squat, no weights or chair'},
+  bridge:{videoId:'iZ611vwxI4I',title:'Bridge - Spine School',variant:'Supine two-leg bridge',source:'https://www.nuh.nhs.uk/exercise-videos-spine-school/'},
+  bird:{videoId:'xo7Qpb_NTKE',title:'Bird dog',variant:'On hands and knees, opposite arm and leg'},
+  dead:{videoId:'t2sYmCjr7Hs',title:'Trans Abdominal Heel Slide',variant:'Supine heel slide with heel supported on floor',source:'https://www.nuh.nhs.uk/exercise-videos-spine-school/'},
+  plankknees:{videoId:'Dx81DAI0SKs',title:'How To Perform Plank on Knees',variant:'Forearms and knees supported, short comfortable holds'},
+  prone:{videoId:'hNseglwRJhY',title:'Shoulder posture',variant:'Standing shoulder-blade squeeze, not a prone raise',source:'https://www.southtees.nhs.uk/resources/shoulder-posture/'},
+  calf:{videoId:'Mjkh9vBfm_E',title:'How to Do Calf Raises: A Guide from Physical Therapists',variant:'Two-leg heel raise on flat floor with support'},
+  cat:{videoId:'1Y0YjXS9sKI',title:'How to Do a Cat Cow Stretch: A Guide from Physical Therapists',variant:'Hands-and-knees cat–cow'},
+  cheststretch:{videoId:'LJEbiC_6Paw',title:'Standing Chest Stretch | PureGym Academy',variant:'Standing chest opening with hands behind body'},
+  stretch:{videoId:'Cus9IRgnvcY',title:'How to do Standing Upper Back Stretch | Joanna Soh',variant:'Standing upper-back stretch with hands in front'},
+  calfhold:{videoId:'XTGUHBFrWZo',title:'NHS Calf Stretch',variant:'Standing calf stretch, straight rear knee and heel down'},
+  breath:{videoId:'W9Gx6sT-W1A',title:'How to Do Diaphragmatic Breathing: A Guide from Physical Therapists',variant:'Comfortable relaxed belly breathing, no holds or forced breaths'}
+};
+for(const entry of Object.values(WORKOUT_VIDEOS)){
+  entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
+  entry.start??=0; // No guessed cue points. Replace only after watching the clip.
+  entry.review??={matched:false,playsInline:false,reviewedAt:null,evidence:null};
+}
+
+</script>
+<script>
+'use strict';
+// One workout screen. The existing clock, readiness checks, plan and storage
+// remain authoritative. External media only grants permission to run the clock.
+const clockPauseBeforePlayer=pause,clockToggleBeforePlayer=toggleTimer;
+const updateBeforePlayer=updateTimerUI,startBeforePlayer=startSession,finishBeforePlayer=showFinish,advanceBeforePlayer=advance;
+let workoutMedia=null,workoutMediaReady=false,mediaLoadTimer=null,mediaWatchdog=null;
+let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0;
+function currentVideo(){return session?WORKOUT_VIDEOS[session.steps[session.index].id]:null}
+function stopWorkoutClock(){clockPauseBeforePlayer()}
+function startWorkoutClock(){
+  if(!session||document.hidden||!$('#timer-toggle'))return;
+  if(session.awaiting){if(state.autoAdvance){advance(false);if($('#timer-toggle'))workoutPlayback.play()}return}
+  if(session.paused)clockToggleBeforePlayer();
+}
+function pauseWorkoutMedia(){if(workoutMediaReady)try{workoutMedia.pauseVideo()}catch{}}
+const workoutPlayback=new PlaybackGate({
+  start:startWorkoutClock,stop:stopWorkoutClock,pause:pauseWorkoutMedia,
+  change:()=>{if(session)updateTimerUI()},
+  play:()=>{if(workoutMediaReady){armMediaTimeout();workoutMedia.playVideo()}else loadWorkoutMedia()},
+  replay:()=>{if(workoutMediaReady){armMediaTimeout();workoutMedia.seekTo(currentVideo()?.start||0,true);workoutMedia.playVideo()}}
+});
+function clearMediaTimers(){clearTimeout(mediaLoadTimer);clearInterval(mediaWatchdog);mediaLoadTimer=null;mediaWatchdog=null}
+function destroyWorkoutMedia(){
+  mediaAttempt++;clearMediaTimers();const old=workoutMedia;workoutMedia=null;workoutMediaReady=false;
+  if(old)try{old.destroy()}catch{}
+}
+function youtubeAPI(){
+  if(window.YT?.Player)return Promise.resolve(window.YT);
+  if(youtubeLoad)return youtubeLoad;
+  youtubeLoad=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');let settled=false;
+    const previous=window.onYouTubeIframeAPIReady;
+    const timeout=setTimeout(()=>finish(Error('Video service did not respond')),12000);
+    const finish=error=>{if(settled)return;settled=true;clearTimeout(timeout);window.onYouTubeIframeAPIReady=previous;if(error){script.remove();youtubeLoad=null;reject(error)}else resolve(window.YT)};
+    window.onYouTubeIframeAPIReady=()=>{if(typeof previous==='function')previous();finish()};
+    script.src='https://www.youtube.com/iframe_api';script.async=true;
+    script.onerror=()=>finish(Error('Video service is unavailable'));document.head.appendChild(script);
+  });
+  return youtubeLoad;
+}
+function armMediaTimeout(){
+  clearTimeout(mediaLoadTimer);const token=workoutPlayback.generation;
+  mediaLoadTimer=setTimeout(()=>{if(token!==workoutPlayback.generation||!workoutPlayback.wanted)return;mediaFailure='The video is taking too long to play. Retry, or use the written steps below.';workoutPlayback.event('error',token)},15000);
+}
+async function loadWorkoutMedia(){
+  const token=workoutPlayback.generation,owner=session,clip=currentVideo();
+  if(!owner||!workoutPlayback.active)return;
+  if(!clip){mediaFailure='An inline video is not available for this saved movement. You can follow its written steps here.';workoutPlayback.event('error',token);return}
+  if(navigator.onLine===false||networkAvailable===false){mediaFailure='You’re offline. Your workout and written steps are saved here; videos need internet.';workoutPlayback.event('error',token);return}
+  if(!/^https?:$/.test(location.protocol)){mediaFailure='Open the HTTPS app to play videos. Written guidance works in this downloaded preview.';workoutPlayback.event('error',token);return}
+  destroyWorkoutMedia();const attempt=mediaAttempt;mediaFailure='';armMediaTimeout();
+  try{
+    const YT=await youtubeAPI();
+    if(attempt!==mediaAttempt||token!==workoutPlayback.generation||session!==owner||!workoutPlayback.active||!workoutPlayback.wanted)return;
+    const host=$('#workout-video-host');if(!host)return;
+    host.innerHTML='<div id="workout-youtube"></div>';
+    const valid=()=>attempt===mediaAttempt&&token===workoutPlayback.generation&&session===owner&&workoutPlayback.active;
+    workoutMedia=new YT.Player('workout-youtube',{
+      host:'https://www.youtube-nocookie.com',width:'100%',height:'100%',videoId:clip.videoId,
+      playerVars:{playsinline:1,controls:1,rel:0,autoplay:0,origin:location.origin,start:clip.start||0},
+      events:{
+        onReady:event=>{
+          if(!valid()){event.target.destroy();return}
+          workoutMedia=event.target;workoutMediaReady=true;
+          const frame=event.target.getIframe();frame.setAttribute('title',EX[session.steps[session.index].id].name+' — human demonstration');frame.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen');frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
+          videoMuted?event.target.mute():event.target.unMute();
+          if(workoutPlayback.wanted&&!document.hidden)event.target.playVideo();
+          else event.target.pauseVideo();
+          // Stop if the media stalls without delivering a BUFFERING event.
+          let lastTime=-1,lastMotion=performance.now();
+          mediaWatchdog=setInterval(()=>{
+            if(!valid()||!workoutPlayback.wanted){lastTime=-1;lastMotion=performance.now();return}
+            if(!['playing','buffering'].includes(workoutPlayback.status))return;
+            const time=event.target.getCurrentTime();
+            if(time!==lastTime){lastTime=time;lastMotion=performance.now();if(workoutPlayback.status==='buffering'){clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}}
+            else if(workoutPlayback.status==='playing'&&performance.now()-lastMotion>1800){workoutPlayback.event('buffering',token);armMediaTimeout()}
+          },500);
+        },
+        onStateChange:event=>{
+          if(!valid())return;
+          if(event.data===1){clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}
+          if(event.data===3){workoutPlayback.event('buffering',token);if(workoutPlayback.wanted)armMediaTimeout()}
+          if(event.data===2&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token);
+          if(event.data===0)workoutPlayback.event('ended',token);
+        },
+        onAutoplayBlocked:()=>{if(valid()){clearTimeout(mediaLoadTimer);workoutPlayback.event('blocked',token)}},
+        onError:()=>{if(valid()){clearMediaTimers();mediaFailure='This video cannot play here right now. Retry, or stay in the workout with written guidance.';workoutPlayback.event('error',token)}}
+      }
+    });
+  }catch{if(attempt===mediaAttempt&&token===workoutPlayback.generation){mediaFailure='The video service could not load. Retry, or use the written guidance here.';workoutPlayback.event('error',token)}}
+}
+function playerStage(step){return step.phase==='Warm-up'?0:step.phase==='Cool-down'?2:1}
+renderSession=function(){
+  if(!session)return;
+  workoutPlayback.close();destroyWorkoutMedia();mediaFailure='';
+  const s=session,step=s.steps[s.index],rest=step.id==='rest',e=EX[step.id],next=s.steps[s.index+1],stage=playerStage(step);
+  const remaining=s.steps.slice(s.index+1).reduce((sum,x)=>sum+x.seconds,0)+s.remaining/1000;
+  $('#session-dialog').setAttribute('data-player','follow');
+  $('#session-content').innerHTML=`<div class="follow-player">
+    <header class="follow-header"><div><span class="label">DAY ${String(s.day).padStart(2,'0')} · ${s.mode==='short'?'SHORT SESSION':'YOUR WORKOUT'}</span><p>${Math.ceil(remaining/60)} min left · ${s.index+1} / ${s.steps.length} intervals</p></div><button class="icon-btn" id="session-exit" aria-label="Save session and close">${icon('close')}</button></header>
+    <div class="follow-stages" aria-label="Workout stages">${['Warm-up','Workout','Cool-down'].map((name,i)=>`<span class="${i===stage?'current':i<stage?'complete':''}" ${i===stage?'aria-current="step"':''}><b>${i<stage?'✓':i+1}</b>${name}</span>`).join('')}</div>
+    <div class="follow-heading"><span id="session-status" role="status">${esc(step.phase)}</span><h2 id="session-title">${rest?'Take a breather':esc(e.name)}</h2></div>
+    <div class="follow-media ${rest?'is-rest':''}" id="workout-video-host" aria-label="${rest?'Rest interval':'Exercise video'}">${rest?'<div class="rest-message"><span>RECOVER</span><h3>Relax. Breathe.</h3><p>Let your muscles recover before the next movement.</p></div>':'<div class="video-placeholder"><span class="play-outline">▷</span><p>Your demonstration plays here</p></div>'}</div>
+    <div class="follow-media-message" id="video-message" role="status"></div>
+    <div class="follow-clock"><div class="timer" id="timer" aria-label="Time remaining">${formatTime(s.remaining)}</div><div><b>${rest?'Recovery time':step.phase==='Cool-down'?'Release & recover':'Move at your pace'}</b><p>${step.round?'Round '+step.round:'Stay comfortable'}</p></div></div>
+    <p class="follow-cue">${rest?'Relax, breathe and get set for the next move.':esc(e.cue)}</p>
+    <div class="follow-actions"><button class="btn primary" id="timer-toggle">${icon('play')} Start workout</button><button class="btn outline" id="timer-next" aria-label="${next?'Skip this interval':'Finish early'}">${next?'Skip':'Finish'}</button></div>
+    <div class="follow-next"><span>UP NEXT</span><b>${next?esc(next.id==='rest'?'Rest & reset':EX[next.id].name):'Save your check-in'}</b>${next?`<small>${next.seconds}s ${icon('arrow')}</small>`:''}</div>
+    ${rest?'':`<details class="follow-instructions" id="player-instructions"><summary>Technique & easier option</summary><ol class="steps">${e.steps.map(text=>'<li>'+esc(text)+'</li>').join('')}</ol><div class="easier"><b>Make it easier</b><br>${esc(e.easy)}</div></details>`}
+    <div class="follow-options">${rest?'':`<button class="text-btn" id="video-mute" aria-pressed="${!videoMuted}">${videoMuted?'Video sound off':'Video sound on'}</button><button class="text-btn" id="written-mode">Use written guidance</button><button class="text-btn" id="video-mode" hidden>Return to video</button>`}<button class="text-btn" id="voice-toggle" aria-pressed="${state.experience.voice}" ${voiceAvailable()?'':'disabled'}>${state.experience.voice?'Voice cues on':'Voice cues off'}</button></div>
+    <p class="follow-footnote">${state.autoAdvance?'Intervals continue automatically.':'Auto-next is off in Settings.'} Pause whenever you need. Stop for pain or dizziness.</p>
+    <div class="screen-controls"><p class="small" id="screen-message"></p><button class="text-btn" id="screen-toggle" type="button"></button></div>
+  </div>`;
+  workoutPlayback.select(rest||s.guidanceMode==='written'?'timer':'video');
+  if(s.guidanceMode==='written')showWrittenGuidance();
+  updateScreenMessage();updateTimerUI();
+  $('#player-instructions')?.addEventListener('toggle',()=>{if($('#player-instructions')?.open&&session&&!session.paused)pause()});
+};
+function showWrittenGuidance(){
+  if(!session||session.steps[session.index].id==='rest')return;
+  const e=EX[session.steps[session.index].id];
+  $('#workout-video-host').innerHTML=`<div class="written-guidance"><span class="label">WRITTEN GUIDANCE</span><h3>${esc(e.name)}</h3><p>${esc(e.steps[0])}</p><p>${esc(e.cue)}</p></div>`;
+  $('#written-mode').hidden=true;$('#video-mode').hidden=false;$('#video-mute').hidden=true;
+}
+updateTimerUI=function(){
+  updateBeforePlayer();if(!session||!$('#timer-toggle')||!workoutPlayback.active)return;
+  const gate=workoutPlayback,step=session.steps[session.index],b=$('#timer-toggle'),message=$('#video-message');
+  if(!session.awaiting)b.innerHTML=gate.wanted?icon('pause')+' Pause':icon('play')+(gate.status==='error'?'Retry video':gate.status==='blocked'?'Tap to play':session.elapsed===0?'Start workout':'Resume');
+  const messages={loading:'Loading video · timer paused',buffering:'Video buffering · timer paused',blocked:'Tap to play. Your timer waits until the video starts.',error:mediaFailure||'Video unavailable · timer paused',ready:'Press Start to follow along',paused:'Paused · continue when you’re ready',playing:gate.kind==='video'?'Follow the demonstration · video sound '+(videoMuted?'off':'on'):step.id==='rest'?'Recovery interval':'Following written guidance'};
+  if(message)message.textContent=messages[gate.status]||'';
+  const status=$('#session-status');if(status&&!session.awaiting)status.textContent=step.phase+(step.round?' · Round '+step.round:'');
+};
+pause=function(){workoutPlayback.active?workoutPlayback.pause():clockPauseBeforePlayer()};
+toggleTimer=function(){
+  if(!session)return;
+  if(session.awaiting){advance(false);if(session&&$('#timer-toggle'))workoutPlayback.play();return}
+  if(workoutPlayback.wanted)workoutPlayback.pause();else{
+    if(workoutPlayback.status==='error'){workoutPlayback.select('video');destroyWorkoutMedia()}
+    workoutPlayback.play();
+  }
+};
+startSession=function(mode,resume=false){const previous=session;startBeforePlayer(mode,resume);if(session&&session!==previous&&!resume)workoutPlayback.play()};
+advance=function(skipped){const continuePlayback=skipped&&workoutPlayback.wanted;advanceBeforePlayer(skipped);if(continuePlayback&&session&&$('#timer-toggle'))workoutPlayback.play()};
+showFinish=function(recovery=false){workoutPlayback.close();destroyWorkoutMedia();$('#session-dialog').removeAttribute('data-player');finishBeforePlayer(recovery)};
+document.addEventListener('click',event=>{
+  const button=event.target.closest('button');if(!button)return;
+  // The existing handler selects the day first. Completed/recovery days remain
+  // reviewable, and the original readiness / spacing checks are still required.
+  if(button.dataset.day&&button.id!=='save-checkin'&&!state.completed[selected]&&getDay(selected).type!=='rest'&&!session){
+    if(state.draft?.day===selected)startSession('full',true);else startSession('full');
+  }
+  if(button.id==='written-mode'&&session){pause();destroyWorkoutMedia();session.guidanceMode='written';workoutPlayback.select('timer');showWrittenGuidance();updateTimerUI()}
+  if(button.id==='video-mode'&&session){pause();session.guidanceMode='video';renderSession();workoutPlayback.play()}
+  if(button.id==='video-mute'&&session){videoMuted=!videoMuted;if(workoutMediaReady)videoMuted?workoutMedia.mute():workoutMedia.unMute();button.setAttribute('aria-pressed',String(!videoMuted));button.textContent=videoMuted?'Video sound off':'Video sound on';updateTimerUI()}
+});
+document.addEventListener('visibilitychange',()=>{workoutPlayback.visibility(document.hidden)});
+window.addEventListener('pagehide',()=>{workoutPlayback.pause();destroyWorkoutMedia()});
+window.addEventListener('offline',()=>{if(workoutPlayback.active&&workoutPlayback.kind==='video'){mediaFailure='You’re offline. Your progress is saved. Use written guidance to continue here.';workoutPlayback.event('error')}});
+$('#session-dialog').addEventListener('close',()=>{workoutPlayback.close();destroyWorkoutMedia();$('#session-dialog').removeAttribute('data-player')});
 
 </script>
 </body>

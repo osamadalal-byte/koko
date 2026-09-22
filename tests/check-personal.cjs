@@ -1,7 +1,7 @@
 process.chdir(require('path').resolve(__dirname,'..'));
 const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
 const source=fs.readFileSync('index.html','utf8');
-const script=source.match(/<script>([\s\S]*?)<\/script>/)[1]+'\n'+['coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','experience.js'].map(f=>fs.readFileSync(f,'utf8')).join('\n');
+const script=source.match(/<script>([\s\S]*?)<\/script>/)[1]+'\n'+['coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','experience.js','playback-gate.js','workout-videos.js','workout-player.js'].map(f=>fs.readFileSync(f,'utf8')).join('\n');
 const storage=new Map();let wallNow=Date.parse('2026-09-14T09:00:00Z'),monoNow=0;
 class ClockDate extends Date{constructor(...args){super(...(args.length?args:[wallNow]))}static now(){return wallNow}}
 function fixture(){
@@ -22,6 +22,7 @@ function fixture(){
 }
 
 let f=fixture();const run=s=>f.run(s),click=s=>f.click(s),field=(s,v)=>{const el=f.doc.querySelector(s);assert(el,'Field exists: '+s);el.value=v},submit=s=>{const target=f.doc.querySelector(s);assert(target,'Form exists: '+s);f.listeners.submit.forEach(fn=>fn({target,preventDefault(){}}))};
+function toggleWritten(){if(run('session && session.guidanceMode!=="written"')&&f.doc.querySelector("#written-mode"))click("#written-mode");click("#timer-toggle")}
 const profile=JSON.parse(run('JSON.stringify(state.coach.profile)'));
 assert.equal(profile.age,35);assert.equal(profile.days,4);assert.equal(profile.minutes,20);assert.equal(profile.activity,'unassessed');assert.equal(profile.device,'iphone');assert.equal(profile.health,'clear');assert.equal(run('state.coach.level'),0);assert.equal(run('state.autoAdvance'),true);
 let plansChecked=0;
@@ -48,13 +49,13 @@ run('state.coach.profile.days=4;state.coach.profile.minutes=20;state.coach.level
 const normalWork=run('recommendation(1).work');run("currentReadiness={energy:'low',soreness:'none',pain:'no'}");assert(run('recommendation(1).work')<normalWork,'Low energy reduces the easiest workload');run('currentReadiness={}');
 click('[data-action="start"]');field('#ready-energy','normal');field('#ready-soreness','none');field('#ready-pain','yes');submit('#readiness-form');assert.equal(run('session'),null);assert(!f.doc.querySelector('#readiness-error').hidden);
 field('#ready-pain','no');submit('#readiness-form');assert.equal(run('session.coachPlan.level'),0);assert.equal(run('session.daySnapshot.type'),'strength');
-click('#timer-toggle');monoNow+=run('session.remaining');run('pause()');assert.equal(run('session.index'),0,'Explicit pause at boundary does not advance');assert.equal(run('session.paused'),true);assert.equal(run('session.awaiting'),true);
-click('#timer-toggle');assert.equal(run('session.index'),1);assert.equal(run('session.paused'),false);
+toggleWritten();monoNow+=run('session.remaining');run('pause()');assert.equal(run('session.index'),0,'Explicit pause at boundary does not advance');assert.equal(run('session.paused'),true);assert.equal(run('session.awaiting'),true);
+toggleWritten();assert.equal(run('session.index'),1);assert.equal(run('session.paused'),false);
 monoNow+=run('session.remaining')+200;run('tick()');assert.equal(run('session.index'),2,'Timer automatically advances while visible');assert.equal(run('session.paused'),false);
 monoNow+=2000;run('tick()');click('#session-exit');const remaining=run('state.draft.remaining'),snapshot=run('JSON.stringify(state.draft.steps)');
 f=fixture();click('[data-action="resume"]');field('#ready-energy','normal');field('#ready-soreness','none');field('#ready-pain','no');submit('#readiness-form');assert.equal(run('session.remaining'),remaining);assert.equal(run('JSON.stringify(session.steps)'),snapshot);
-click('#timer-toggle');f.doc.hidden=true;monoNow+=1000;f.listeners.visibilitychange.forEach(fn=>fn());assert.equal(run('session.paused'),true);f.doc.hidden=false;
-let guard=0;while(!f.doc.querySelector('#save-checkin')&&guard++<100){if(run('session.paused'))click('#timer-toggle');monoNow+=run('session.remaining')+200;run('tick()')}
+toggleWritten();f.doc.hidden=true;monoNow+=1000;f.listeners.visibilitychange.forEach(fn=>fn());assert.equal(run('session.paused'),true);f.doc.hidden=false;f.listeners.visibilitychange.forEach(fn=>fn());
+let guard=0;while(!f.doc.querySelector('#save-checkin')&&guard++<100){if(run('session.paused'))toggleWritten();monoNow+=run('session.remaining')+200;run('tick()')}
 assert(guard<100);assert(f.doc.querySelector('#coach-pain'));field('#finish-note','Controlled reps');click('[data-feeling="easy"]');click('#save-checkin');assert.equal(run('state.coach.easyRun'),1);assert.equal(run('state.completed[1].seconds'),1040);assert.equal(run('state.completed[1].coachPlan.level'),0);assert.equal(run('state.completed[1].daySnapshot.type'),'strength');
 click('[data-tab="progress"]');assert(f.doc.querySelector('#view').innerHTML.includes('Your last 7 days'));
 click('[data-coach-measure]');field('#measure-kind','waist');field('#measure-value','90.5');field('#measure-date','2026-09-14');submit('#measure-form');const mid=run('state.coach.measures[0].id');f=fixture();assert.equal(run('state.coach.measures[0].id'),mid);
