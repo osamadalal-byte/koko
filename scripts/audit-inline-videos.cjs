@@ -33,7 +33,9 @@ const server=http.createServer((req,res)=>{
        renderSession();if(!document.querySelector('#session-dialog').open)document.querySelector('#session-dialog').showModal();
       },clip);
       await page.locator('#timer-toggle').click();
-      await page.waitForFunction(()=>workoutMediaReady&&workoutMedia.getPlayerState()===1&&!session.paused,{},{timeout:18000});
+      await page.waitForFunction(()=>(workoutMediaReady&&workoutMedia.getPlayerState()===1&&!session.paused)||['error','blocked'].includes(workoutPlayback.status),{},{timeout:18000});
+      const failure=await page.evaluate(()=>['error','blocked'].includes(workoutPlayback.status)?{status:workoutPlayback.status,detail:workoutMediaError}:null);
+      if(failure){row.failure=failure;throw Error('Playback refused: '+JSON.stringify(failure))}
       row.before=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),video:workoutMedia.getVideoData(),remaining:session.remaining,duration:workoutMedia.getDuration()}));
       await page.waitForTimeout(1800);
       row.after=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),state:workoutMedia.getPlayerState(),remaining:session.remaining}));
@@ -48,7 +50,13 @@ const server=http.createServer((req,res)=>{
        await page.locator('#workout-video-host').screenshot({path:path.join(out,filename),type:'jpeg',quality:70});
        row.frames.push({file:filename,time:await page.evaluate(()=>workoutMedia.getCurrentTime())});
       }
-     }catch(error){row.error=error.message.split('\n')[0];row.playerMessage=await page.locator('#video-message').textContent().catch(()=>null)}
+     }catch(error){
+      row.error=error.message.split('\n')[0];row.playerMessage=await page.locator('#video-message').textContent().catch(()=>null);
+      row.frames=row.frames||[];
+      for(const frame of page.frames().filter(f=>/youtube/.test(f.url())))row.providerText=await frame.locator('body').innerText({timeout:2000}).then(t=>t.slice(0,1200)).catch(()=>null);
+      const file=`${name}-${clip.id}-failure.jpg`;
+      await page.locator('#workout-video-host').screenshot({path:path.join(out,file),type:'jpeg',quality:55}).then(()=>row.frames.push({file,time:null})).catch(()=>{});
+     }
      if(!row.played)process.exitCode=1;
      console.log(JSON.stringify({engine:name,id:clip.id,played:row.played,error:row.error}));
     }

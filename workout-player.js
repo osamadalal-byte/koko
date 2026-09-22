@@ -4,7 +4,7 @@
 const clockPauseBeforePlayer=pause,clockToggleBeforePlayer=toggleTimer;
 const updateBeforePlayer=updateTimerUI,startBeforePlayer=startSession,finishBeforePlayer=showFinish,advanceBeforePlayer=advance;
 let workoutMedia=null,workoutMediaReady=false,mediaLoadTimer=null,mediaWatchdog=null;
-let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0;
+let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0,workoutMediaError=null;
 function currentVideo(){return session?WORKOUT_VIDEOS[session.steps[session.index].id]:null}
 function stopWorkoutClock(){clockPauseBeforePlayer()}
 function startWorkoutClock(){
@@ -48,7 +48,7 @@ async function loadWorkoutMedia(){
   if(!clip){mediaFailure='An inline video is not available for this saved movement. You can follow its written steps here.';workoutPlayback.event('error',token);return}
   if(navigator.onLine===false||networkAvailable===false){mediaFailure='You’re offline. Your workout and written steps are saved here; videos need internet.';workoutPlayback.event('error',token);return}
   if(!/^https?:$/.test(location.protocol)){mediaFailure='Open the HTTPS app to play videos. Written guidance works in this downloaded preview.';workoutPlayback.event('error',token);return}
-  destroyWorkoutMedia();const attempt=mediaAttempt;mediaFailure='';armMediaTimeout();
+  destroyWorkoutMedia();const attempt=mediaAttempt;mediaFailure='';workoutMediaError=null;armMediaTimeout();
   try{
     const YT=await youtubeAPI();
     if(attempt!==mediaAttempt||token!==workoutPlayback.generation||session!==owner||!workoutPlayback.active||!workoutPlayback.wanted)return;
@@ -84,7 +84,7 @@ async function loadWorkoutMedia(){
           if(event.data===0)workoutPlayback.event('ended',token);
         },
         onAutoplayBlocked:()=>{if(valid()){clearTimeout(mediaLoadTimer);workoutPlayback.event('blocked',token)}},
-        onError:()=>{if(valid()){clearMediaTimers();mediaFailure='This video cannot play here right now. Retry, or stay in the workout with written guidance.';workoutPlayback.event('error',token)}}
+        onError:event=>{if(valid()){workoutMediaError={code:event?.data,videoId:clip.videoId};clearMediaTimers();mediaFailure='This video cannot play here right now. Retry, or stay in the workout with written guidance.';workoutPlayback.event('error',token)}}
       }
     });
   }catch{if(attempt===mediaAttempt&&token===workoutPlayback.generation){mediaFailure='The video service could not load. Retry, or use the written guidance here.';workoutPlayback.event('error',token)}}
@@ -114,6 +114,10 @@ renderSession=function(){
   workoutPlayback.select(rest||s.guidanceMode==='written'?'timer':'video');
   if(s.guidanceMode==='written')showWrittenGuidance();
   updateScreenMessage();updateTimerUI();
+  $('#session-dialog').scrollTop=0;
+  // Chrome queues the details toggle event. Pause synchronously on activation
+  // so reading instructions never spends another timer tick.
+  $('#player-instructions')?.querySelector?.('summary')?.addEventListener('click',pause);
   $('#player-instructions')?.addEventListener('toggle',()=>{if($('#player-instructions')?.open&&session&&!session.paused)pause()});
 };
 function showWrittenGuidance(){
@@ -121,6 +125,7 @@ function showWrittenGuidance(){
   const e=EX[session.steps[session.index].id];
   $('#workout-video-host').innerHTML=`<div class="written-guidance"><span class="label">WRITTEN GUIDANCE</span><h3>${esc(e.name)}</h3><p>${esc(e.steps[0])}</p><p>${esc(e.cue)}</p></div>`;
   $('#written-mode').hidden=true;$('#video-mode').hidden=false;$('#video-mute').hidden=true;
+  $('#session-dialog').scrollTop=0;
 }
 updateTimerUI=function(){
   updateBeforePlayer();if(!session||!$('#timer-toggle')||!workoutPlayback.active)return;
