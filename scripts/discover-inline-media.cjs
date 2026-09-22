@@ -14,6 +14,7 @@ async function report(name,data){
   try{
    const response=await page.goto(row.url,{waitUntil:'domcontentloaded',timeout:18000});row.status=response?.status();row.title=await page.title();
    if(response?.ok()){
+    await page.waitForSelector('video',{timeout:8000}).catch(()=>{});
     row.players=await page.locator('video,mux-player,mux-video,iframe').evaluateAll(els=>els.map(el=>({tag:el.tagName,html:el.outerHTML.slice(0,5000)})));
     row.playbackIds=await page.evaluate(()=>[...document.documentElement.innerHTML.matchAll(/(?:playbackId|playback-id|playback_id)["'\s:=]+([a-zA-Z0-9]+)/g)].map(m=>m[1]));
     const videos=page.locator('video');for(let i=0;i<Math.min(await videos.count(),4);i++){try{await videos.nth(i).scrollIntoViewIfNeeded();await videos.nth(i).evaluate(v=>{v.muted=true;v.play().catch(()=>{})});await page.waitForTimeout(900)}catch{}}
