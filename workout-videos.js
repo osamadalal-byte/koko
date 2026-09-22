@@ -31,8 +31,23 @@ for(const [id,slug,mediaId,mp4] of [
  ['calf','calf-raises','v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8',true],
  ['cat','cat-cow','17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg',true],
  ['push','wall-push-ups','j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA',false],
- ['bird','bird-dog','vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs',true]
+ ['bird','bird-dog','vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs',true],
+ ['squat','squat','x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk',true],
+ ['bridge','bridge-exercise','00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU',true],
+ ['prone','scapular-squeezes','zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y',true],
+ ['breath','diaphragmatic-breathing','lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI',false]
 ])Object.assign(WORKOUT_VIDEOS[id],{mediaId,src:'https://stream.mux.com/'+mediaId+(mp4?'/medium.mp4':'.m3u8'),provider:'Hinge Health',source:'https://www.hingehealth.com/resources/articles/'+slug+'/'});
+// Original public Vimeo embeds. Candidate IDs still require visual review and
+// actual playback in both engines before the release gate can pass.
+for(const [id,mediaId,provider] of [
+ ['march','130116470','I Will If You Will / Pennine Acute Hospitals physiotherapy'],
+ ['circles','254729998','MoveSafe'],
+ ['side','832795423','E3 Rehab'],
+ ['kneepush','958701573','E3 Rehab'],
+ ['dead','647943884','E3 Rehab'],
+ ['stretch','15020273','StretchCoach / Richard Ding'],
+ ['calfhold','832694557','E3 Rehab']
+])Object.assign(WORKOUT_VIDEOS[id],{vimeo:true,mediaId,provider,source:'https://vimeo.com/'+mediaId});
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
   entry.start??=0; // No guessed cue points. Replace only after watching the clip.

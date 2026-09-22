@@ -5,7 +5,7 @@ const {chromium,webkit,devices}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'../dist'),out=path.resolve(__dirname,'../test-results/inline-video-audit');
 fs.mkdirSync(out,{recursive:true});
-const report={date:new Date().toISOString(),scope:'Real public YouTube embeds in the built app at /koko/. Playback observations are not exact-variant approval.',engines:[]};
+const report={date:new Date().toISOString(),scope:'Real public provider media in the built app at /koko/. Playback observations are not exact-variant approval.',engines:[]};
 const types={'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png','.webmanifest':'application/manifest+json'};
 const server=http.createServer((req,res)=>{
  const pathname=new URL(req.url,'http://local').pathname;
@@ -21,7 +21,7 @@ const server=http.createServer((req,res)=>{
   for(const [name,type,device] of [['chromium',chromium,{viewport:{width:390,height:844}}],['webkit',webkit,devices['iPhone 13']]]){
    const engine={name,clips:[]};report.engines.push(engine);let browser;
    try{
-    browser=await type.launch();const context=await browser.newContext(device);const page=await context.newPage();
+    browser=await type.launch();const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
     await page.goto(url);const clips=await page.evaluate(()=>Object.entries(WORKOUT_VIDEOS).map(([id,c])=>({id,videoId:c.mediaId||c.videoId,src:c.src||null,start:c.start})));
     for(const clip of clips){
      const row={...clip,played:false,humanReview:'Pending visual inspection'};engine.clips.push(row);
@@ -58,6 +58,7 @@ const server=http.createServer((req,res)=>{
       await page.locator('#workout-video-host').screenshot({path:path.join(out,file),type:'jpeg',quality:55}).then(()=>row.frames.push({file,time:null})).catch(()=>{});
      }
      if(!row.played)process.exitCode=1;
+     fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(report,null,2));
      console.log(JSON.stringify({engine:name,id:clip.id,played:row.played,error:row.error}));
     }
    }catch(error){engine.error=error.message.split('\n')[0];process.exitCode=1}

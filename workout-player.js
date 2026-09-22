@@ -6,6 +6,52 @@ const updateBeforePlayer=updateTimerUI,startBeforePlayer=startSession,finishBefo
 let workoutMedia=null,workoutMediaReady=false,mediaLoadTimer=null,mediaWatchdog=null;
 let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0,workoutMediaError=null;
 let hlsLoad=null;
+let vimeoLoad=null;
+function vimeoAPI(){
+  if(window.Vimeo?.Player)return Promise.resolve(window.Vimeo);
+  if(vimeoLoad)return vimeoLoad;
+  vimeoLoad=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');let finished=false;
+    const timer=setTimeout(()=>finish(Error('Video player timed out')),12000);
+    function finish(error){if(finished)return;finished=true;clearTimeout(timer);if(error){script.remove();vimeoLoad=null;reject(error)}else resolve(window.Vimeo)}
+    script.src='https://player.vimeo.com/api/player.js';script.async=true;
+    script.onload=()=>window.Vimeo?.Player?finish():finish(Error('Video player unavailable'));
+    script.onerror=()=>finish(Error('Video player unavailable'));document.head.appendChild(script);
+  });return vimeoLoad;
+}
+async function vimeoWorkoutMedia(clip,token,attempt,owner){
+  const valid=()=>token===workoutPlayback.generation&&attempt===mediaAttempt&&session===owner&&workoutPlayback.active;
+  const fail=error=>{if(!valid())return;clearMediaTimers();workoutMediaError={code:error?.name||'vimeo',videoId:clip.mediaId};mediaFailure='This video could not play. Retry, or follow the written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
+  try{
+    const Vimeo=await vimeoAPI();if(!valid())return;
+    const host=$('#workout-video-host');if(!host)return;
+    host.innerHTML='';const frame=document.createElement('iframe');
+    frame.src='https://player.vimeo.com/video/'+clip.mediaId+'?playsinline=1&muted='+(videoMuted?'1':'0')+'&dnt=1';
+    frame.title=EX[owner.steps[owner.index].id].name+' — human demonstration';
+    frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture');frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
+    host.appendChild(frame);const player=new Vimeo.Player(frame);let time=0,duration=0,mediaState=2,title=clip.title,seeking=false;
+    const play=()=>{if(valid()&&workoutPlayback.wanted&&!document.hidden)player.play().catch(fail)};
+    workoutMedia={playVideo:play,pauseVideo(){mediaState=2;player.pause().catch(()=>{})},mute(){player.setMuted(true).catch(fail)},unMute(){player.setMuted(false).catch(fail)},
+      seekTo(seconds){seeking=true;mediaState=3;if(valid()&&workoutPlayback.wanted)workoutPlayback.event('buffering',token);return player.setCurrentTime(seconds).then(t=>{time=t;seeking=false}).catch(fail)},
+      getCurrentTime(){return time},getDuration(){return duration},getPlayerState(){return mediaState},
+      getVideoData(){return {video_id:clip.mediaId,title,source:clip.source}},destroy(){player.destroy().catch(()=>{});frame.remove()}};
+    player.on('playing',()=>{if(valid()){mediaState=1;clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}});
+    player.on('bufferstart',()=>{if(valid()&&workoutPlayback.wanted){mediaState=3;workoutPlayback.event('buffering',token);armMediaTimeout()}});
+    player.on('pause',()=>{mediaState=2;if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
+    player.on('ended',()=>{mediaState=0;if(valid())workoutPlayback.event('ended',token)});
+    player.on('error',fail);
+    player.on('timeupdate',data=>{
+      const previous=time;time=data.seconds;duration=data.duration;
+      if(!valid()||!workoutPlayback.wanted||seeking)return;
+      if(clip.end&&time>=clip.end){workoutPlayback.event('ended',token);return}
+      if(time>previous&&workoutPlayback.status==='buffering'){mediaState=1;clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}
+    });
+    await player.ready();if(!valid())return;
+    [duration,title]=await Promise.all([player.getDuration(),player.getVideoTitle()]);if(!valid())return;
+    await player.setMuted(videoMuted);if(clip.start>0)time=await player.setCurrentTime(clip.start);
+    if(!valid())return;workoutMediaReady=true;play();
+  }catch(error){fail(error)}
+}
 function hlsAPI(){
   if(window.Hls)return Promise.resolve(window.Hls);
   if(hlsLoad)return hlsLoad;
@@ -98,6 +144,7 @@ async function loadWorkoutMedia(){
   if(!/^https?:$/.test(location.protocol)){mediaFailure='Open the HTTPS app to play videos. Written guidance works in this downloaded preview.';workoutPlayback.event('error',token);return}
   destroyWorkoutMedia();const attempt=mediaAttempt;mediaFailure='';workoutMediaError=null;armMediaTimeout();
   if(clip.src){await nativeWorkoutMedia(clip,token,attempt,owner);return}
+  if(clip.vimeo){await vimeoWorkoutMedia(clip,token,attempt,owner);return}
   try{
     const YT=await youtubeAPI();
     if(attempt!==mediaAttempt||token!==workoutPlayback.generation||session!==owner||!workoutPlayback.active||!workoutPlayback.wanted)return;
