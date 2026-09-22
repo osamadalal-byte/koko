@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 const fs=require('node:fs');
-const paths=['standing-side-leg-raise','https://us.physitrack.com/home-exercise-video/supine-heel-slides---movement-control'];
+const paths=['https://na.physitrack.com/home-exercise-video/standing-marching','https://na.physitrack.com/home-exercise-video/shoulder-rolls'];
 async function report(name,data){
  const response=await fetch(`${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/check-runs`,{method:'POST',headers:{Authorization:`Bearer ${process.env.GITHUB_TOKEN}`,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify({name:'Media discovery: '+name,head_sha:process.env.GITHUB_SHA,status:'completed',conclusion:'neutral',output:{title:'Public provider media metadata: '+name,summary:'Discovery only. URLs and titles do not certify a demonstration.',text:JSON.stringify(data,null,2).slice(0,65000)}})});
  if(!response.ok)throw Error('Check report HTTP '+response.status);
