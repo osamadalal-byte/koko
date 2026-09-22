@@ -5,8 +5,8 @@ const PLANNED_EXERCISES=['march','circles','hinge','side','push','kneepush','squ
 const southTees='South Tees Hospitals NHS Foundation Trust';
 const hingeVideo=(path,label,note)=>({provider:'Hinge Health',url:'https://www.hingehealth.com/resources/articles/'+path+'/',type:'video',label,note,checked:'2026-09-16'});
 Object.assign(DEMO_SOURCES,{
-  march:{provider:'NHS',url:'https://www.nhs.uk/live-well/exercise/how-to-warm-up-before-exercising/',type:'video',label:'Basic warm-up video',note:'Use the march-on-the-spot movement. This is a warm-up tutorial covering several movements; the app times your marching interval separately.'},
-  circles:{provider:'NHS',url:'https://www.nhs.uk/live-well/exercise/how-to-warm-up-before-exercising/',type:'video',label:'Basic warm-up video',note:'Use the shoulder-roll movement. Keep your arms relaxed; the app sets the interval for this movement.'},
+  march:{provider:'Physitrack',url:'https://na.physitrack.com/home-exercise-video/standing-marching',type:'video',label:'Standing marching',note:'Use a wall for balance and a comfortable low knee lift. The app times your interval.'},
+  circles:{provider:'Physitrack',url:'https://na.physitrack.com/home-exercise-video/shoulder-rolls',type:'video',label:'Standing shoulder rolls',note:'Keep your arms relaxed and roll your shoulders through a small comfortable range.'},
   hinge:hingeVideo('hip-hinge','Hip hinge tutorial','Watch the standard hip hinge in the exercise section. Use a small range during preparation; no weights are needed.'),
   cat:hingeVideo('cat-cow','Cat–cow tutorial','Watch the standard hands-and-knees version. Move gently through a comfortable range.'),
   calf:hingeVideo('calf-raises','Calf raise tutorial','Use the basic two-leg version on the floor, with a wall for balance. Skip the step and single-leg progressions.'),

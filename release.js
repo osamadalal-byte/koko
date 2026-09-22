@@ -1,5 +1,5 @@
 'use strict';
-const APP_RELEASE='1.0.1-rc';
+const APP_RELEASE='1.2.0';
 const baseStateValidator=validState;
 function validCycle(c){return c&&typeof c.date==='string'&&Number.isFinite(Date.parse(c.date))&&baseStateValidator({version:1,name:'',pace:'beginner',sound:false,completed:c.completed})&&Object.keys(c.completed).length===28}
 validState=function(s){return baseStateValidator(s)&&(!('cycles' in s)||(Array.isArray(s.cycles)&&s.cycles.length<=12&&s.cycles.every(validCycle)))};

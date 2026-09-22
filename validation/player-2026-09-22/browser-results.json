@@ -1,0 +1,136 @@
+{
+  "date": "2026-09-22T11:05:32.816Z",
+  "playwright": "1.61.1",
+  "scope": "Real browser automation. External video playback, physical iPhone installation, app switching and screen locking require separate checks.",
+  "results": [
+    {
+      "name": "chromium-desktop-source-root",
+      "folder": ".",
+      "basePath": "/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "exercise search, filters, empty results, saved exercises and persistence",
+        "28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked",
+        "spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "old backups migrate without losing check-ins; upgraded backups restore favorites and setup",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "Simulated media API: day selection, loading/buffering clock gate, pause race, replay, automatic transition, stale events, autoplay block, same-screen instructions, video error, explicit written fallback and full phase sequence. Not a live playback test.",
+        "offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "chromium-desktop-dist-root",
+      "folder": "dist",
+      "basePath": "/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "exercise search, filters, empty results, saved exercises and persistence",
+        "28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked",
+        "spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "old backups migrate without losing check-ins; upgraded backups restore favorites and setup",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "Simulated media API: day selection, loading/buffering clock gate, pause race, replay, automatic transition, stale events, autoplay block, same-screen instructions, video error, explicit written fallback and full phase sequence. Not a live playback test.",
+        "offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "chromium-desktop-dist-subpath",
+      "folder": "dist",
+      "basePath": "/koko/",
+      "checks": [
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "exercise search, filters, empty results, saved exercises and persistence",
+        "28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked",
+        "spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "old backups migrate without losing check-ins; upgraded backups restore favorites and setup",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "Simulated media API: day selection, loading/buffering clock gate, pause race, replay, automatic transition, stale events, autoplay block, same-screen instructions, video error, explicit written fallback and full phase sequence. Not a live playback test.",
+        "offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "webkit-iphone-source-root",
+      "folder": ".",
+      "basePath": "/",
+      "checks": [
+        "Start workout fully visible in the initial iPhone browser viewport",
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "exercise search, filters, empty results, saved exercises and persistence",
+        "28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked",
+        "spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "old backups migrate without losing check-ins; upgraded backups restore favorites and setup",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "Simulated media API: day selection, loading/buffering clock gate, pause race, replay, automatic transition, stale events, autoplay block, same-screen instructions, video error, explicit written fallback and full phase sequence. Not a live playback test.",
+        "offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "webkit-iphone-dist-root",
+      "folder": "dist",
+      "basePath": "/",
+      "checks": [
+        "Start workout fully visible in the initial iPhone browser viewport",
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "exercise search, filters, empty results, saved exercises and persistence",
+        "28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked",
+        "spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "old backups migrate without losing check-ins; upgraded backups restore favorites and setup",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "Simulated media API: day selection, loading/buffering clock gate, pause race, replay, automatic transition, stale events, autoplay block, same-screen instructions, video error, explicit written fallback and full phase sequence. Not a live playback test.",
+        "offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "webkit-iphone-dist-subpath",
+      "folder": "dist",
+      "basePath": "/koko/",
+      "checks": [
+        "Start workout fully visible in the initial iPhone browser viewport",
+        "all tabs at 320/375/390px, scrolling and settings controls",
+        "guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence",
+        "18 video links, written instructions, easier options and iframe cleanup (no playback claim)",
+        "exercise search, filters, empty results, saved exercises and persistence",
+        "28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked",
+        "spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)",
+        "real-time timer, pause, reload/resume, pagehide persistence and paused reopening",
+        "automatic completion and saved feedback",
+        "old backups migrate without losing check-ins; upgraded backups restore favorites and setup",
+        "downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload",
+        "manifest, icons and exact service-worker scope",
+        "Simulated media API: day selection, loading/buffering clock gate, pause race, replay, automatic transition, stale events, autoplay block, same-screen instructions, video error, explicit written fallback and full phase sequence. Not a live playback test.",
+        "offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence"
+      ],
+      "status": "passed"
+    }
+  ]
+}
