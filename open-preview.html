@@ -80,6 +80,8 @@ body{background:var(--paper)}button,a{touch-action:manipulation}h1,h2,h3{letter-
 @media(max-width:640px) and (max-height:740px){.follow-player{padding-top:calc(8px + env(safe-area-inset-top))}.follow-stages{margin:8px 0 12px;padding:0}.follow-heading{margin-bottom:10px}.follow-heading h2{font-size:24px}.follow-media{height:200px}.follow-clock{margin-top:7px}.follow-clock .timer{font-size:46px}.follow-cue{margin:9px 0 11px}.follow-next{margin:10px 0}.follow-header .icon-btn{min-height:40px}.follow-media-message{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.follow-player *{animation:none!important;transition:none!important}}
 
+.follow-media > .video-js{width:100%;height:100%;padding:0;max-height:100%}
+
 </style>
 </head>
 <body>
@@ -661,7 +663,7 @@ persist();render();
       }else if(name==='paused'){
         this.hooks.stop();this.wanted=false;this.status='paused';
       }else if(name==='blocked'||name==='error'){
-        this.hooks.stop();this.wanted=false;this.status=name;
+        this.hooks.stop();this.wanted=false;this.status=name;this.hooks.pause();
       }else return false;
       this.notify();return true;
     }
@@ -720,9 +722,10 @@ for(const [id,mediaId,provider] of [
  ['side','832795423','E3 Rehab'],
  ['kneepush','958701573','E3 Rehab'],
  ['dead','647943884','E3 Rehab'],
- ['stretch','15020273','StretchCoach / Richard Ding'],
- ['calfhold','832694557','E3 Rehab']
 ])Object.assign(WORKOUT_VIDEOS[id],{vimeo:true,mediaId,provider,source:'https://vimeo.com/'+mediaId});
+for(const [id,mediaId] of [['cheststretch','1763467661001'],['stretch','1763945821001'],['calfhold','1763467667001']]){
+  Object.assign(WORKOUT_VIDEOS[id],{brightcove:true,mediaId,provider:'NHS',source:'https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/'});
+}
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
   entry.start??=0; // No guessed cue points. Replace only after watching the clip.
@@ -739,6 +742,39 @@ const updateBeforePlayer=updateTimerUI,startBeforePlayer=startSession,finishBefo
 let workoutMedia=null,workoutMediaReady=false,mediaLoadTimer=null,mediaWatchdog=null;
 let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0,workoutMediaError=null;
 let hlsLoad=null;
+let brightcoveLoad=null;
+function brightcoveAPI(){
+  if(window.bc)return Promise.resolve(window.bc);
+  if(brightcoveLoad)return brightcoveLoad;
+  brightcoveLoad=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');let finished=false;
+    const timer=setTimeout(()=>finish(Error('Video player timed out')),12000);
+    function finish(error){if(finished)return;finished=true;clearTimeout(timer);if(error){script.remove();brightcoveLoad=null;reject(error)}else resolve(window.bc)}
+    script.src='https://players.brightcove.net/79855382001/EkC1XU82e_default/index.min.js';script.async=true;
+    script.onload=()=>window.bc?finish():finish(Error('Video player unavailable'));
+    script.onerror=()=>finish(Error('Video player unavailable'));document.head.appendChild(script);
+  });return brightcoveLoad;
+}
+async function brightcoveWorkoutMedia(clip,token,attempt,owner){
+  const valid=()=>token===workoutPlayback.generation&&attempt===mediaAttempt&&session===owner&&workoutPlayback.active;
+  const fail=error=>{if(!valid())return;clearMediaTimers();workoutMediaError={code:error?.code||error?.name||'brightcove',videoId:clip.mediaId};mediaFailure='This video could not play. Retry, or follow the written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
+  try{
+    const bc=await brightcoveAPI();if(!valid())return;
+    const host=$('#workout-video-host');if(!host)return;host.innerHTML='';
+    const video=document.createElement('video');video.id='workout-brightcove-'+attempt;video.className='video-js';video.controls=true;video.muted=videoMuted;video.playsInline=true;
+    for(const [name,value] of Object.entries({'data-account':'79855382001','data-player':'EkC1XU82e','data-embed':'default','data-video-id':clip.mediaId,'playsinline':'','aria-label':EX[owner.steps[owner.index].id].name+' — human demonstration'}))video.setAttribute(name,value);
+    host.appendChild(video);const player=bc(video);
+    const play=()=>{if(valid()&&workoutPlayback.wanted&&!document.hidden)player.play()?.catch(fail)};
+    workoutMedia={playVideo:play,pauseVideo(){player.pause()},mute(){player.muted(true)},unMute(){player.muted(false)},seekTo(time){player.currentTime(time)},getCurrentTime(){return player.currentTime()},getDuration(){return player.duration()},getPlayerState(){return player.ended()?0:player.paused()?2:player.readyState()<3?3:1},getVideoData(){return {video_id:String(player.mediainfo?.id||''),title:player.mediainfo?.name,source:clip.source}},destroy(){player.dispose()}};
+    player.on('playing',()=>{if(valid()){clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}});
+    player.on('waiting',()=>{if(valid()&&workoutPlayback.wanted){workoutPlayback.event('buffering',token);armMediaTimeout()}});
+    player.on('pause',()=>{if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
+    player.on('ended',()=>{if(valid())workoutPlayback.event('ended',token)});
+    player.on('error',()=>fail(player.error()));
+    player.on('timeupdate',()=>{if(valid()&&clip.end&&player.currentTime()>=clip.end&&workoutPlayback.wanted)workoutPlayback.event('ended',token)});
+    player.on('loadedmetadata',()=>{if(!valid())return;workoutMediaReady=true;player.muted(videoMuted);if(clip.start>0)player.currentTime(clip.start);play()});
+  }catch(error){fail(error)}
+}
 let vimeoLoad=null;
 function vimeoAPI(){
   if(window.Vimeo?.Player)return Promise.resolve(window.Vimeo);
@@ -762,12 +798,12 @@ async function vimeoWorkoutMedia(clip,token,attempt,owner){
     frame.src='https://player.vimeo.com/video/'+clip.mediaId+'?playsinline=1&muted='+(videoMuted?'1':'0')+'&dnt=1';
     frame.title=EX[owner.steps[owner.index].id].name+' — human demonstration';
     frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture');frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
-    host.appendChild(frame);const player=new Vimeo.Player(frame);let time=0,duration=0,mediaState=2,title=clip.title,seeking=false;
+    host.appendChild(frame);const player=new Vimeo.Player(frame);let time=0,duration=0,mediaState=2,title=clip.title,actualId='',seeking=false;
     const play=()=>{if(valid()&&workoutPlayback.wanted&&!document.hidden)player.play().catch(fail)};
     workoutMedia={playVideo:play,pauseVideo(){mediaState=2;player.pause().catch(()=>{})},mute(){player.setMuted(true).catch(fail)},unMute(){player.setMuted(false).catch(fail)},
       seekTo(seconds){seeking=true;mediaState=3;if(valid()&&workoutPlayback.wanted)workoutPlayback.event('buffering',token);return player.setCurrentTime(seconds).then(t=>{time=t;seeking=false}).catch(fail)},
       getCurrentTime(){return time},getDuration(){return duration},getPlayerState(){return mediaState},
-      getVideoData(){return {video_id:clip.mediaId,title,source:clip.source}},destroy(){player.destroy().catch(()=>{});frame.remove()}};
+      getVideoData(){return {video_id:String(actualId),title,source:clip.source}},destroy(){player.destroy().catch(()=>{});frame.remove()}};
     player.on('playing',()=>{if(valid()){mediaState=1;clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}});
     player.on('bufferstart',()=>{if(valid()&&workoutPlayback.wanted){mediaState=3;workoutPlayback.event('buffering',token);armMediaTimeout()}});
     player.on('pause',()=>{mediaState=2;if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
@@ -780,7 +816,7 @@ async function vimeoWorkoutMedia(clip,token,attempt,owner){
       if(time>previous&&workoutPlayback.status==='buffering'){mediaState=1;clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}
     });
     await player.ready();if(!valid())return;
-    [duration,title]=await Promise.all([player.getDuration(),player.getVideoTitle()]);if(!valid())return;
+    [duration,title,actualId]=await Promise.all([player.getDuration(),player.getVideoTitle(),player.getVideoId()]);if(!valid())return;
     await player.setMuted(videoMuted);if(clip.start>0)time=await player.setCurrentTime(clip.start);
     if(!valid())return;workoutMediaReady=true;play();
   }catch(error){fail(error)}
@@ -878,6 +914,7 @@ async function loadWorkoutMedia(){
   destroyWorkoutMedia();const attempt=mediaAttempt;mediaFailure='';workoutMediaError=null;armMediaTimeout();
   if(clip.src){await nativeWorkoutMedia(clip,token,attempt,owner);return}
   if(clip.vimeo){await vimeoWorkoutMedia(clip,token,attempt,owner);return}
+  if(clip.brightcove){await brightcoveWorkoutMedia(clip,token,attempt,owner);return}
   try{
     const YT=await youtubeAPI();
     if(attempt!==mediaAttempt||token!==workoutPlayback.generation||session!==owner||!workoutPlayback.active||!workoutPlayback.wanted)return;

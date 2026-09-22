@@ -45,9 +45,10 @@ for(const [id,mediaId,provider] of [
  ['side','832795423','E3 Rehab'],
  ['kneepush','958701573','E3 Rehab'],
  ['dead','647943884','E3 Rehab'],
- ['stretch','15020273','StretchCoach / Richard Ding'],
- ['calfhold','832694557','E3 Rehab']
 ])Object.assign(WORKOUT_VIDEOS[id],{vimeo:true,mediaId,provider,source:'https://vimeo.com/'+mediaId});
+for(const [id,mediaId] of [['cheststretch','1763467661001'],['stretch','1763945821001'],['calfhold','1763467667001']]){
+  Object.assign(WORKOUT_VIDEOS[id],{brightcove:true,mediaId,provider:'NHS',source:'https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/'});
+}
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
   entry.start??=0; // No guessed cue points. Replace only after watching the clip.

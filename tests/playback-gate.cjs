@@ -16,7 +16,7 @@ gate.play();gate.event('playing',first);gate.event('ended',first);assert.equal(r
 gate.event('playing',first);assert.equal(running,true);
 gate.event('blocked',first);assert.equal(running,false);assert.equal(gate.wanted,false);
 gate.event('playing',first);assert.equal(running,false,'Autoplay refusal needs a fresh user action');
-gate.play();gate.event('playing',first);gate.event('error',first);assert.equal(running,false);assert.equal(gate.wanted,false);
+gate.play();gate.event('playing',first);const pausesBeforeError=pauseCalls;gate.event('error',first);assert.equal(running,false);assert.equal(gate.wanted,false);assert.equal(pauseCalls,pausesBeforeError+1,'Failure pauses media as well as the clock');
 const next=gate.select('video');gate.play();gate.event('playing',first);assert.equal(running,false,'A previous video cannot start the next interval');
 gate.event('error',first);assert.equal(gate.status,'loading','Stale failure cannot cancel the new player');
 gate.event('playing',next);assert.equal(running,true);

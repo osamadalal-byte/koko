@@ -40,6 +40,16 @@ const server=http.createServer((req,res)=>{
       await page.waitForTimeout(1800);
       row.after=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),state:workoutMedia.getPlayerState(),remaining:session.remaining}));
       row.played=row.after.time>row.before.time+.5&&row.after.remaining<row.before.remaining&&row.before.video.video_id===clip.videoId;
+      if(!row.played)throw Error('Media identity, advancing frames and workout clock did not agree');
+      await page.locator('#timer-toggle').click();await page.waitForTimeout(250);
+      const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
+      await page.waitForTimeout(800);
+      const still=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
+      row.pauseControl=paused.paused&&still.paused&&still.remaining===paused.remaining&&Math.abs(still.time-paused.time)<.3;
+      if(!row.pauseControl)throw Error('Pause did not stop both media and workout clock');
+      await page.locator('#timer-toggle').click();
+      await page.waitForFunction(()=>workoutMedia.getPlayerState()===1&&!session.paused,{},{timeout:18000});
+      row.resumeControl=true;
       row.frames=[];
       // Sample the beginning plus early demonstration positions, always recording
       // actual positions. Review all frames and watch the complete clip before approval.
@@ -51,6 +61,7 @@ const server=http.createServer((req,res)=>{
        row.frames.push({file:filename,time:await page.evaluate(()=>workoutMedia.getCurrentTime())});
       }
      }catch(error){
+      row.played=false;
       row.error=error.message.split('\n')[0];row.playerMessage=await page.locator('#video-message').textContent().catch(()=>null);
       row.frames=row.frames||[];
       for(const frame of page.frames().filter(f=>/youtube/.test(f.url())))row.providerText=await frame.locator('body').innerText({timeout:2000}).then(t=>t.slice(0,1200)).catch(()=>null);

@@ -25,7 +25,7 @@
       }else if(name==='paused'){
         this.hooks.stop();this.wanted=false;this.status='paused';
       }else if(name==='blocked'||name==='error'){
-        this.hooks.stop();this.wanted=false;this.status=name;
+        this.hooks.stop();this.wanted=false;this.status=name;this.hooks.pause();
       }else return false;
       this.notify();return true;
     }
