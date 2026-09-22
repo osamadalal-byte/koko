@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 const fs=require('node:fs');
-const paths=['squat','bridge-exercise','push-ups','shoulder-mobility-exercises','standing-worktime-resource','scapular-squeezes','upper-back-stretches','diaphragmatic-breathing','calf-stretch','chest-stretch','https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/','https://www.nhs.uk/live-well/exercise/how-to-warm-up-before-exercising/'];
+const paths=['https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/','https://www.cancercouncil.com.au/cancer-information/living-well/exercise-cancer/flexibility-exercises/'];
 async function report(name,data){
  const response=await fetch(`${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/check-runs`,{method:'POST',headers:{Authorization:`Bearer ${process.env.GITHUB_TOKEN}`,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify({name:'Media discovery: '+name,head_sha:process.env.GITHUB_SHA,status:'completed',conclusion:'neutral',output:{title:'Public provider media metadata: '+name,summary:'Discovery only. URLs and titles do not certify a demonstration.',text:JSON.stringify(data,null,2).slice(0,65000)}})});
  if(!response.ok)throw Error('Check report HTTP '+response.status);
@@ -16,7 +16,9 @@ async function report(name,data){
    if(response?.ok()){
     await page.waitForSelector('video',{timeout:8000}).catch(()=>{});
     row.players=await page.locator('video,mux-player,mux-video,iframe').evaluateAll(els=>els.map(el=>({tag:el.tagName,html:el.outerHTML.slice(0,5000)})));
-    row.brightcove=await page.locator('[data-video-id]').evaluateAll(els=>els.map(el=>el.outerHTML.slice(0,1800)));
+    row.brightcove=await page.locator('[data-video-id]').evaluateAll(els=>els.map(el=>({id:el.getAttribute('data-video-id'),account:el.getAttribute('data-account'),player:el.getAttribute('data-player'),label:el.getAttribute('aria-label')})));
+    row.metadata=await page.evaluate(()=>Object.values(window.videojs?.getPlayers?.()||{}).filter(Boolean).map(p=>({id:p.mediainfo?.id,name:p.mediainfo?.name,description:p.mediainfo?.description})));
+    row.iframes=await page.locator('iframe').evaluateAll(els=>els.map(e=>({src:e.src,title:e.title})));
     row.playbackIds=await page.evaluate(()=>[...document.documentElement.innerHTML.matchAll(/(?:playbackId|playback-id|playback_id)["'\s:=]+([a-zA-Z0-9]+)/g)].map(m=>m[1]));
     const videos=page.locator('video');for(let i=0;i<Math.min(await videos.count(),4);i++){try{await videos.nth(i).scrollIntoViewIfNeeded();await videos.nth(i).evaluate(v=>{v.muted=true;v.play().catch(()=>{})});await page.waitForTimeout(900)}catch{}}
     row.playersAfter=await page.locator('video,mux-player,mux-video').evaluateAll(els=>els.map(el=>({tag:el.tagName,html:el.outerHTML.slice(0,5000)})));
@@ -28,6 +30,6 @@ async function report(name,data){
     }
    }
   }catch(error){row.error=error.message.split('\n')[0]}
-  finally{await page.close();await report(slug,row);console.log(slug,row.status,row.requests.length)}
+  finally{row.requests=row.requests.filter(u=>!u.includes('metrics.brightcove')).map(u=>u.split('?')[0]);row.players=row.players?.map(p=>({tag:p.tag,html:p.html.slice(0,600)}));row.playersAfter=undefined;await page.close();await report(slug,row);console.log(slug,row.status,row.requests.length)}
  }}finally{await browser.close();fs.mkdirSync('test-results',{recursive:true});fs.writeFileSync('test-results/media-discovery.json',JSON.stringify(all,null,2))}
 })().catch(error=>{console.error(error);process.exitCode=1});
