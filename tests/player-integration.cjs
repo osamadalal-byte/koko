@@ -6,7 +6,7 @@ const harness=fs.readFileSync(path.join(__dirname,'check-personal.cjs'),'utf8').
 const scenario=async function(){
  const f=fixture(),run=f.run,click=f.click;
  run("location.protocol='https:';location.origin='https://example.test';networkAvailable=true;state.completed={};state.cycles=[];state.draft=null;state.autoAdvance=true;selected=1;tab='plan';render()");
- run(`Object.values(WORKOUT_VIDEOS).forEach(c=>{delete c.src;delete c.vimeo;delete c.brightcove});window.doubles=[];window.YT={Player:class{
+ run(`Object.values(WORKOUT_VIDEOS).forEach(c=>{delete c.src;delete c.brightcove});window.doubles=[];window.YT={Player:class{
   constructor(id,o){this.options=o;this.frame=document.createElement('iframe');this.dead=false;this.time=0;window.doubles.push(this)}
   getIframe(){return this.frame}mute(){}unMute(){}getCurrentTime(){return this.time}playVideo(){this.requested=true}pauseVideo(){this.requested=false}
   seekTo(t){this.time=t;this.looped=true}destroy(){this.dead=true}emit(n){this.options.events.onStateChange({data:n,target:this})}

@@ -35,18 +35,12 @@ for(const [id,slug,mediaId,mp4] of [
  ['squat','squat','x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk',true],
  ['bridge','bridge-exercise','00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU',true],
  ['prone','scapular-squeezes','zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y',true],
- ['breath','diaphragmatic-breathing','lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI',false]
+ ['breath','diaphragmatic-breathing','lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI',false],
+ ['kneepush','push-ups','7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw',false],
+ ['side','standing-side-leg-raise','O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ',true]
 ])Object.assign(WORKOUT_VIDEOS[id],{mediaId,src:'https://stream.mux.com/'+mediaId+(mp4?'/medium.mp4':'.m3u8'),provider:'Hinge Health',source:'https://www.hingehealth.com/resources/articles/'+slug+'/'});
-// Original public Vimeo embeds. Candidate IDs still require visual review and
-// actual playback in both engines before the release gate can pass.
-for(const [id,mediaId,provider] of [
- ['march','130116470','I Will If You Will / Pennine Acute Hospitals physiotherapy'],
- ['circles','254729998','MoveSafe'],
- ['side','832795423','E3 Rehab'],
- ['kneepush','958701573','E3 Rehab'],
- ['dead','647943884','E3 Rehab'],
-])Object.assign(WORKOUT_VIDEOS[id],{vimeo:true,mediaId,provider,source:'https://vimeo.com/'+mediaId});
-for(const [id,mediaId] of [['cheststretch','1763467661001'],['stretch','1763945821001'],['calfhold','1763467667001']]){
+Object.assign(WORKOUT_VIDEOS.dead,{mediaId:'dd7b9bef-40cc-45ee-a7a7-0b6552605a41',src:'https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4',provider:'Physitrack',source:'https://us.physitrack.com/home-exercise-video/supine-heel-slides---movement-control'});
+for(const [id,mediaId] of [['march','1763945815001'],['circles','1763945815001'],['cheststretch','1763467661001'],['stretch','1763945821001'],['calfhold','1763467667001']]){
   Object.assign(WORKOUT_VIDEOS[id],{brightcove:true,mediaId,provider:'NHS',source:'https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/'});
 }
 for(const entry of Object.values(WORKOUT_VIDEOS)){

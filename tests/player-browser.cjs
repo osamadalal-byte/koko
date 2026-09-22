@@ -6,7 +6,7 @@ module.exports=async function(page,checks){
  const saved=await page.evaluate(()=>JSON.stringify(state));
  await page.evaluate(()=>{
   state.completed={};state.cycles=[];state.draft=null;state.autoAdvance=true;selected=1;tab='plan';render();
-  window.savedVideoCatalog=JSON.stringify(WORKOUT_VIDEOS);Object.values(WORKOUT_VIDEOS).forEach(c=>{delete c.src;delete c.vimeo;delete c.brightcove});window.playerDoubles=[];
+  window.savedVideoCatalog=JSON.stringify(WORKOUT_VIDEOS);Object.values(WORKOUT_VIDEOS).forEach(c=>{delete c.src;delete c.brightcove});window.playerDoubles=[];
   window.YT={Player:class{
    constructor(id,options){
     this.options=options;this.dead=false;this.time=0;

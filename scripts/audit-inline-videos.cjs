@@ -58,7 +58,7 @@ const server=http.createServer((req,res)=>{
       row.frames=[];
       // Sample the beginning plus early demonstration positions, always recording
       // actual positions. Review all frames and watch the complete clip before approval.
-      for(const seconds of [clip.start,5,10,20]){
+      for(const seconds of [...new Set([clip.start,10,20,30,40,50,...(['march','circles','kneepush'].includes(clip.id)?[60,75,90,105,120,140]:[])])]){
        if(seconds>=row.before.duration)continue;
        await page.evaluate(t=>workoutMedia.seekTo(t,true),seconds);await page.waitForTimeout(500);
        const filename=`${name}-${clip.id}-${seconds}.jpg`;
