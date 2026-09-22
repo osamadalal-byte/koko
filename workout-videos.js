@@ -47,7 +47,7 @@ for(const [id,mediaId,slug] of [
  ['march','71550880-a7cf-402d-9ada-938438d4ba38','standing-marching'],
  ['circles','a267a10f-9cea-4312-abd0-402efdfa9bf7','shoulder-rolls']
 ])Object.assign(WORKOUT_VIDEOS[id],{mediaId,src:'https://media.physitrack.com/exercises/'+mediaId+'/en/video_1280x720.mp4',provider:'Physitrack',source:'https://na.physitrack.com/home-exercise-video/'+slug});
-Object.assign(WORKOUT_VIDEOS.march,{title:'Standing marching',variant:'Supported standing march, use a comfortable low knee lift'});
+Object.assign(WORKOUT_VIDEOS.march,{title:'Standing marching',variant:'Standing march, comfortable knee lift; optional wall support'});
 WORKOUT_VIDEOS.circles.title='Standing shoulder rolls';
 WORKOUT_VIDEOS.bridge.title='Supine bridge';WORKOUT_VIDEOS.prone.title='Standing scapular squeezes';
 WORKOUT_VIDEOS.cheststretch.title='NHS chest stretch';WORKOUT_VIDEOS.stretch.title='NHS upper back stretch';
@@ -55,10 +55,11 @@ WORKOUT_VIDEOS.dead.title='Supine heel slides — movement control';
 // Candidate demonstration boundaries. Publishing remains blocked until the
 // exact excerpts have passed visual review and both real browser audits.
 for(const [id,start,end] of [
- ['hinge',18,34],['side',15,33],['push',25,42],['kneepush',12,25],
- ['squat',12,32],['bridge',18,42],['bird',27,53],['dead',12,50],
- ['plankknees',18,32],['prone',15,32],['calf',15,32],['cat',18,38],
- ['cheststretch',16,25],['stretch',17,28],['calfhold',23,35],['breath',14,26]
+ ['march',2,16],['circles',2,12],['hinge',26,44],['side',17,30],
+ ['push',39,56],['kneepush',12,19],['squat',33,43],['bridge',32,42],
+ ['bird',39,53],['dead',12,24],['plankknees',18,25],['prone',15,29],
+ ['calf',15,32],['cat',24,33],['cheststretch',16,21],['stretch',17,28],
+ ['calfhold',23,35],['breath',26,46]
 ])Object.assign(WORKOUT_VIDEOS[id],{start,end});
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;

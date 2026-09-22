@@ -37,7 +37,7 @@ const server=http.createServer((req,res)=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const url=`http://127.0.0.1:${server.address().port}/koko/`;
  try{
-  for(const [name,type,device] of [['chromium',chromium,{viewport:{width:390,height:844}}],['webkit',webkit,devices['iPhone 13']]]){
+  await Promise.all([['chromium',chromium,{viewport:{width:390,height:844}}],['webkit',webkit,devices['iPhone 13']]].map(async ([name,type,device])=>{
    const engine={name,clips:[]};report.engines.push(engine);let browser;
    try{
     browser=await type.launch();const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
@@ -116,6 +116,6 @@ const server=http.createServer((req,res)=>{
     engine.flow.passed=true;
    }catch(error){engine.error=error.message.split('\n')[0];process.exitCode=1}
    finally{if(browser)await browser.close()}
-  }
+  }));
  }finally{await new Promise(resolve=>server.close(resolve));fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(report,null,2))}
 })().catch(error=>{console.error(error);process.exitCode=1});
