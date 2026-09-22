@@ -6,7 +6,7 @@ module.exports=async function(page,checks){
  const saved=await page.evaluate(()=>JSON.stringify(state));
  await page.evaluate(()=>{
   state.completed={};state.cycles=[];state.draft=null;state.autoAdvance=true;selected=1;tab='plan';render();
-  window.playerDoubles=[];
+  window.savedVideoCatalog=JSON.stringify(WORKOUT_VIDEOS);Object.values(WORKOUT_VIDEOS).forEach(c=>delete c.src);window.playerDoubles=[];
   window.YT={Player:class{
    constructor(id,options){
     this.options=options;this.dead=false;this.time=0;
@@ -58,6 +58,6 @@ module.exports=async function(page,checks){
  for(const phase of ['Warm-up','Work','Rest','Cool-down'])assert(stages.includes(phase),phase+' remains in the sequence');
  assert(await page.locator('#save-checkin').isVisible());
  await page.locator('#finish-exit').click();
- await page.evaluate(raw=>{state=JSON.parse(raw);session=null;selected=1;tab='today';delete window.YT;youtubeLoad=null;persist();render()},saved);
+ await page.evaluate(raw=>{state=JSON.parse(raw);session=null;selected=1;tab='today';Object.assign(WORKOUT_VIDEOS,JSON.parse(window.savedVideoCatalog));delete window.YT;youtubeLoad=null;persist();render()},saved);
  checks.push('Simulated media API: day selection, loading/buffering clock gate, pause race, replay, automatic transition, stale events, autoplay block, same-screen instructions, video error, explicit written fallback and full phase sequence. Not a live playback test.');
 };

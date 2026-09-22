@@ -64,6 +64,7 @@ body{background:var(--paper)}button,a{touch-action:manipulation}h1,h2,h3{letter-
 .follow-heading h2{font-size:28px;letter-spacing:-.8px;line-height:1.12;margin:7px 0 0}
 .follow-media{width:100%;height:250px;min-height:200px;border-radius:16px;background:#171221;color:#f8f5ff;overflow:hidden}
 .follow-media iframe,.follow-media>div:not(.video-placeholder):not(.rest-message):not(.written-guidance){width:100%;height:100%;border:0}
+.follow-media video{display:block;width:100%;height:100%;object-fit:contain;background:#f6f5f8}.follow-credit{font-size:10px;color:#82788d;margin:4px 0 0}
 .video-placeholder,.rest-message,.written-guidance{height:100%;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
 .play-outline{font-size:46px;color:#c8b5f0}.video-placeholder p{font-size:13px;color:#d6cce6;margin:0}.rest-message span{font-size:11px;letter-spacing:3px;color:#c4e2a5}.rest-message h3{font-size:32px;color:white;margin:0}.rest-message p{font-size:14px;line-height:1.5;color:#d8cfdf;max-width:240px;margin:0}
 .written-guidance{background:#f0eaf9;color:#392651;gap:9px}.written-guidance h3{margin:0;font-size:20px}.written-guidance p{margin:0;font-size:13px;line-height:1.5}.written-guidance .label{font-size:10px;letter-spacing:1px}
@@ -697,6 +698,16 @@ const WORKOUT_VIDEOS={
   calfhold:{videoId:'XTGUHBFrWZo',title:'NHS Calf Stretch',variant:'Standing calf stretch, straight rear knee and heel down'},
   breath:{videoId:'W9Gx6sT-W1A',title:'How to Do Diaphragmatic Breathing: A Guide from Physical Therapists',variant:'Comfortable relaxed belly breathing, no holds or forced breaths'}
 };
+// Public media published in the corresponding Hinge Health article. Streams
+// are played from the provider; no third-party videos are bundled or rehosted.
+for(const [id,slug,mediaId,mp4] of [
+ ['hinge','hip-hinge','qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo',true],
+ ['plankknees','plank-on-knees','Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ',false],
+ ['calf','calf-raises','v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8',true],
+ ['cat','cat-cow','17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg',true],
+ ['push','wall-push-ups','j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA',false],
+ ['bird','bird-dog','vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs',true]
+])Object.assign(WORKOUT_VIDEOS[id],{mediaId,src:'https://stream.mux.com/'+mediaId+(mp4?'/medium.mp4':'.m3u8'),provider:'Hinge Health',source:'https://www.hingehealth.com/resources/articles/'+slug+'/'});
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
   entry.start??=0; // No guessed cue points. Replace only after watching the clip.
@@ -712,6 +723,54 @@ const clockPauseBeforePlayer=pause,clockToggleBeforePlayer=toggleTimer;
 const updateBeforePlayer=updateTimerUI,startBeforePlayer=startSession,finishBeforePlayer=showFinish,advanceBeforePlayer=advance;
 let workoutMedia=null,workoutMediaReady=false,mediaLoadTimer=null,mediaWatchdog=null;
 let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0,workoutMediaError=null;
+let hlsLoad=null;
+function hlsAPI(){
+  if(window.Hls)return Promise.resolve(window.Hls);
+  if(hlsLoad)return hlsLoad;
+  hlsLoad=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');let finished=false;
+    const timer=setTimeout(()=>finish(Error('Streaming player timed out')),12000);
+    function finish(error){if(finished)return;finished=true;clearTimeout(timer);if(error){script.remove();hlsLoad=null;reject(error)}else resolve(window.Hls)}
+    script.src='https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js';script.async=true;
+    script.onload=()=>window.Hls?finish():finish(Error('Streaming player is unavailable'));
+    script.onerror=()=>finish(Error('Streaming player is unavailable'));document.head.appendChild(script);
+  });return hlsLoad;
+}
+async function nativeWorkoutMedia(clip,token,attempt,owner){
+  const valid=()=>token===workoutPlayback.generation&&attempt===mediaAttempt&&session===owner&&workoutPlayback.active;
+  const host=$('#workout-video-host');if(!host||!valid())return;
+  const video=document.createElement('video');video.controls=true;video.playsInline=true;video.muted=videoMuted;video.preload='auto';
+  video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[owner.steps[owner.index].id].name+' — human demonstration');
+  host.innerHTML='';host.appendChild(video);let streaming=null,disposed=false;
+  const fail=error=>{if(!valid())return;clearMediaTimers();workoutMediaError={code:error?.code||error?.name||'media',mediaId:clip.mediaId};mediaFailure='This video could not play. Retry, or use written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
+  const play=()=>{if(valid()&&workoutPlayback.wanted&&!document.hidden)video.play().catch(error=>{if(error.name!=='AbortError')fail(error)})};
+  const adapter={
+    playVideo:play,pauseVideo(){video.pause()},mute(){video.muted=true},unMute(){video.muted=false},
+    seekTo(time){video.currentTime=time},getCurrentTime(){return video.currentTime},getDuration(){return video.duration},
+    getPlayerState(){return video.ended?0:video.paused?2:video.readyState<3?3:1},
+    getVideoData(){return {video_id:clip.mediaId,title:clip.title,source:clip.src,currentSrc:video.currentSrc}},
+    destroy(){disposed=true;streaming?.destroy();video.pause();video.removeAttribute('src');video.load();video.remove()}
+  };
+  workoutMedia=adapter;workoutMediaReady=true;
+  video.addEventListener('playing',()=>{if(valid()){clearTimeout(mediaLoadTimer);workoutPlayback.event('playing',token)}});
+  video.addEventListener('waiting',()=>{if(valid()&&workoutPlayback.wanted){workoutPlayback.event('buffering',token);armMediaTimeout()}});
+  video.addEventListener('pause',()=>{if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
+  video.addEventListener('ended',()=>{if(valid())workoutPlayback.event('ended',token)});
+  video.addEventListener('error',()=>fail(video.error));
+  video.addEventListener('loadedmetadata',()=>{if(valid()&&clip.start>0)video.currentTime=clip.start});
+  video.addEventListener('timeupdate',()=>{if(valid()&&clip.end&&video.currentTime>=clip.end&&workoutPlayback.wanted){workoutPlayback.event('ended',token)}});
+  try{
+    if(clip.src.includes('.m3u8')){
+      const Hls=await hlsAPI();if(!valid()||disposed)return;
+      if(Hls.isSupported()){
+        streaming=new Hls({startPosition:clip.start||0,maxBufferLength:15});
+        streaming.on(Hls.Events.ERROR,(_,data)=>{if(data.fatal)fail({code:data.details})});
+        streaming.on(Hls.Events.MANIFEST_PARSED,play);streaming.loadSource(clip.src);streaming.attachMedia(video);
+      }else if(video.canPlayType('application/vnd.apple.mpegurl')){video.src=clip.src;play()}
+      else fail({code:'unsupported-stream'});
+    }else{video.src=clip.src;play()}
+  }catch(error){fail(error)}
+}
 function currentVideo(){return session?WORKOUT_VIDEOS[session.steps[session.index].id]:null}
 function stopWorkoutClock(){clockPauseBeforePlayer()}
 function startWorkoutClock(){
@@ -756,6 +815,7 @@ async function loadWorkoutMedia(){
   if(navigator.onLine===false||networkAvailable===false){mediaFailure='You’re offline. Your workout and written steps are saved here; videos need internet.';workoutPlayback.event('error',token);return}
   if(!/^https?:$/.test(location.protocol)){mediaFailure='Open the HTTPS app to play videos. Written guidance works in this downloaded preview.';workoutPlayback.event('error',token);return}
   destroyWorkoutMedia();const attempt=mediaAttempt;mediaFailure='';workoutMediaError=null;armMediaTimeout();
+  if(clip.src){await nativeWorkoutMedia(clip,token,attempt,owner);return}
   try{
     const YT=await youtubeAPI();
     if(attempt!==mediaAttempt||token!==workoutPlayback.generation||session!==owner||!workoutPlayback.active||!workoutPlayback.wanted)return;
@@ -809,6 +869,7 @@ renderSession=function(){
     <div class="follow-heading"><span id="session-status" role="status">${esc(step.phase)}</span><h2 id="session-title">${rest?'Take a breather':esc(e.name)}</h2></div>
     <div class="follow-media ${rest?'is-rest':''}" id="workout-video-host" aria-label="${rest?'Rest interval':'Exercise video'}">${rest?'<div class="rest-message"><span>RECOVER</span><h3>Relax. Breathe.</h3><p>Let your muscles recover before the next movement.</p></div>':'<div class="video-placeholder"><span class="play-outline">▷</span><p>Your demonstration plays here</p></div>'}</div>
     <div class="follow-media-message" id="video-message" role="status"></div>
+    ${!rest&&currentVideo()?.provider?`<p class="follow-credit">Video: ${esc(currentVideo().provider)}</p>`:''}
     <div class="follow-clock"><div class="timer" id="timer" aria-label="Time remaining">${formatTime(s.remaining)}</div><div><b>${rest?'Recovery time':step.phase==='Cool-down'?'Release & recover':'Move at your pace'}</b><p>${step.round?'Round '+step.round:'Stay comfortable'}</p></div></div>
     <p class="follow-cue">${rest?'Relax, breathe and get set for the next move.':esc(e.cue)}</p>
     <div class="follow-actions"><button class="btn primary" id="timer-toggle">${icon('play')} Start workout</button><button class="btn outline" id="timer-next" aria-label="${next?'Skip this interval':'Finish early'}">${next?'Skip':'Finish'}</button></div>

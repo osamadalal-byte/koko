@@ -23,6 +23,16 @@ const WORKOUT_VIDEOS={
   calfhold:{videoId:'XTGUHBFrWZo',title:'NHS Calf Stretch',variant:'Standing calf stretch, straight rear knee and heel down'},
   breath:{videoId:'W9Gx6sT-W1A',title:'How to Do Diaphragmatic Breathing: A Guide from Physical Therapists',variant:'Comfortable relaxed belly breathing, no holds or forced breaths'}
 };
+// Public media published in the corresponding Hinge Health article. Streams
+// are played from the provider; no third-party videos are bundled or rehosted.
+for(const [id,slug,mediaId,mp4] of [
+ ['hinge','hip-hinge','qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo',true],
+ ['plankknees','plank-on-knees','Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ',false],
+ ['calf','calf-raises','v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8',true],
+ ['cat','cat-cow','17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg',true],
+ ['push','wall-push-ups','j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA',false],
+ ['bird','bird-dog','vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs',true]
+])Object.assign(WORKOUT_VIDEOS[id],{mediaId,src:'https://stream.mux.com/'+mediaId+(mp4?'/medium.mp4':'.m3u8'),provider:'Hinge Health',source:'https://www.hingehealth.com/resources/articles/'+slug+'/'});
 for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
   entry.start??=0; // No guessed cue points. Replace only after watching the clip.
