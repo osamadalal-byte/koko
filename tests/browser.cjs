@@ -24,7 +24,7 @@ async function run(browserType,device,name,folder,basePath){
     const context=await browser.newContext({...device,serviceWorkers:'allow',acceptDownloads:true});
     context.setDefaultTimeout(15000);page=await context.newPage();
     const errors=[],failedAssets=[];
-    page.on('pageerror',error=>errors.push(error.message));
+    page.on('pageerror',error=>errors.push(error.stack||error.message));
     page.on('dialog',dialog=>dialog.accept());
     page.on('response',response=>{if(response.url().startsWith(url)&&response.status()>=400)failedAssets.push(response.url())});
     // Third-party playback is a separate audit; do not report a routed iframe as a playing video.
@@ -71,18 +71,28 @@ async function run(browserType,device,name,folder,basePath){
     checks.push('guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence');
     await page.locator('.nav [data-tab="moves"]').click();assert.equal(await page.locator('.move-card').count(),18);
     const movementIds=await page.evaluate(()=>PLANNED_EXERCISES);
+    const previewURL=page.url();let previewPopups=0;const countPopup=()=>previewPopups++;page.on('popup',countPopup);
     for(const id of movementIds){
       await page.locator(`[data-exercise="${id}"]`).click();await fit();
       assert(await page.locator('#detail-dialog .steps li').count()>=3);
       assert(await page.locator('#detail-dialog .easier').isVisible());
-      assert.match(await page.locator('#detail-dialog [data-demo-link]').getAttribute('href'),/^https:\/\//);
+      assert(await page.locator('#preview-video-host').isVisible());
+      assert(await page.locator('#preview-toggle').isVisible());
+      assert.equal(await page.locator('#detail-dialog a[href], #detail-dialog iframe, #detail-dialog [data-demo-link], #detail-dialog [data-play-source]').count(),0,'Exercise previews cannot route to a provider website or old YouTube embed');
       await page.locator('[data-close="detail-dialog"]').click();
-      await page.waitForFunction(()=>document.querySelector('#detail-content').innerHTML==='');
+      await page.waitForFunction(()=>document.querySelector('#detail-content').innerHTML===''&&exercisePreview===null);
+      assert.equal(page.url(),previewURL);assert.equal(previewPopups,0);
     }
-    await page.locator('[data-exercise="bridge"]').click();await page.locator('[data-play-source="bridge"]').click();
-    assert((await page.locator('#human-player iframe').getAttribute('src')).includes('iZ611vwxI4I'));
-    await page.locator('[data-close="detail-dialog"]').click();await page.waitForFunction(()=>!document.querySelector('#human-player iframe'));
-    checks.push('18 video links, written instructions, easier options and iframe cleanup (no playback claim)');
+    // The workout preflight is a separate entry point into the same guide.
+    await page.locator('.nav [data-tab="today"]').click();
+    await page.evaluate(()=>reviewWorkout());
+    await page.locator('[data-review-exercise="cheststretch"]').click();
+    assert(await page.locator('#preview-video-host').isVisible());
+    assert.equal(await page.locator('dialog[open]').count(),1);
+    assert.equal(await page.locator('#detail-dialog a[href]').count(),0);
+    await page.locator('[data-close="detail-dialog"]').click();
+    await page.locator('.nav [data-tab="moves"]').click();page.off('popup',countPopup);
+    checks.push('All 18 in-app previews and workout preflight: no external watch links, popups or provider iframes; written instructions, easier options and media cleanup. Real playback is tested separately.');
     await page.locator('[data-exercise="bridge"]').click();await page.locator('[data-favorite="bridge"]').click();await page.locator('[data-close="detail-dialog"]').click();
     await page.locator('[data-library-filter="saved"]').click();assert.equal(await page.locator('.move-card').count(),1);
     await page.locator('#exercise-search').fill('no matching exercise');assert.equal(await page.locator('.move-card').count(),0);
