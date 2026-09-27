@@ -774,7 +774,7 @@ function monitorWorkoutMedia(media,valid,token,clip){
     const time=media.getCurrentTime(),now=performance.now(),delta=time-previous;
     previous=time;
     if(!workoutPlayback.wanted||document.hidden){lastMotion=now;return}
-    if(media.getPlayerState()===1&&delta>0&&delta<1&&time>=(clip.start||0)&&(!clip.end||time<clip.end)){
+    if(media.getPlayerState()===1&&delta>.01&&delta<1&&time>=(clip.start||0)&&(!clip.end||time<clip.end)){
       lastMotion=now;clearTimeout(mediaLoadTimer);
       if(workoutPlayback.status!=='playing')workoutPlayback.event('playing',token);
     }else if(workoutPlayback.status==='playing'&&now-lastMotion>600){
@@ -1074,12 +1074,13 @@ async function startExercisePreview(id){
     on('error',()=>fail(Error('Video unavailable')));
     on('ended',()=>{if(valid()&&p.wanted){media.seek(clip.start);p.play()}});
     // Keep previews within the reviewed excerpt, including after manual replay.
-    let previous=-1;
+    let previous=-1,lastMotion=performance.now();
     p.watchdog=setInterval(()=>{
       if(!valid()||!p.wanted||document.hidden)return;
       const time=media.time();
       if(time>=clip.end){media.seek(clip.start);p.play()}
-      else if(time>=clip.start&&time>previous&&time-previous<1){clearTimeout(p.timeout);if(p.status!=='playing')previewStatus(p,'playing','Follow the demonstration · repeats automatically')}
+      else if(time>=clip.start&&time-previous>.01&&time-previous<1){lastMotion=performance.now();clearTimeout(p.timeout);if(p.status!=='playing')previewStatus(p,'playing','Follow the demonstration · repeats automatically')}
+      else if(p.status==='playing'&&performance.now()-lastMotion>600){previewStatus(p,'loading','Loading demonstration…');clearTimeout(p.timeout);p.timeout=setTimeout(()=>fail(Error('Playback stalled')),15000)}
       previous=time;
     },100);
   };
