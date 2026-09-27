@@ -1,0 +1,57 @@
+{
+  "date": "2026-09-22",
+  "sourceCommit": "6d193b3e292619289d32f500ba2ea638a9b40c33",
+  "scope": "Manual visual inspection of GitHub Actions screenshots. These are observations, not completed release approvals. Source clip introductions at 0/5s are unsuitable for a follow-along start.",
+  "observations": [
+    {
+      "id": "hinge",
+      "observed": "10s standing side-on, 20s hip hinge. Human, unweighted.",
+      "remaining": "Needs excerpt end review and final WebKit playback."
+    },
+    {
+      "id": "push",
+      "observed": "10s and 20s hands on wall. Human, wall variation.",
+      "remaining": "Need bent-elbow repetition frames and excerpt bounds."
+    },
+    {
+      "id": "squat",
+      "observed": "10s partial squat, 20s deeper bodyweight squat. Human.",
+      "remaining": "Cue must emphasize comfortable depth; review final excerpt."
+    },
+    {
+      "id": "bridge",
+      "observed": "10s supine setup, 20s knees bent and feet supported.",
+      "remaining": "Need raised-hip repetition frames before approving exact demonstration."
+    },
+    {
+      "id": "bird",
+      "observed": "10s hands-and-knees setup, 20s one leg extended.",
+      "remaining": "Need opposite arm-and-leg frames; do not approve leg-only sample as full bird-dog."
+    },
+    {
+      "id": "plankknees",
+      "observed": "20s forearms and knees supported, trunk raised. Human.",
+      "remaining": "Review excerpt bounds and final WebKit playback."
+    },
+    {
+      "id": "prone",
+      "observed": "10s/20s standing back view; shoulder-blade squeeze with elbows bent.",
+      "remaining": "Matches existing standing variation, not the legacy prone W."
+    },
+    {
+      "id": "calf",
+      "observed": "10s/20s standing two-leg heel raises with a stable table for support.",
+      "remaining": "App allows wall support; no weights or elevated step."
+    },
+    {
+      "id": "cat",
+      "observed": "10s/20s quadruped spinal movement. Human.",
+      "remaining": "Review both cow and cat positions within excerpt."
+    },
+    {
+      "id": "breath",
+      "observed": "20s supine, knees bent, hands at belly/chest. Human.",
+      "remaining": "Gentle breathing only; review excerpt and final WebKit playback."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 /* Checks the actual deployment artifact over HTTP at / and a GitHub Pages repository path. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),crypto=require('node:crypto'),vm=require('node:vm');
 const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist');
-const assets=['index.html','coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','coach.css','service-worker.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
+const assets=['index.html','coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','experience.js','experience.css','playback-gate.js','workout-videos.js','workout-player.js','workout-player.css','coach.css','service-worker.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
 const actual=fs.readdirSync(dist,{recursive:true}).filter(f=>fs.statSync(path.join(dist,f)).isFile()).sort();
 assert.deepEqual(actual,[...assets,'.nojekyll'].sort(),'Only release assets may be published');
 const hash=crypto.createHash('sha256');for(const file of assets)hash.update(file).update(fs.readFileSync(path.join(root,file)));

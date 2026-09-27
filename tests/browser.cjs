@@ -33,9 +33,10 @@ async function run(browserType,device,name,folder,basePath){
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Page overflows viewport');
       for(const dialog of await page.locator('dialog[open]').all())assert(await dialog.evaluate(e=>e.scrollWidth<=e.clientWidth+1),'Dialog overflows horizontally');
     };
-    const readiness=async()=>{await page.locator('#ready-energy').selectOption('normal');await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('no');await page.locator('#readiness-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#session-dialog').open)};
+    const readiness=async()=>{await page.locator('#ready-energy').selectOption('normal');await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('no');await page.locator('#readiness-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#session-dialog').open);await page.locator('#written-mode').click();assert.equal(await page.evaluate(()=>session.guidanceMode),'written')};
     await page.goto(url);await page.waitForSelector('[data-action="start"]');
     assert.equal(await page.evaluate(()=>state.coach.profile.days),4);await fit();
+    if(page.viewportSize().width<=720){const startBox=await page.locator('[data-action="start"]').boundingBox(),navBox=await page.locator('.nav').boundingBox();assert(startBox.y>=0&&startBox.y+startBox.height<=navBox.y-6,'The first workout action must be fully visible above mobile navigation');checks.push('Start workout fully visible in the initial iPhone browser viewport')}
     await page.screenshot({path:path.join(results,name+'-today.png'),fullPage:true});
     if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-today.jpg'),type:'jpeg',quality:55,scale:'css'});
     const originalViewport=page.viewportSize();
@@ -51,6 +52,23 @@ async function run(browserType,device,name,folder,basePath){
       await page.locator('[data-close="settings-dialog"]').click();
     }
     await page.setViewportSize(originalViewport);checks.push('all tabs at 320/375/390px, scrolling and settings controls');
+    await page.locator('.nav [data-tab="today"]').click();
+    const beforeSetup=await page.evaluate(()=>JSON.stringify(state));
+    await page.locator('[data-onboarding]').click();
+    await page.locator('[data-setup-key="goal"][data-setup-value="consistency"]').click();
+    await page.locator('[data-coach-close]').click();
+    assert.equal(await page.evaluate(()=>JSON.stringify(state)),beforeSetup,'Cancelled setup cannot change saved data');
+    await page.locator('[data-onboarding]').click();await page.locator('[data-setup-next]').click();
+    await page.locator('[data-setup-key="activity"][data-setup-value="unassessed"]').click();
+    if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-setup.jpg'),type:'jpeg',quality:50,scale:'css'});
+    await page.locator('[data-setup-next]').click();await page.locator('[data-setup-key="minutes"][data-setup-value="15"]').click();
+    await page.locator('[data-setup-key="days"][data-setup-value="3"]').click();await page.locator('[data-setup-next]').click();
+    assert.equal(await page.evaluate(()=>state.coach.profile.days),3);assert.equal(await page.evaluate(()=>state.coach.profile.minutes),15);
+    assert.equal(await page.evaluate(()=>state.coach.level),0);assert.equal(await page.evaluate(()=>state.experience.setupDone),true);
+    await page.reload();assert.equal(await page.evaluate(()=>state.coach.profile.days),3);
+    await page.locator('[data-onboarding]').click();await page.locator('[data-setup-next]').click();await page.locator('[data-setup-next]').click();
+    await page.locator('[data-setup-key="minutes"][data-setup-value="20"]').click();await page.locator('[data-setup-key="days"][data-setup-value="4"]').click();await page.locator('[data-setup-next]').click();
+    checks.push('guided setup: cancel is nonmutating, 15/20 minutes, 3/4 sessions, baseline and reload persistence');
     await page.locator('.nav [data-tab="moves"]').click();assert.equal(await page.locator('.move-card').count(),18);
     const movementIds=await page.evaluate(()=>PLANNED_EXERCISES);
     for(const id of movementIds){
@@ -65,17 +83,32 @@ async function run(browserType,device,name,folder,basePath){
     assert((await page.locator('#human-player iframe').getAttribute('src')).includes('iZ611vwxI4I'));
     await page.locator('[data-close="detail-dialog"]').click();await page.waitForFunction(()=>!document.querySelector('#human-player iframe'));
     checks.push('18 video links, written instructions, easier options and iframe cleanup (no playback claim)');
+    await page.locator('[data-exercise="bridge"]').click();await page.locator('[data-favorite="bridge"]').click();await page.locator('[data-close="detail-dialog"]').click();
+    await page.locator('[data-library-filter="saved"]').click();assert.equal(await page.locator('.move-card').count(),1);
+    await page.locator('#exercise-search').fill('no matching exercise');assert.equal(await page.locator('.move-card').count(),0);
+    await page.locator('#exercise-search').fill('bridge');assert.equal(await page.locator('.move-card').count(),1);
+    await page.locator('#exercise-search').fill('');await page.locator('[data-library-filter="all"]').click();assert.equal(await page.locator('.move-card').count(),18);
+    if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-library.jpg'),type:'jpeg',quality:50,scale:'css'});
+    await page.reload();await page.locator('.nav [data-tab="moves"]').click();await page.locator('[data-library-filter="saved"]').click();assert.equal(await page.locator('.move-card').count(),1);
+    await page.locator('[data-library-filter="all"]').click();checks.push('exercise search, filters, empty results, saved exercises and persistence');
     await page.locator('.nav [data-tab="plan"]').click();assert.equal(await page.locator('.day-tile').count(),28);
     await page.locator('.nav [data-tab="today"]').click();await page.locator('[data-review-workout]').click();
     assert(await page.locator('[data-review-exercise="march"]').count());await page.locator('.preview-moves [data-review-exercise="march"]').click();
     assert(await page.locator('#detail-dialog').evaluate(e=>e.open));await page.locator('[data-close="detail-dialog"]').click();
+    await page.evaluate(()=>{window.voiceTest=[];Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{cancel(){window.voiceTest.push({event:'cancel'})},speak(utterance){window.voiceTest.push({event:'speak',text:utterance.text})}}});window.SpeechSynthesisUtterance=class{constructor(text){this.text=text}}});
     await page.locator('[data-action="start"]').click();await page.locator('#ready-energy').selectOption('normal');
     await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('yes');
     await page.locator('#readiness-form button[type=submit]').click();assert.equal(await page.evaluate(()=>session),null);await readiness();
-    checks.push('28 days, preflight and pain gate');
+    checks.push('28 days, preflight and pain gate; explicit written mode for clock tests with third-party requests blocked');
     const initialRemaining=await page.evaluate(()=>session.remaining);
+    assert.equal(await page.evaluate(()=>window.voiceTest.filter(e=>e.event==='speak').length),0,'Spoken cues are opt-in');
+    await page.locator('#voice-toggle').click();assert.equal(await page.evaluate(()=>state.experience.voice),true);
     await page.locator('#timer-toggle').click();await page.waitForFunction(initial=>session.remaining<=initial-1000,initialRemaining);
+    assert.equal(await page.evaluate(()=>window.voiceTest.filter(e=>e.event==='speak').length),1);
+    assert((await page.evaluate(()=>window.voiceTest.find(e=>e.event==='speak').text)).includes('Easy march'));
     await page.locator('#timer-toggle').click();const pausedRemaining=await page.evaluate(()=>session.remaining);
+    assert.equal(await page.evaluate(()=>window.voiceTest.at(-1).event),'cancel');await page.locator('#voice-toggle').click();
+    assert.equal(await page.evaluate(()=>state.experience.voice),false);checks.push('spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)');
     await page.waitForTimeout(350);assert.equal(await page.evaluate(()=>session.remaining),pausedRemaining);
     await page.locator('#session-exit').click();const remaining=await page.evaluate(()=>state.draft.remaining);
     await page.reload();await page.locator('[data-action="resume"]').click();await readiness();assert.equal(await page.evaluate(()=>session.remaining),remaining);
@@ -92,6 +125,9 @@ async function run(browserType,device,name,folder,basePath){
     await page.locator('[data-feeling="easy"]').click();await page.locator('#finish-note').fill('Browser-verified check-in');await page.locator('#save-checkin').click();
     assert.equal(await page.evaluate(()=>state.completed[1].mode),'full');assert.equal(await page.evaluate(()=>state.coach.easyRun),1);
     await page.locator('.nav [data-tab="progress"]').click();await fit();
+    assert.equal(await page.evaluate(()=>experienceStats().sessions),1);
+    assert((await page.locator('.activity-bars').getAttribute('aria-label')).includes('Week 1:'));
+    if(name==='webkit-iphone-dist-subpath')await page.screenshot({path:path.join(results,'iphone-progress.jpg'),type:'jpeg',quality:50,scale:'css'});
     checks.push('automatic completion and saved feedback');
     await page.locator('#settings-open').click();
     const downloadPromise=page.waitForEvent('download');await page.locator('#export-button').click();const download=await downloadPromise;
@@ -110,6 +146,15 @@ async function run(browserType,device,name,folder,basePath){
     await page.waitForFunction(()=>!document.querySelector('#settings-dialog').open);
     assert.equal(await page.evaluate(()=>state.coach.profile.days),4);assert.equal(await page.evaluate(()=>state.name),parsed.name);
     await page.reload();assert.equal(await page.evaluate(()=>state.completed[1].note),'Browser-verified check-in');
+    assert.equal(await page.evaluate(()=>state.experience.favorites.includes('bridge')),true);
+    await page.locator('#settings-open').click();
+    const legacy={...parsed};delete legacy.experience;
+    await page.locator('#import-file').setInputFiles({name:'legacy-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(legacy))});
+    await page.waitForFunction(()=>!document.querySelector('#settings-dialog').open);
+    assert.equal(await page.evaluate(()=>state.completed[1].note),'Browser-verified check-in');assert.equal(await page.evaluate(()=>state.experience.favorites.length),0);
+    await page.locator('#settings-open').click();await page.locator('#import-file').setInputFiles({name:'backup.json',mimeType:'application/json',buffer:backup});
+    await page.waitForFunction(()=>!document.querySelector('#settings-dialog').open);assert.equal(await page.evaluate(()=>state.experience.favorites.includes('bridge')),true);
+    checks.push('old backups migrate without losing check-ins; upgraded backups restore favorites and setup');
     checks.push('downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload');
     const manifestResponse=await context.request.get(url+'manifest.webmanifest');assert.equal(manifestResponse.status(),200);
     const manifest=await manifestResponse.json();assert.equal(new URL(manifest.scope,url).href,url);assert(new URL(manifest.start_url,url).href.startsWith(url));
@@ -118,6 +163,7 @@ async function run(browserType,device,name,folder,basePath){
     await page.evaluate(()=>Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>setTimeout(()=>reject(Error('Service worker readiness timed out')),15000))]));await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
     assert.equal(await page.evaluate(async()=>(await navigator.serviceWorker.ready).scope),url);
     checks.push('manifest, icons and exact service-worker scope');
+    await require('./player-browser.cjs')(page,checks);
     // Remove third-party interception before testing the browser's actual offline stack.
     await context.unrouteAll({behavior:'wait'});
     // First verify the browser offline event and app indicator on the loaded page.
@@ -133,9 +179,9 @@ async function run(browserType,device,name,folder,basePath){
     // Back up saved progress, then use a fresh local training fixture to test offline exercise UI.
     await page.evaluate(()=>{state.completed={};state.draft=null;selected=1;persist();render()});
     await page.locator('[data-action="start"]').click();await readiness();await page.locator('#timer-toggle').click();
-    await page.waitForFunction(()=>session.elapsed>=1);await page.locator('#session-how').click();
-    assert(await page.locator('#detail-dialog .steps').isVisible());assert.equal(await page.evaluate(()=>session.paused),true);
-    await page.locator('[data-close="detail-dialog"]').click();await page.locator('#session-exit').click();
+    await page.waitForFunction(()=>session.elapsed>=1);await page.locator('#player-instructions summary').click();
+    assert(await page.locator('#player-instructions .steps').isVisible());assert.equal(await page.evaluate(()=>session.paused),true);
+    await page.locator('#session-exit').click();
     await page.reload();assert(await page.locator('[data-action="resume"]').count());await context.setOffline(false);
     checks.push('offline event indicator; disconnected origin verified; offline reload, retained progress, workout timer, written guidance and draft persistence');
     assert.deepEqual(errors,[]);assert.deepEqual(failedAssets,[]);entry.status='passed';

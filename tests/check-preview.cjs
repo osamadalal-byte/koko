@@ -9,7 +9,7 @@ function fixture(){
  class El{
   constructor(tag,attrs={},owner=null){this.tagName=tag;this.attrs=attrs;this.owner=owner;this.dataset={};this.events={};this.hidden='hidden' in attrs;this.value='';this.open=false;this._html='';this.textContent='';this.classList={toggle(){}};for(const [k,v] of Object.entries(attrs))if(k.startsWith('data-'))this.dataset[k.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=v;nodes.add(this)}
   get id(){return this.attrs.id}set id(v){this.attrs.id=v}hasAttribute(k){return k in this.attrs}appendChild(el){el.owner=this;return el}insertAdjacentHTML(pos,s){parse(s,this)}set innerHTML(s){for(const n of [...nodes]){let p=n.owner;while(p){if(p===this){nodes.delete(n);break}p=p.owner}}this._html=s;parse(s,this)}get innerHTML(){return this._html}
-  setAttribute(k,v){this.attrs[k]=v}removeAttribute(k){delete this.attrs[k]}getAttribute(k){return this.attrs[k]??null}addEventListener(k,cb){this.events[k]=cb}showModal(){this.open=true}close(){this.open=false;if(this.events.close)this.events.close()}click(){}closest(s){return s==='button'&&this.tagName==='button'?this:null}
+  setAttribute(k,v){this.attrs[k]=v}removeAttribute(k){delete this.attrs[k]}getAttribute(k){return this.attrs[k]??null}addEventListener(k,cb){const previous=this.events[k];this.events[k]=previous?(...args)=>{previous(...args);cb(...args)}:cb}showModal(){this.open=true}close(){this.open=false;if(this.events.close)this.events.close()}click(){}closest(s){return s==='button'&&this.tagName==='button'?this:null}
  }
  function parse(s,owner){for(const m of s.matchAll(/<([a-z][\w-]*)\b([^>]*)>/gi)){const a={};for(const x of m[2].matchAll(/([\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))a[x[1]]=x[2]??x[3]??x[4]??'';new El(m[1],a,owner)}}
  function match(n,s){if(s[0]==='#')return n.attrs.id===s.slice(1);if(s[0]==='['){const tokens=[...s.matchAll(/\[([^=\]]+)(?:=["']?([^\]"']+)["']?)?\]/g)];return tokens.every(m=>m[2]===undefined?m[1] in n.attrs:n.attrs[m[1]]===m[2])}return false}
@@ -22,6 +22,7 @@ function fixture(){
 }
 
 let f=fixture();const run=s=>f.run(s),click=s=>f.click(s),field=(s,v)=>{const el=f.doc.querySelector(s);assert(el,'Field exists: '+s);el.value=v},submit=s=>{const target=f.doc.querySelector(s);assert(target,'Form exists: '+s);f.listeners.submit.forEach(fn=>fn({target,preventDefault(){}}))};
+function toggleWritten(){if(run('session && session.guidanceMode!=="written"')&&f.doc.querySelector("#written-mode"))click("#written-mode");click("#timer-toggle")}
 const profile=JSON.parse(run('JSON.stringify(state.coach.profile)'));
 assert.equal(profile.age,35);assert.equal(profile.days,4);assert.equal(profile.minutes,20);assert.equal(profile.activity,'unassessed');assert.equal(profile.device,'iphone');assert.equal(profile.health,'clear');assert.equal(run('state.coach.level'),0);assert.equal(run('state.autoAdvance'),true);
 let plansChecked=0;
@@ -48,13 +49,13 @@ run('state.coach.profile.days=4;state.coach.profile.minutes=20;state.coach.level
 const normalWork=run('recommendation(1).work');run("currentReadiness={energy:'low',soreness:'none',pain:'no'}");assert(run('recommendation(1).work')<normalWork,'Low energy reduces the easiest workload');run('currentReadiness={}');
 click('[data-action="start"]');field('#ready-energy','normal');field('#ready-soreness','none');field('#ready-pain','yes');submit('#readiness-form');assert.equal(run('session'),null);assert(!f.doc.querySelector('#readiness-error').hidden);
 field('#ready-pain','no');submit('#readiness-form');assert.equal(run('session.coachPlan.level'),0);assert.equal(run('session.daySnapshot.type'),'strength');
-click('#timer-toggle');monoNow+=run('session.remaining');run('pause()');assert.equal(run('session.index'),0,'Explicit pause at boundary does not advance');assert.equal(run('session.paused'),true);assert.equal(run('session.awaiting'),true);
-click('#timer-toggle');assert.equal(run('session.index'),1);assert.equal(run('session.paused'),false);
+toggleWritten();monoNow+=run('session.remaining');run('pause()');assert.equal(run('session.index'),0,'Explicit pause at boundary does not advance');assert.equal(run('session.paused'),true);assert.equal(run('session.awaiting'),true);
+toggleWritten();assert.equal(run('session.index'),1);assert.equal(run('session.paused'),false);
 monoNow+=run('session.remaining')+200;run('tick()');assert.equal(run('session.index'),2,'Timer automatically advances while visible');assert.equal(run('session.paused'),false);
 monoNow+=2000;run('tick()');click('#session-exit');const remaining=run('state.draft.remaining'),snapshot=run('JSON.stringify(state.draft.steps)');
 f=fixture();click('[data-action="resume"]');field('#ready-energy','normal');field('#ready-soreness','none');field('#ready-pain','no');submit('#readiness-form');assert.equal(run('session.remaining'),remaining);assert.equal(run('JSON.stringify(session.steps)'),snapshot);
-click('#timer-toggle');f.doc.hidden=true;monoNow+=1000;f.listeners.visibilitychange.forEach(fn=>fn());assert.equal(run('session.paused'),true);f.doc.hidden=false;
-let guard=0;while(!f.doc.querySelector('#save-checkin')&&guard++<100){if(run('session.paused'))click('#timer-toggle');monoNow+=run('session.remaining')+200;run('tick()')}
+toggleWritten();f.doc.hidden=true;monoNow+=1000;f.listeners.visibilitychange.forEach(fn=>fn());assert.equal(run('session.paused'),true);f.doc.hidden=false;f.listeners.visibilitychange.forEach(fn=>fn());
+let guard=0;while(!f.doc.querySelector('#save-checkin')&&guard++<100){if(run('session.paused'))toggleWritten();monoNow+=run('session.remaining')+200;run('tick()')}
 assert(guard<100);assert(f.doc.querySelector('#coach-pain'));field('#finish-note','Controlled reps');click('[data-feeling="easy"]');click('#save-checkin');assert.equal(run('state.coach.easyRun'),1);assert.equal(run('state.completed[1].seconds'),1040);assert.equal(run('state.completed[1].coachPlan.level'),0);assert.equal(run('state.completed[1].daySnapshot.type'),'strength');
 click('[data-tab="progress"]');assert(f.doc.querySelector('#view').innerHTML.includes('Your last 7 days'));
 click('[data-coach-measure]');field('#measure-kind','waist');field('#measure-value','90.5');field('#measure-date','2026-09-14');submit('#measure-form');const mid=run('state.coach.measures[0].id');f=fixture();assert.equal(run('state.coach.measures[0].id'),mid);

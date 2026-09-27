@@ -1,0 +1,34 @@
+
+> form28-strength-mobility@1.2.0 test
+> node tests/check-personal.cjs && node tests/service-worker.cjs && node tests/playback-gate.cjs && node tests/player-integration.cjs
+
+{
+  "result": "PASS",
+  "scope": "Node DOM fixture and pure coaching rules; no real browser/iPhone playback test",
+  "plansChecked": 280,
+  "checks": [
+    "personal preferences applied once",
+    "all 28-day plans stay within selected total time",
+    "3 strength + optional 1 mobility",
+    "warm-up and cool-down retained",
+    "low energy eases baseline",
+    "pain gate",
+    "automatic timer and boundary pause",
+    "background pause",
+    "exact resume after reload",
+    "complete session feedback and history",
+    "progress measurements persist",
+    "verified bridge embed and close cleanup",
+    "all 18 current-plan movements have video sources",
+    "new exercise variation resets baseline",
+    "local-file installation message",
+    "gradual progression without progression from lighter sessions"
+  ]
+}
+PASS: preflight guidance, cycle archival and reload, backup validation, and recovery spacing across cycle boundaries.
+PASS: actual backup import restores profile and cycle history; invalid archive leaves existing progress intact.
+PASS: screen-awake lifecycle, unsupported/declined fallback, and pending request cleanup.
+PASS: scoped cache lifecycle, complete asset manifest, offline navigation, no third-party/private-data caching, and no HTML fallback for JavaScript.
+PASS: media-gated clock, buffering, explicit pause, background, looping, autoplay block, errors, stale callbacks, close cleanup and written/rest mode. Catalog structure checked; no live playback or visual matching claim.
+PASS: application + simulated media API: day entry, real timer integration, buffering, pause/background races, looping, autoplay refusal, retry generation, automatic warm-up/work/rest/cool-down, exact saved seconds, unknown legacy clip and explicit written fallback. No live playback claim.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

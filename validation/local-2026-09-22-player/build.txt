@@ -1,0 +1,6 @@
+
+> form28-strength-mobility@1.2.0 build
+> node scripts/build.cjs
+
+Built 19 static assets and the standalone preview.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

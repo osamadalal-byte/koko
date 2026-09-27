@@ -1,15 +1,16 @@
 # FORM / 28
 
-A no-equipment strength and mobility PWA: three strength sessions plus an optional mobility session each week. Guided sessions include preparation and stretching within a 15–20 minute limit. The starting workload is conservative and changes with readiness and workout feedback.
+A personal strength and mobility PWA with three weekly strength sessions and an optional mobility session. The conservative starting plan includes warm-up and cool-down within a 15/20-minute guided budget. Pauses and video loading add time.
 
-**Release candidate — not yet deployed or fully verified.** Progress stays in this browser, with JSON backup/restore and a cycle archive. There is no account or cloud synchronization. External video guides require internet.
+The **1.2 continuous-player upgrade** is in [PR #2](https://github.com/osamadalal-byte/koko/pull/2). It is not deployed yet. The [existing app](https://osamadalal-byte.github.io/koko/) remains on the earlier release until this upgrade is merged and published.
 
+Choose a training day, complete the short readiness check, and follow warm-up, exercise/rest and cool-down videos in one screen. The timer, next movement, Pause, Skip and technique instructions stay beside the video. Progress, feedback, backups and cycle history remain local to your browser; there is no account or cloud synchronization.
+
+- [Upgrade details and verification status](UPGRADE-1.2.md)
 - [Hebrew guide](README-HE.md)
-- [Build and deployment details](README.txt)
-- [Validation record and limitations](VALIDATION-HE.md)
-- [Local validation evidence](validation/local-2026-09-16/)
+- [Build details](README.txt)
 
-## Run the checks
+## Check the release
 
 Use Node 20 or later:
 
@@ -21,16 +22,20 @@ npm run test:browser
 npm run build
 node tests/check-preview.cjs
 npm run test:dist
+node scripts/audit-inline-videos.cjs
+npm run test:video-release
 ```
 
-`test:browser` builds and checks Chromium and WebKit at source root, built root and `/koko/`, including narrow layouts, timer, backup/restore and offline use. WebKit iPhone emulation is not a physical device test. External video playback is a separate check.
+The browser suite runs Chromium and WebKit at the source root, built root and `/koko/`, covering narrow layouts, controls, progress, backup/restore and actual service-worker offline loading. Its simulated media scenarios are explicitly labeled. The separate inline audit plays every real provider clip, checks media/clock pause and resume, loops each selected excerpt, and completes an automatic warm-up/work/rest/cool-down sequence.
 
-All six browser scenarios and the build/Node/artifact checks passed in [GitHub Actions](https://github.com/osamadalal-byte/koko/actions/runs/35104289642). Offline loading uses a genuinely disconnected origin plus a failing uncached-request assertion; an independent control reproduces WebKit’s Playwright offline-emulation error. See [the evidence](validation/github-2026-09-16/). Local engine-installation failures are retained as historical records. Full video matching and physical iPhone checks remain incomplete.
+The release gate requires visual-review evidence and matching real-browser playback records for the exact URLs, variants and excerpt boundaries. WebKit iPhone emulation is not a physical iPhone test. Videos require internet; explicit written guidance remains available offline.
 
 ## Publish
 
-The **Test and publish FORM 28** workflow is manual and publishes only `dist/`, after all checks pass. Merge [PR #1](https://github.com/osamadalal-byte/koko/pull/1), then in Settings → Pages select GitHub Actions as the source and run that workflow on main. The connected tools cannot configure Pages or dispatch the workflow; automatic approval review rejected auto-merge. Use the URL reported by a successful deployment; no live URL has been verified yet.
+Merge [PR #2](https://github.com/osamadalal-byte/koko/pull/2), then open **Actions → Test and publish FORM 28 → Run workflow → main**. Pages is already configured for this repository. The connected tools can upload commits but cannot dispatch this manual workflow.
 
-On iPhone, open the deployed HTTPS URL in Safari → Share → Add to Home Screen → Open as Web App (if shown) → Add. First open online and wait for the offline-ready message. Videos are not stored offline.
+The workflow publishes only `dist/` after the release checks pass. A separate post-publication job compares every deployed file with the build, checks HTTPS, the manifest and service-worker scope/cache in Chromium and WebKit, and repeats the real video audit on the live `/koko/` origin. Publication is not fully verified until that job passes.
 
-The workout content and feedback rules are an original starter plan. External sources do not endorse the app. No third-party video files are redistributed.
+On iPhone: open the HTTPS app in Safari → Share → Add to Home Screen → Open as Web App (if shown) → Add. Open online first. After an upgrade, close and reopen the app to load the new installed release. Keep a JSON backup of important progress.
+
+External video sources do not endorse this app. Third-party video files are streamed from their public providers and are not bundled, rehosted or cached for offline use.

@@ -1,0 +1,34 @@
+'use strict';
+const assert=require('node:assert/strict'),Gate=require('../playback-gate.js');
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+let running=false,playCalls=0,pauseCalls=0,replays=0;
+const gate=new Gate({start(){running=true},stop(){running=false},play(){playCalls++},pause(){pauseCalls++},replay(){replays++}});
+const first=gate.select('video');gate.play();
+assert.equal(running,false,'Loading cannot spend exercise time');assert.equal(playCalls,1);
+gate.event('playing',first);assert.equal(running,true);
+gate.event('buffering',first);assert.equal(running,false);assert.equal(gate.wanted,true);
+gate.event('playing',first);assert.equal(running,true,'Buffer recovery resumes only requested playback');
+gate.pause();assert.equal(running,false);gate.event('playing',first);assert.equal(running,false,'Late PLAYING after pause is rejected');assert(pauseCalls>0);
+gate.play();gate.event('playing',first);gate.visibility(true);assert.equal(running,false);
+gate.event('playing',first);assert.equal(running,false,'Hidden page never spends time');
+gate.visibility(false);assert.equal(running,false,'Foreground does not implicitly resume');
+gate.play();gate.event('playing',first);gate.event('ended',first);assert.equal(replays,1);assert.equal(running,false,'Video ending loops the demonstration, not the workout');
+gate.event('playing',first);assert.equal(running,true);
+gate.event('blocked',first);assert.equal(running,false);assert.equal(gate.wanted,false);
+gate.event('playing',first);assert.equal(running,false,'Autoplay refusal needs a fresh user action');
+gate.play();gate.event('playing',first);const pausesBeforeError=pauseCalls;gate.event('error',first);assert.equal(running,false);assert.equal(gate.wanted,false);assert.equal(pauseCalls,pausesBeforeError+1,'Failure pauses media as well as the clock');
+const next=gate.select('video');gate.play();gate.event('playing',first);assert.equal(running,false,'A previous video cannot start the next interval');
+gate.event('error',first);assert.equal(gate.status,'loading','Stale failure cannot cancel the new player');
+gate.event('playing',next);assert.equal(running,true);
+gate.close();gate.event('playing',next);assert.equal(running,false,'Closed workouts ignore all late callbacks');
+gate.select('timer');gate.play();assert.equal(running,true,'Explicit written mode and rest do not depend on video');
+gate.event('buffering');assert.equal(running,true,'Video callbacks cannot interrupt written mode');
+gate.pause();assert.equal(running,false);
+const catalog=vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../workout-videos.js'),'utf8')+'\nWORKOUT_VIDEOS');
+assert.equal(Object.keys(catalog).length,18);
+for(const [id,clip] of Object.entries(catalog)){
+  assert.match(clip.videoId,/^[a-zA-Z0-9_-]{11}$/,id);assert.match(clip.source,/^https:\/\//);
+  assert.equal(typeof clip.variant,'string');assert(Number.isFinite(clip.start)&&clip.start>=0);
+  assert.equal(typeof clip.review.matched,'boolean');assert.equal(typeof clip.review.playsInline,'boolean');
+}
+console.log('PASS: media-gated clock, buffering, explicit pause, background, looping, autoplay block, errors, stale callbacks, close cleanup and written/rest mode. Catalog structure checked; no live playback or visual matching claim.');

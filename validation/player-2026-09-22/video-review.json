@@ -1,0 +1,2799 @@
+{
+  "date": "2026-09-22",
+  "testedSourceCommit": "42a63b1fac13daa33ea4f12ce23c4686713fc546",
+  "runUrls": [
+    "https://github.com/osamadalal-byte/koko/actions/runs/35719378548",
+    "https://github.com/osamadalal-byte/koko/actions/runs/35719375473"
+  ],
+  "scope": "Codex visual review of rendered frame samples at 2-second intervals and excerpt boundaries, together with actual Chromium/WebKit playback observations. Not a physical-iPhone, full audio, or clinician technique assessment.",
+  "flows": {
+    "chromium": {
+      "phases": [
+        "Warm-up",
+        "Work",
+        "Rest",
+        "Cool-down"
+      ],
+      "dialogs": 1,
+      "path": "/koko/",
+      "passed": true
+    },
+    "webkit": {
+      "phases": [
+        "Warm-up",
+        "Work",
+        "Rest",
+        "Cool-down"
+      ],
+      "dialogs": 1,
+      "path": "/koko/",
+      "passed": true
+    }
+  },
+  "clips": [
+    {
+      "id": "march",
+      "videoId": "71550880-a7cf-402d-9ada-938438d4ba38",
+      "src": "https://media.physitrack.com/exercises/71550880-a7cf-402d-9ada-938438d4ba38/en/video_1280x720.mp4",
+      "source": "https://na.physitrack.com/home-exercise-video/standing-marching",
+      "variant": "Standing march, comfortable knee lift; optional wall support",
+      "start": 2,
+      "end": 16,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human standing alternating knee lifts; front and side views. Optional wall support and lower comfortable knee height are explicit easier choices in the written guide.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "march",
+          "videoId": "71550880-a7cf-402d-9ada-938438d4ba38",
+          "src": "https://media.physitrack.com/exercises/71550880-a7cf-402d-9ada-938438d4ba38/en/video_1280x720.mp4",
+          "source": "https://na.physitrack.com/home-exercise-video/standing-marching",
+          "start": 2,
+          "end": 16,
+          "played": true,
+          "before": {
+            "time": 2.025142,
+            "video": {
+              "video_id": "71550880-a7cf-402d-9ada-938438d4ba38",
+              "title": "Standing marching",
+              "source": "https://media.physitrack.com/exercises/71550880-a7cf-402d-9ada-938438d4ba38/en/video_1280x720.mp4",
+              "currentSrc": "https://media.physitrack.com/exercises/71550880-a7cf-402d-9ada-938438d4ba38/en/video_1280x720.mp4"
+            },
+            "remaining": 120000,
+            "duration": 22.612993
+          },
+          "after": {
+            "time": 3.790555,
+            "state": 1,
+            "remaining": 118334.5
+          },
+          "screens": [
+            {
+              "file": "chromium-player-march.jpg",
+              "time": 3.790555
+            }
+          ],
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-march-2.jpg",
+              "time": 2.71652
+            },
+            {
+              "file": "chromium-march-4.jpg",
+              "time": 4.465693
+            },
+            {
+              "file": "chromium-march-6.jpg",
+              "time": 6.527944
+            },
+            {
+              "file": "chromium-march-8.jpg",
+              "time": 8.587718
+            },
+            {
+              "file": "chromium-march-10.jpg",
+              "time": 10.526101
+            },
+            {
+              "file": "chromium-march-12.jpg",
+              "time": 12.520817
+            },
+            {
+              "file": "chromium-march-14.jpg",
+              "time": 14.555249
+            },
+            {
+              "file": "chromium-march-15.2.jpg",
+              "time": 15.82228
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-march-sheet-1.jpg",
+              "time": 2.71652
+            },
+            {
+              "file": "chromium-march-sheet-2.jpg",
+              "time": 14.555249
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "march",
+          "videoId": "71550880-a7cf-402d-9ada-938438d4ba38",
+          "src": "https://media.physitrack.com/exercises/71550880-a7cf-402d-9ada-938438d4ba38/en/video_1280x720.mp4",
+          "source": "https://na.physitrack.com/home-exercise-video/standing-marching",
+          "start": 2,
+          "end": 16,
+          "played": true,
+          "before": {
+            "time": 2.172820250666669,
+            "video": {
+              "video_id": "71550880-a7cf-402d-9ada-938438d4ba38",
+              "title": "Standing marching",
+              "source": "https://media.physitrack.com/exercises/71550880-a7cf-402d-9ada-938438d4ba38/en/video_1280x720.mp4",
+              "currentSrc": "https://media.physitrack.com/exercises/71550880-a7cf-402d-9ada-938438d4ba38/en/video_1280x720.mp4"
+            },
+            "remaining": 120000,
+            "duration": 22.6
+          },
+          "after": {
+            "time": 3.9755285003333434,
+            "state": 1,
+            "remaining": 118369
+          },
+          "screens": [
+            {
+              "file": "webkit-player-march.jpg",
+              "time": 3.9755285003333434
+            }
+          ],
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-march-2.jpg",
+              "time": 2.65438941666666
+            },
+            {
+              "file": "webkit-march-4.jpg",
+              "time": 4.546732542000006
+            },
+            {
+              "file": "webkit-march-6.jpg",
+              "time": 6.597560208666648
+            },
+            {
+              "file": "webkit-march-8.jpg",
+              "time": 8.57641566700001
+            },
+            {
+              "file": "webkit-march-10.jpg",
+              "time": 10.637190708666653
+            },
+            {
+              "file": "webkit-march-12.jpg",
+              "time": 12.611623708666674
+            },
+            {
+              "file": "webkit-march-14.jpg",
+              "time": 14.889653083999994
+            },
+            {
+              "file": "webkit-march-15.2.jpg",
+              "time": 15.81930079166668
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-march-sheet-1.jpg",
+              "time": 2.65438941666666
+            },
+            {
+              "file": "webkit-march-sheet-2.jpg",
+              "time": 14.889653083999994
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "circles",
+      "videoId": "a267a10f-9cea-4312-abd0-402efdfa9bf7",
+      "src": "https://media.physitrack.com/exercises/a267a10f-9cea-4312-abd0-402efdfa9bf7/en/video_1280x720.mp4",
+      "source": "https://na.physitrack.com/home-exercise-video/shoulder-rolls",
+      "variant": "Standing shoulder rolls, relaxed arms",
+      "start": 2,
+      "end": 12,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human stands with arms relaxed and rolls the shoulders. No seated variation or equipment use.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "circles",
+          "videoId": "a267a10f-9cea-4312-abd0-402efdfa9bf7",
+          "src": "https://media.physitrack.com/exercises/a267a10f-9cea-4312-abd0-402efdfa9bf7/en/video_1280x720.mp4",
+          "source": "https://na.physitrack.com/home-exercise-video/shoulder-rolls",
+          "start": 2,
+          "end": 12,
+          "played": true,
+          "before": {
+            "time": 2.262727,
+            "video": {
+              "video_id": "a267a10f-9cea-4312-abd0-402efdfa9bf7",
+              "title": "Standing shoulder rolls",
+              "source": "https://media.physitrack.com/exercises/a267a10f-9cea-4312-abd0-402efdfa9bf7/en/video_1280x720.mp4",
+              "currentSrc": "https://media.physitrack.com/exercises/a267a10f-9cea-4312-abd0-402efdfa9bf7/en/video_1280x720.mp4"
+            },
+            "remaining": 120000,
+            "duration": 15.76
+          },
+          "after": {
+            "time": 4.065576,
+            "state": 1,
+            "remaining": 118351
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-circles-2.jpg",
+              "time": 2.49748
+            },
+            {
+              "file": "chromium-circles-4.jpg",
+              "time": 4.461201
+            },
+            {
+              "file": "chromium-circles-6.jpg",
+              "time": 6.465119
+            },
+            {
+              "file": "chromium-circles-8.jpg",
+              "time": 8.405822
+            },
+            {
+              "file": "chromium-circles-10.jpg",
+              "time": 10.505406
+            },
+            {
+              "file": "chromium-circles-11.2.jpg",
+              "time": 11.70549
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-circles-sheet-1.jpg",
+              "time": 2.49748
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "circles",
+          "videoId": "a267a10f-9cea-4312-abd0-402efdfa9bf7",
+          "src": "https://media.physitrack.com/exercises/a267a10f-9cea-4312-abd0-402efdfa9bf7/en/video_1280x720.mp4",
+          "source": "https://na.physitrack.com/home-exercise-video/shoulder-rolls",
+          "start": 2,
+          "end": 12,
+          "played": true,
+          "before": {
+            "time": 2.203890459000002,
+            "video": {
+              "video_id": "a267a10f-9cea-4312-abd0-402efdfa9bf7",
+              "title": "Standing shoulder rolls",
+              "source": "https://media.physitrack.com/exercises/a267a10f-9cea-4312-abd0-402efdfa9bf7/en/video_1280x720.mp4",
+              "currentSrc": "https://media.physitrack.com/exercises/a267a10f-9cea-4312-abd0-402efdfa9bf7/en/video_1280x720.mp4"
+            },
+            "remaining": 120000,
+            "duration": 15.76
+          },
+          "after": {
+            "time": 4.006820500666663,
+            "state": 1,
+            "remaining": 118369
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-circles-2.jpg",
+              "time": 2.6110571253333497
+            },
+            {
+              "file": "webkit-circles-4.jpg",
+              "time": 4.563318958333308
+            },
+            {
+              "file": "webkit-circles-6.jpg",
+              "time": 6.540483083666674
+            },
+            {
+              "file": "webkit-circles-8.jpg",
+              "time": 8.425956291999999
+            },
+            {
+              "file": "webkit-circles-10.jpg",
+              "time": 10.617608833666656
+            },
+            {
+              "file": "webkit-circles-11.2.jpg",
+              "time": 11.792827875000013
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-circles-sheet-1.jpg",
+              "time": 2.6110571253333497
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "hinge",
+      "videoId": "qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo",
+      "src": "https://stream.mux.com/qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/hip-hinge/",
+      "variant": "Standing unweighted hip hinge",
+      "start": 26,
+      "end": 44,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human unweighted hip hinge with soft knees; standing, hips-back lowering and return are visible.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "hinge",
+          "videoId": "qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo",
+          "src": "https://stream.mux.com/qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/hip-hinge/",
+          "start": 26,
+          "end": 44,
+          "played": true,
+          "before": {
+            "time": 26.24278,
+            "video": {
+              "video_id": "qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo",
+              "title": "How to Do a Hip Hinge: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo/medium.mp4",
+              "currentSrc": "https://stream.mux.com/qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 48.15
+          },
+          "after": {
+            "time": 28.004356,
+            "state": 1,
+            "remaining": 118379.5
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-hinge-26.jpg",
+              "time": 26.522628
+            },
+            {
+              "file": "chromium-hinge-28.jpg",
+              "time": 28.44477
+            },
+            {
+              "file": "chromium-hinge-30.jpg",
+              "time": 30.500993
+            },
+            {
+              "file": "chromium-hinge-32.jpg",
+              "time": 32.48146
+            },
+            {
+              "file": "chromium-hinge-34.jpg",
+              "time": 34.534777
+            },
+            {
+              "file": "chromium-hinge-36.jpg",
+              "time": 36.504883
+            },
+            {
+              "file": "chromium-hinge-38.jpg",
+              "time": 38.525852
+            },
+            {
+              "file": "chromium-hinge-40.jpg",
+              "time": 40.548884
+            },
+            {
+              "file": "chromium-hinge-42.jpg",
+              "time": 42.488866
+            },
+            {
+              "file": "chromium-hinge-43.2.jpg",
+              "time": 43.680255
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-hinge-sheet-1.jpg",
+              "time": 26.522628
+            },
+            {
+              "file": "chromium-hinge-sheet-2.jpg",
+              "time": 38.525852
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "hinge",
+          "videoId": "qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo",
+          "src": "https://stream.mux.com/qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/hip-hinge/",
+          "start": 26,
+          "end": 44,
+          "played": true,
+          "before": {
+            "time": 26.26224245866667,
+            "video": {
+              "video_id": "qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo",
+              "title": "How to Do a Hip Hinge: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo/medium.mp4",
+              "currentSrc": "https://stream.mux.com/qSkGC596TLeguMh9Iq8pqumZi47my3AiUGejudrnJqo/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 48.148
+          },
+          "after": {
+            "time": 28.06582916633335,
+            "state": 1,
+            "remaining": 118382
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-hinge-26.jpg",
+              "time": 26.614314792333328
+            },
+            {
+              "file": "webkit-hinge-28.jpg",
+              "time": 28.567722584000006
+            },
+            {
+              "file": "webkit-hinge-30.jpg",
+              "time": 30.632137583666683
+            },
+            {
+              "file": "webkit-hinge-32.jpg",
+              "time": 32.60554941699999
+            },
+            {
+              "file": "webkit-hinge-34.jpg",
+              "time": 34.54448724933335
+            },
+            {
+              "file": "webkit-hinge-36.jpg",
+              "time": 36.59277441666668
+            },
+            {
+              "file": "webkit-hinge-38.jpg",
+              "time": 38.56786508299999
+            },
+            {
+              "file": "webkit-hinge-40.jpg",
+              "time": 40.63282379199999
+            },
+            {
+              "file": "webkit-hinge-42.jpg",
+              "time": 42.592129749666675
+            },
+            {
+              "file": "webkit-hinge-43.2.jpg",
+              "time": 43.756440291666664
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-hinge-sheet-1.jpg",
+              "time": 26.614314792333328
+            },
+            {
+              "file": "webkit-hinge-sheet-2.jpg",
+              "time": 38.56786508299999
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "side",
+      "videoId": "O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ",
+      "src": "https://stream.mux.com/O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/standing-side-leg-raise/",
+      "variant": "Supported standing side leg raise",
+      "start": 17,
+      "end": 30,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human standing side leg lift on flat floor with light stable-surface support; written guide offers a wall and alternating sides.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "side",
+          "videoId": "O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ",
+          "src": "https://stream.mux.com/O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/standing-side-leg-raise/",
+          "start": 17,
+          "end": 30,
+          "played": true,
+          "before": {
+            "time": 17.203933,
+            "video": {
+              "video_id": "O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ",
+              "title": "Hip abduction in standing",
+              "source": "https://stream.mux.com/O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ/medium.mp4",
+              "currentSrc": "https://stream.mux.com/O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 49.515333
+          },
+          "after": {
+            "time": 19.002131,
+            "state": 1,
+            "remaining": 118173.4
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-side-17.jpg",
+              "time": 17.47336
+            },
+            {
+              "file": "chromium-side-19.jpg",
+              "time": 19.196942
+            },
+            {
+              "file": "chromium-side-21.jpg",
+              "time": 21.500673
+            },
+            {
+              "file": "chromium-side-23.jpg",
+              "time": 23.45257
+            },
+            {
+              "file": "chromium-side-25.jpg",
+              "time": 25.632703
+            },
+            {
+              "file": "chromium-side-27.jpg",
+              "time": 27.562687
+            },
+            {
+              "file": "chromium-side-29.jpg",
+              "time": 29.474941
+            },
+            {
+              "file": "chromium-side-29.2.jpg",
+              "time": 29.586027
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-side-sheet-1.jpg",
+              "time": 17.47336
+            },
+            {
+              "file": "chromium-side-sheet-2.jpg",
+              "time": 29.474941
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "side",
+          "videoId": "O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ",
+          "src": "https://stream.mux.com/O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/standing-side-leg-raise/",
+          "start": 17,
+          "end": 30,
+          "played": true,
+          "before": {
+            "time": 17.16386183333333,
+            "video": {
+              "video_id": "O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ",
+              "title": "Hip abduction in standing",
+              "source": "https://stream.mux.com/O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ/medium.mp4",
+              "currentSrc": "https://stream.mux.com/O88ZO1yUbXPjIdnSWx02IVf02QDoOEk4vQeZqzcdJxXbQ/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 49.514
+          },
+          "after": {
+            "time": 19.019952666666644,
+            "state": 1,
+            "remaining": 118178
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-side-17.jpg",
+              "time": 17.77072787533334
+            },
+            {
+              "file": "webkit-side-19.jpg",
+              "time": 19.611367208333334
+            },
+            {
+              "file": "webkit-side-21.jpg",
+              "time": 21.69944849999999
+            },
+            {
+              "file": "webkit-side-23.jpg",
+              "time": 23.57703233366667
+            },
+            {
+              "file": "webkit-side-25.jpg",
+              "time": 25.660872750000003
+            },
+            {
+              "file": "webkit-side-27.jpg",
+              "time": 27.584444416666663
+            },
+            {
+              "file": "webkit-side-29.jpg",
+              "time": 29.546579416333337
+            },
+            {
+              "file": "webkit-side-29.2.jpg",
+              "time": 29.75009079166668
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-side-sheet-1.jpg",
+              "time": 17.77072787533334
+            },
+            {
+              "file": "webkit-side-sheet-2.jpg",
+              "time": 29.546579416333337
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "push",
+      "videoId": "j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA",
+      "src": "https://stream.mux.com/j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA.m3u8",
+      "source": "https://www.hingehealth.com/resources/articles/wall-push-ups/",
+      "variant": "Standing press-up against a solid wall",
+      "start": 39,
+      "end": 56,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human wall push-ups with elbow flexion and extension and a straight trunk. No floor progression in the selected interval.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "push",
+          "videoId": "j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA",
+          "src": "https://stream.mux.com/j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/wall-push-ups/",
+          "start": 39,
+          "end": 56,
+          "played": true,
+          "before": {
+            "time": 39.067148,
+            "video": {
+              "video_id": "j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA",
+              "title": "Wall press-up",
+              "source": "https://stream.mux.com/j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA.m3u8",
+              "currentSrc": "blob:http://127.0.0.1:49179/4f0b6c62-01b3-4d1f-823c-ca129d214b00"
+            },
+            "remaining": 120000,
+            "duration": 63.2308
+          },
+          "after": {
+            "time": 40.87343,
+            "state": 1,
+            "remaining": 118200
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-push-39.jpg",
+              "time": 39.410615
+            },
+            {
+              "file": "chromium-push-41.jpg",
+              "time": 41.476042
+            },
+            {
+              "file": "chromium-push-43.jpg",
+              "time": 43.453388
+            },
+            {
+              "file": "chromium-push-45.jpg",
+              "time": 45.370032
+            },
+            {
+              "file": "chromium-push-47.jpg",
+              "time": 47.472725
+            },
+            {
+              "file": "chromium-push-49.jpg",
+              "time": 49.196526
+            },
+            {
+              "file": "chromium-push-51.jpg",
+              "time": 51.462975
+            },
+            {
+              "file": "chromium-push-53.jpg",
+              "time": 53.388752
+            },
+            {
+              "file": "chromium-push-55.jpg",
+              "time": 55.247575
+            },
+            {
+              "file": "chromium-push-55.2.jpg",
+              "time": 55.706024
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-push-sheet-1.jpg",
+              "time": 39.410615
+            },
+            {
+              "file": "chromium-push-sheet-2.jpg",
+              "time": 51.462975
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "push",
+          "videoId": "j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA",
+          "src": "https://stream.mux.com/j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/wall-push-ups/",
+          "start": 39,
+          "end": 56,
+          "played": true,
+          "before": {
+            "time": 39.168737124999986,
+            "video": {
+              "video_id": "j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA",
+              "title": "Wall press-up",
+              "source": "https://stream.mux.com/j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA.m3u8",
+              "currentSrc": "https://stream.mux.com/j02WICI81riUEnxjCWVOkTz8vD6uGdKs7eMc6WnAXsGA.m3u8"
+            },
+            "remaining": 120000,
+            "duration": 63.23
+          },
+          "after": {
+            "time": 40.97251150033334,
+            "state": 1,
+            "remaining": 118369
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-push-39.jpg",
+              "time": 39.43974141600002
+            },
+            {
+              "file": "webkit-push-41.jpg",
+              "time": 41.57480312500002
+            },
+            {
+              "file": "webkit-push-43.jpg",
+              "time": 43.56455849966665
+            },
+            {
+              "file": "webkit-push-45.jpg",
+              "time": 45.65860425033333
+            },
+            {
+              "file": "webkit-push-47.jpg",
+              "time": 47.58283054200001
+            },
+            {
+              "file": "webkit-push-49.jpg",
+              "time": 49.59677824966667
+            },
+            {
+              "file": "webkit-push-51.jpg",
+              "time": 51.62736820866666
+            },
+            {
+              "file": "webkit-push-53.jpg",
+              "time": 53.613963041333335
+            },
+            {
+              "file": "webkit-push-55.jpg",
+              "time": 55.60790254233334
+            },
+            {
+              "file": "webkit-push-55.2.jpg",
+              "time": 55.80623145833336
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-push-sheet-1.jpg",
+              "time": 39.43974141600002
+            },
+            {
+              "file": "webkit-push-sheet-2.jpg",
+              "time": 51.62736820866666
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "kneepush",
+      "videoId": "7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw",
+      "src": "https://stream.mux.com/7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw.m3u8",
+      "source": "https://www.hingehealth.com/resources/articles/push-ups/",
+      "variant": "Floor press-up with knees supported",
+      "start": 12,
+      "end": 19,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Knees remain on the mat throughout the push-up repetitions. Ends at 19s, before the later transition to full push-ups.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "kneepush",
+          "videoId": "7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw",
+          "src": "https://stream.mux.com/7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/push-ups/",
+          "start": 12,
+          "end": 19,
+          "played": true,
+          "before": {
+            "time": 12.151816,
+            "video": {
+              "video_id": "7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw",
+              "title": "Knee-supported press-up",
+              "source": "https://stream.mux.com/7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw.m3u8",
+              "currentSrc": "blob:http://127.0.0.1:49179/113c25e4-1f3b-4bba-9217-1f3751b9ddc1"
+            },
+            "remaining": 120000,
+            "duration": 36.45404
+          },
+          "after": {
+            "time": 13.801525,
+            "state": 1,
+            "remaining": 118186.80000000002
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-kneepush-12.jpg",
+              "time": 12.500281
+            },
+            {
+              "file": "chromium-kneepush-14.jpg",
+              "time": 14.425708
+            },
+            {
+              "file": "chromium-kneepush-16.jpg",
+              "time": 16.475787
+            },
+            {
+              "file": "chromium-kneepush-18.jpg",
+              "time": 18.325363
+            },
+            {
+              "file": "chromium-kneepush-18.2.jpg",
+              "time": 18.583463
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-kneepush-sheet-1.jpg",
+              "time": 12.500281
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "kneepush",
+          "videoId": "7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw",
+          "src": "https://stream.mux.com/7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/push-ups/",
+          "start": 12,
+          "end": 19,
+          "played": true,
+          "before": {
+            "time": 12.139425333333309,
+            "video": {
+              "video_id": "7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw",
+              "title": "Knee-supported press-up",
+              "source": "https://stream.mux.com/7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw.m3u8",
+              "currentSrc": "https://stream.mux.com/7GqB01HWWS5KIWH6ZSvYPJLq2khgyT601fyPI02aqANYsw.m3u8"
+            },
+            "remaining": 120000,
+            "duration": 36.454
+          },
+          "after": {
+            "time": 13.942929874999994,
+            "state": 1,
+            "remaining": 118379
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-kneepush-12.jpg",
+              "time": 12.574575874666651
+            },
+            {
+              "file": "webkit-kneepush-14.jpg",
+              "time": 14.561605292000024
+            },
+            {
+              "file": "webkit-kneepush-16.jpg",
+              "time": 16.623479124666662
+            },
+            {
+              "file": "webkit-kneepush-18.jpg",
+              "time": 18.56759495866667
+            },
+            {
+              "file": "webkit-kneepush-18.2.jpg",
+              "time": 18.823082791666675
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-kneepush-sheet-1.jpg",
+              "time": 12.574575874666651
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "squat",
+      "videoId": "x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk",
+      "src": "https://stream.mux.com/x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/squat/",
+      "variant": "Bodyweight squat, no weights or chair",
+      "start": 33,
+      "end": 43,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human bodyweight squat with both feet grounded, no weights or chair. Written cue limits depth to a comfortable range.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "squat",
+          "videoId": "x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk",
+          "src": "https://stream.mux.com/x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/squat/",
+          "start": 33,
+          "end": 43,
+          "played": true,
+          "before": {
+            "time": 33.222979,
+            "video": {
+              "video_id": "x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk",
+              "title": "How to Do Squats: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk/medium.mp4",
+              "currentSrc": "https://stream.mux.com/x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 46.635333
+          },
+          "after": {
+            "time": 35.024616,
+            "state": 1,
+            "remaining": 118389.5
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-squat-33.jpg",
+              "time": 33.440031
+            },
+            {
+              "file": "chromium-squat-35.jpg",
+              "time": 35.51398
+            },
+            {
+              "file": "chromium-squat-37.jpg",
+              "time": 37.50149
+            },
+            {
+              "file": "chromium-squat-39.jpg",
+              "time": 39.460769
+            },
+            {
+              "file": "chromium-squat-41.jpg",
+              "time": 41.505926
+            },
+            {
+              "file": "chromium-squat-42.2.jpg",
+              "time": 42.685373
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-squat-sheet-1.jpg",
+              "time": 33.440031
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "squat",
+          "videoId": "x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk",
+          "src": "https://stream.mux.com/x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/squat/",
+          "start": 33,
+          "end": 43,
+          "played": true,
+          "before": {
+            "time": 33.232918958000006,
+            "video": {
+              "video_id": "x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk",
+              "title": "How to Do Squats: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk/medium.mp4",
+              "currentSrc": "https://stream.mux.com/x1d5wfYzJ2o6aVM4VZsC00QCUZrnUi02YTqHkLhyh8BYk/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 46.634
+          },
+          "after": {
+            "time": 35.03547499966668,
+            "state": 1,
+            "remaining": 118381
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-squat-33.jpg",
+              "time": 33.600750541666656
+            },
+            {
+              "file": "webkit-squat-35.jpg",
+              "time": 35.68799800000002
+            },
+            {
+              "file": "webkit-squat-37.jpg",
+              "time": 37.59038691633333
+            },
+            {
+              "file": "webkit-squat-39.jpg",
+              "time": 39.547682874666656
+            },
+            {
+              "file": "webkit-squat-41.jpg",
+              "time": 41.59142495899997
+            },
+            {
+              "file": "webkit-squat-42.2.jpg",
+              "time": 42.88963162433336
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-squat-sheet-1.jpg",
+              "time": 33.600750541666656
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "bridge",
+      "videoId": "00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU",
+      "src": "https://stream.mux.com/00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/bridge-exercise/",
+      "variant": "Supine two-leg bridge",
+      "start": 32,
+      "end": 42,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human supine two-leg bridge; bent knees, planted feet, hips lifting and returning.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "bridge",
+          "videoId": "00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU",
+          "src": "https://stream.mux.com/00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/bridge-exercise/",
+          "start": 32,
+          "end": 42,
+          "played": true,
+          "before": {
+            "time": 32.227033,
+            "video": {
+              "video_id": "00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU",
+              "title": "Supine bridge",
+              "source": "https://stream.mux.com/00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU/medium.mp4",
+              "currentSrc": "https://stream.mux.com/00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 44.566
+          },
+          "after": {
+            "time": 34.031309,
+            "state": 1,
+            "remaining": 118342.59999999998
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-bridge-32.jpg",
+              "time": 32.480979
+            },
+            {
+              "file": "chromium-bridge-34.jpg",
+              "time": 34.404919
+            },
+            {
+              "file": "chromium-bridge-36.jpg",
+              "time": 36.500976
+            },
+            {
+              "file": "chromium-bridge-38.jpg",
+              "time": 38.491309
+            },
+            {
+              "file": "chromium-bridge-40.jpg",
+              "time": 40.487182
+            },
+            {
+              "file": "chromium-bridge-41.2.jpg",
+              "time": 41.701041
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-bridge-sheet-1.jpg",
+              "time": 32.480979
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "bridge",
+          "videoId": "00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU",
+          "src": "https://stream.mux.com/00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/bridge-exercise/",
+          "start": 32,
+          "end": 42,
+          "played": true,
+          "before": {
+            "time": 32.262264583333334,
+            "video": {
+              "video_id": "00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU",
+              "title": "Supine bridge",
+              "source": "https://stream.mux.com/00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU/medium.mp4",
+              "currentSrc": "https://stream.mux.com/00oJ021DCcVhnnHEhSsbJm9TtvQV7OgZWiF7v6BZmOgpU/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 44.564
+          },
+          "after": {
+            "time": 34.066218958000015,
+            "state": 1,
+            "remaining": 118382
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-bridge-32.jpg",
+              "time": 32.575264583666666
+            },
+            {
+              "file": "webkit-bridge-34.jpg",
+              "time": 34.54440066700001
+            },
+            {
+              "file": "webkit-bridge-36.jpg",
+              "time": 36.62441291633333
+            },
+            {
+              "file": "webkit-bridge-38.jpg",
+              "time": 38.558018791666676
+            },
+            {
+              "file": "webkit-bridge-40.jpg",
+              "time": 40.62083908300002
+            },
+            {
+              "file": "webkit-bridge-41.2.jpg",
+              "time": 41.82353208266666
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-bridge-sheet-1.jpg",
+              "time": 32.575264583666666
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "bird",
+      "videoId": "vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs",
+      "src": "https://stream.mux.com/vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/bird-dog/",
+      "variant": "On hands and knees, opposite arm and leg",
+      "start": 39,
+      "end": 53,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human hands-and-knees opposite-arm-and-leg reach, return and repetition.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "bird",
+          "videoId": "vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs",
+          "src": "https://stream.mux.com/vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/bird-dog/",
+          "start": 39,
+          "end": 53,
+          "played": true,
+          "before": {
+            "time": 39.162416,
+            "video": {
+              "video_id": "vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs",
+              "title": "Bird dog",
+              "source": "https://stream.mux.com/vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs/medium.mp4",
+              "currentSrc": "https://stream.mux.com/vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 74.411333
+          },
+          "after": {
+            "time": 40.977164,
+            "state": 1,
+            "remaining": 118391.30000000002
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-bird-39.jpg",
+              "time": 39.453163
+            },
+            {
+              "file": "chromium-bird-41.jpg",
+              "time": 41.505316
+            },
+            {
+              "file": "chromium-bird-43.jpg",
+              "time": 43.492646
+            },
+            {
+              "file": "chromium-bird-45.jpg",
+              "time": 45.446029
+            },
+            {
+              "file": "chromium-bird-47.jpg",
+              "time": 47.486113
+            },
+            {
+              "file": "chromium-bird-49.jpg",
+              "time": 49.464991
+            },
+            {
+              "file": "chromium-bird-51.jpg",
+              "time": 51.48473
+            },
+            {
+              "file": "chromium-bird-52.2.jpg",
+              "time": 52.650743
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-bird-sheet-1.jpg",
+              "time": 39.453163
+            },
+            {
+              "file": "chromium-bird-sheet-2.jpg",
+              "time": 51.48473
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "bird",
+          "videoId": "vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs",
+          "src": "https://stream.mux.com/vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/bird-dog/",
+          "start": 39,
+          "end": 53,
+          "played": true,
+          "before": {
+            "time": 39.01538346171568,
+            "video": {
+              "video_id": "vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs",
+              "title": "Bird dog",
+              "source": "https://stream.mux.com/vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs/medium.mp4",
+              "currentSrc": "https://stream.mux.com/vABAJR5hkBrLn01WDfNtSKtHfiNPJrMTKqrnT7QnwCPs/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 74.41
+          },
+          "after": {
+            "time": 40.819544041000015,
+            "state": 1,
+            "remaining": 118383
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-bird-39.jpg",
+              "time": 39.64970116666667
+            },
+            {
+              "file": "webkit-bird-41.jpg",
+              "time": 41.60154575
+            },
+            {
+              "file": "webkit-bird-43.jpg",
+              "time": 43.578101250666684
+            },
+            {
+              "file": "webkit-bird-45.jpg",
+              "time": 45.624620542
+            },
+            {
+              "file": "webkit-bird-47.jpg",
+              "time": 47.635093499999996
+            },
+            {
+              "file": "webkit-bird-49.jpg",
+              "time": 49.590983041333345
+            },
+            {
+              "file": "webkit-bird-51.jpg",
+              "time": 51.611730500000014
+            },
+            {
+              "file": "webkit-bird-52.2.jpg",
+              "time": 52.77096424966667
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-bird-sheet-1.jpg",
+              "time": 39.64970116666667
+            },
+            {
+              "file": "webkit-bird-sheet-2.jpg",
+              "time": 51.611730500000014
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "dead",
+      "videoId": "dd7b9bef-40cc-45ee-a7a7-0b6552605a41",
+      "src": "https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4",
+      "source": "https://us.physitrack.com/home-exercise-video/supine-heel-slides---movement-control",
+      "variant": "Supine heel slide with heel supported on floor",
+      "start": 12,
+      "end": 24,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human supine heel slides; the moving heel stays supported by the surface. This is not the unsupported heel-tap progression.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "dead",
+          "videoId": "dd7b9bef-40cc-45ee-a7a7-0b6552605a41",
+          "src": "https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4",
+          "source": "https://us.physitrack.com/home-exercise-video/supine-heel-slides---movement-control",
+          "start": 12,
+          "end": 24,
+          "played": true,
+          "before": {
+            "time": 12.212902,
+            "video": {
+              "video_id": "dd7b9bef-40cc-45ee-a7a7-0b6552605a41",
+              "title": "Supine heel slides — movement control",
+              "source": "https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4",
+              "currentSrc": "https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4"
+            },
+            "remaining": 120000,
+            "duration": 57.408005
+          },
+          "after": {
+            "time": 14.012117,
+            "state": 1,
+            "remaining": 118389
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-dead-12.jpg",
+              "time": 12.485257
+            },
+            {
+              "file": "chromium-dead-14.jpg",
+              "time": 14.422426
+            },
+            {
+              "file": "chromium-dead-16.jpg",
+              "time": 16.501162
+            },
+            {
+              "file": "chromium-dead-18.jpg",
+              "time": 18.465482
+            },
+            {
+              "file": "chromium-dead-20.jpg",
+              "time": 20.444641
+            },
+            {
+              "file": "chromium-dead-22.jpg",
+              "time": 22.445474
+            },
+            {
+              "file": "chromium-dead-23.2.jpg",
+              "time": 23.641975
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-dead-sheet-1.jpg",
+              "time": 12.485257
+            },
+            {
+              "file": "chromium-dead-sheet-2.jpg",
+              "time": 23.641975
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "dead",
+          "videoId": "dd7b9bef-40cc-45ee-a7a7-0b6552605a41",
+          "src": "https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4",
+          "source": "https://us.physitrack.com/home-exercise-video/supine-heel-slides---movement-control",
+          "start": 12,
+          "end": 24,
+          "played": true,
+          "before": {
+            "time": 12.174254416666667,
+            "video": {
+              "video_id": "dd7b9bef-40cc-45ee-a7a7-0b6552605a41",
+              "title": "Supine heel slides — movement control",
+              "source": "https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4",
+              "currentSrc": "https://media.physitrack.com/exercises/dd7b9bef-40cc-45ee-a7a7-0b6552605a41/en/video_1280x720.mp4"
+            },
+            "remaining": 120000,
+            "duration": 57.4
+          },
+          "after": {
+            "time": 13.978290999999999,
+            "state": 1,
+            "remaining": 118379
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-dead-12.jpg",
+              "time": 12.574553166333336
+            },
+            {
+              "file": "webkit-dead-14.jpg",
+              "time": 14.421336791333339
+            },
+            {
+              "file": "webkit-dead-16.jpg",
+              "time": 16.564113708999997
+            },
+            {
+              "file": "webkit-dead-18.jpg",
+              "time": 18.586710790999987
+            },
+            {
+              "file": "webkit-dead-20.jpg",
+              "time": 20.53674979199999
+            },
+            {
+              "file": "webkit-dead-22.jpg",
+              "time": 22.491366083999996
+            },
+            {
+              "file": "webkit-dead-23.2.jpg",
+              "time": 23.717173582666664
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-dead-sheet-1.jpg",
+              "time": 12.574553166333336
+            },
+            {
+              "file": "webkit-dead-sheet-2.jpg",
+              "time": 23.717173582666664
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "plankknees",
+      "videoId": "Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ",
+      "src": "https://stream.mux.com/Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ.m3u8",
+      "source": "https://www.hingehealth.com/resources/articles/plank-on-knees/",
+      "variant": "Forearms and knees supported, short comfortable holds",
+      "start": 18,
+      "end": 25,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human forearms-and-knees plank. Ends before the later prone resting position. Written guide calls for short holds and rest as needed.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "plankknees",
+          "videoId": "Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ",
+          "src": "https://stream.mux.com/Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/plank-on-knees/",
+          "start": 18,
+          "end": 25,
+          "played": true,
+          "before": {
+            "time": 18.159154,
+            "video": {
+              "video_id": "Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ",
+              "title": "How To Perform Plank on Knees",
+              "source": "https://stream.mux.com/Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ.m3u8",
+              "currentSrc": "blob:http://127.0.0.1:49179/73894316-b308-40ab-ad12-0df57aa08026"
+            },
+            "remaining": 120000,
+            "duration": 44.83742
+          },
+          "after": {
+            "time": 19.960282,
+            "state": 1,
+            "remaining": 118199.70000000001
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-plankknees-18.jpg",
+              "time": 18.402402
+            },
+            {
+              "file": "chromium-plankknees-20.jpg",
+              "time": 20.347613
+            },
+            {
+              "file": "chromium-plankknees-22.jpg",
+              "time": 22.43183
+            },
+            {
+              "file": "chromium-plankknees-24.jpg",
+              "time": 24.285172
+            },
+            {
+              "file": "chromium-plankknees-24.2.jpg",
+              "time": 24.54187
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-plankknees-sheet-1.jpg",
+              "time": 18.402402
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "plankknees",
+          "videoId": "Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ",
+          "src": "https://stream.mux.com/Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/plank-on-knees/",
+          "start": 18,
+          "end": 25,
+          "played": true,
+          "before": {
+            "time": 18.184878291666674,
+            "video": {
+              "video_id": "Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ",
+              "title": "How To Perform Plank on Knees",
+              "source": "https://stream.mux.com/Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ.m3u8",
+              "currentSrc": "https://stream.mux.com/Yc4H37Gk00EWaL3IxXarTQAVibGUeZniAKCNfLZBvDNQ.m3u8"
+            },
+            "remaining": 120000,
+            "duration": 44.837
+          },
+          "after": {
+            "time": 19.98940716633331,
+            "state": 1,
+            "remaining": 118371
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-plankknees-18.jpg",
+              "time": 18.65089366633332
+            },
+            {
+              "file": "webkit-plankknees-20.jpg",
+              "time": 20.57171374933337
+            },
+            {
+              "file": "webkit-plankknees-22.jpg",
+              "time": 22.57897675000003
+            },
+            {
+              "file": "webkit-plankknees-24.jpg",
+              "time": 24.601428833666677
+            },
+            {
+              "file": "webkit-plankknees-24.2.jpg",
+              "time": 24.7859830003333
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-plankknees-sheet-1.jpg",
+              "time": 18.65089366633332
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "prone",
+      "videoId": "zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y",
+      "src": "https://stream.mux.com/zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/scapular-squeezes/",
+      "variant": "Standing shoulder-blade squeeze, not a prone raise",
+      "start": 15,
+      "end": 29,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human standing shoulder-blade squeeze with bent elbows. Written guide matches the standing variation; legacy internal ID is retained.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "prone",
+          "videoId": "zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y",
+          "src": "https://stream.mux.com/zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/scapular-squeezes/",
+          "start": 15,
+          "end": 29,
+          "played": true,
+          "before": {
+            "time": 15.264272,
+            "video": {
+              "video_id": "zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y",
+              "title": "Standing scapular squeezes",
+              "source": "https://stream.mux.com/zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y/medium.mp4",
+              "currentSrc": "https://stream.mux.com/zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 40.683333
+          },
+          "after": {
+            "time": 17.066925,
+            "state": 1,
+            "remaining": 118399.69999999998
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-prone-15.jpg",
+              "time": 15.506107
+            },
+            {
+              "file": "chromium-prone-17.jpg",
+              "time": 17.478465
+            },
+            {
+              "file": "chromium-prone-19.jpg",
+              "time": 19.457885
+            },
+            {
+              "file": "chromium-prone-21.jpg",
+              "time": 21.505458
+            },
+            {
+              "file": "chromium-prone-23.jpg",
+              "time": 23.464614
+            },
+            {
+              "file": "chromium-prone-25.jpg",
+              "time": 25.535583
+            },
+            {
+              "file": "chromium-prone-27.jpg",
+              "time": 27.486252
+            },
+            {
+              "file": "chromium-prone-28.2.jpg",
+              "time": 28.666072
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-prone-sheet-1.jpg",
+              "time": 15.506107
+            },
+            {
+              "file": "chromium-prone-sheet-2.jpg",
+              "time": 27.486252
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "prone",
+          "videoId": "zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y",
+          "src": "https://stream.mux.com/zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/scapular-squeezes/",
+          "start": 15,
+          "end": 29,
+          "played": true,
+          "before": {
+            "time": 15.283142875000017,
+            "video": {
+              "video_id": "zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y",
+              "title": "Standing scapular squeezes",
+              "source": "https://stream.mux.com/zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y/medium.mp4",
+              "currentSrc": "https://stream.mux.com/zi01a02BbRi9JvNuTrKAOwsCagj4s02zOM1gjNPx5WrH6Y/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 40.682
+          },
+          "after": {
+            "time": 17.08919199999998,
+            "state": 1,
+            "remaining": 118385
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-prone-15.jpg",
+              "time": 15.613285957666676
+            },
+            {
+              "file": "webkit-prone-17.jpg",
+              "time": 17.598574791666657
+            },
+            {
+              "file": "webkit-prone-19.jpg",
+              "time": 19.593368541666653
+            },
+            {
+              "file": "webkit-prone-21.jpg",
+              "time": 21.597360333000005
+            },
+            {
+              "file": "webkit-prone-23.jpg",
+              "time": 23.651275041999966
+            },
+            {
+              "file": "webkit-prone-25.jpg",
+              "time": 25.642695083333336
+            },
+            {
+              "file": "webkit-prone-27.jpg",
+              "time": 27.58880483366664
+            },
+            {
+              "file": "webkit-prone-28.2.jpg",
+              "time": 28.762985291333344
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-prone-sheet-1.jpg",
+              "time": 15.613285957666676
+            },
+            {
+              "file": "webkit-prone-sheet-2.jpg",
+              "time": 27.58880483366664
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "calf",
+      "videoId": "v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8",
+      "src": "https://stream.mux.com/v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/calf-raises/",
+      "variant": "Two-leg heel raise on flat floor with support",
+      "start": 15,
+      "end": 32,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human supported two-leg heel raises on flat floor. No step, weights or single-leg progression; a wall may replace the demonstrated stable table.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "calf",
+          "videoId": "v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8",
+          "src": "https://stream.mux.com/v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/calf-raises/",
+          "start": 15,
+          "end": 32,
+          "played": true,
+          "before": {
+            "time": 15.282734,
+            "video": {
+              "video_id": "v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8",
+              "title": "How to Do Calf Raises: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8/medium.mp4",
+              "currentSrc": "https://stream.mux.com/v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 44.480667
+          },
+          "after": {
+            "time": 17.085078,
+            "state": 1,
+            "remaining": 118380.90000000002
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-calf-15.jpg",
+              "time": 15.507884
+            },
+            {
+              "file": "chromium-calf-17.jpg",
+              "time": 17.490199
+            },
+            {
+              "file": "chromium-calf-19.jpg",
+              "time": 19.464906
+            },
+            {
+              "file": "chromium-calf-21.jpg",
+              "time": 21.484592
+            },
+            {
+              "file": "chromium-calf-23.jpg",
+              "time": 23.474497
+            },
+            {
+              "file": "chromium-calf-25.jpg",
+              "time": 25.48553
+            },
+            {
+              "file": "chromium-calf-27.jpg",
+              "time": 27.465387
+            },
+            {
+              "file": "chromium-calf-29.jpg",
+              "time": 29.445019
+            },
+            {
+              "file": "chromium-calf-31.jpg",
+              "time": 31.52004
+            },
+            {
+              "file": "chromium-calf-31.2.jpg",
+              "time": 31.703107
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-calf-sheet-1.jpg",
+              "time": 15.507884
+            },
+            {
+              "file": "chromium-calf-sheet-2.jpg",
+              "time": 27.465387
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "calf",
+          "videoId": "v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8",
+          "src": "https://stream.mux.com/v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/calf-raises/",
+          "start": 15,
+          "end": 32,
+          "played": true,
+          "before": {
+            "time": 15.204069916333356,
+            "video": {
+              "video_id": "v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8",
+              "title": "How to Do Calf Raises: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8/medium.mp4",
+              "currentSrc": "https://stream.mux.com/v01wHv3RIaTi5AX61ziFTQMrE01d00hY9C01HK7swASG8O8/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 44.479
+          },
+          "after": {
+            "time": 17.00760879199998,
+            "state": 1,
+            "remaining": 118178
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-calf-15.jpg",
+              "time": 15.63888620799999
+            },
+            {
+              "file": "webkit-calf-17.jpg",
+              "time": 17.59408412566668
+            },
+            {
+              "file": "webkit-calf-19.jpg",
+              "time": 19.55284525066664
+            },
+            {
+              "file": "webkit-calf-21.jpg",
+              "time": 21.640396250000034
+            },
+            {
+              "file": "webkit-calf-23.jpg",
+              "time": 23.526224541333345
+            },
+            {
+              "file": "webkit-calf-25.jpg",
+              "time": 25.64942520900004
+            },
+            {
+              "file": "webkit-calf-27.jpg",
+              "time": 27.575280250333332
+            },
+            {
+              "file": "webkit-calf-29.jpg",
+              "time": 29.54513891666665
+            },
+            {
+              "file": "webkit-calf-31.jpg",
+              "time": 31.586206041333305
+            },
+            {
+              "file": "webkit-calf-31.2.jpg",
+              "time": 31.804607583
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-calf-sheet-1.jpg",
+              "time": 15.63888620799999
+            },
+            {
+              "file": "webkit-calf-sheet-2.jpg",
+              "time": 27.575280250333332
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "cat",
+      "videoId": "17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg",
+      "src": "https://stream.mux.com/17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg/medium.mp4",
+      "source": "https://www.hingehealth.com/resources/articles/cat-cow/",
+      "variant": "Hands-and-knees cat–cow",
+      "start": 24,
+      "end": 33,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human quadruped rounded-back position changing to a comfortable arch. No standing substitution or forced stretch.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "cat",
+          "videoId": "17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg",
+          "src": "https://stream.mux.com/17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/cat-cow/",
+          "start": 24,
+          "end": 33,
+          "played": true,
+          "before": {
+            "time": 24.22434,
+            "video": {
+              "video_id": "17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg",
+              "title": "How to Do a Cat Cow Stretch: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg/medium.mp4",
+              "currentSrc": "https://stream.mux.com/17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 54.486
+          },
+          "after": {
+            "time": 26.027332,
+            "state": 1,
+            "remaining": 118190
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-cat-24.jpg",
+              "time": 24.457142
+            },
+            {
+              "file": "chromium-cat-26.jpg",
+              "time": 26.480807
+            },
+            {
+              "file": "chromium-cat-28.jpg",
+              "time": 28.466118
+            },
+            {
+              "file": "chromium-cat-30.jpg",
+              "time": 30.546095
+            },
+            {
+              "file": "chromium-cat-32.jpg",
+              "time": 32.487937
+            },
+            {
+              "file": "chromium-cat-32.2.jpg",
+              "time": 32.641556
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-cat-sheet-1.jpg",
+              "time": 24.457142
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "cat",
+          "videoId": "17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg",
+          "src": "https://stream.mux.com/17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg/medium.mp4",
+          "source": "https://www.hingehealth.com/resources/articles/cat-cow/",
+          "start": 24,
+          "end": 33,
+          "played": true,
+          "before": {
+            "time": 24.095280878662113,
+            "video": {
+              "video_id": "17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg",
+              "title": "How to Do a Cat Cow Stretch: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg/medium.mp4",
+              "currentSrc": "https://stream.mux.com/17dtlSux2l01lgJzVmoNEBOcrnmFUTQ7x7rFvQZ74bNg/medium.mp4"
+            },
+            "remaining": 120000,
+            "duration": 54.484
+          },
+          "after": {
+            "time": 25.91277374999996,
+            "state": 1,
+            "remaining": 118383
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-cat-24.jpg",
+              "time": 24.555673833666706
+            },
+            {
+              "file": "webkit-cat-26.jpg",
+              "time": 26.607215042000018
+            },
+            {
+              "file": "webkit-cat-28.jpg",
+              "time": 28.612806332666683
+            },
+            {
+              "file": "webkit-cat-30.jpg",
+              "time": 30.640727083333292
+            },
+            {
+              "file": "webkit-cat-32.jpg",
+              "time": 32.57979687533333
+            },
+            {
+              "file": "webkit-cat-32.2.jpg",
+              "time": 32.788898915999994
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-cat-sheet-1.jpg",
+              "time": 24.555673833666706
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "cheststretch",
+      "videoId": "1763467661001",
+      "src": null,
+      "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+      "variant": "Standing chest opening with hands behind body",
+      "start": 16,
+      "end": 21,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human standing chest opening with hands clasped behind the body. Ends at 21s, before the later arched-back/red-cross incorrect-form example.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "cheststretch",
+          "videoId": "1763467661001",
+          "src": null,
+          "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+          "start": 16,
+          "end": 21,
+          "played": true,
+          "before": {
+            "time": 16.148287,
+            "video": {
+              "video_id": "1763467661001",
+              "title": "NHS Strength and flexibility: chest stretch",
+              "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/"
+            },
+            "remaining": 120000,
+            "duration": 29.866666
+          },
+          "after": {
+            "time": 17.947968,
+            "state": 1,
+            "remaining": 118185.89999999997
+          },
+          "screens": [
+            {
+              "file": "chromium-player-cheststretch.jpg",
+              "time": 17.947968
+            }
+          ],
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-cheststretch-16.jpg",
+              "time": 16.517406
+            },
+            {
+              "file": "chromium-cheststretch-18.jpg",
+              "time": 18.534658
+            },
+            {
+              "file": "chromium-cheststretch-20.jpg",
+              "time": 20.543452
+            },
+            {
+              "file": "chromium-cheststretch-20.2.jpg",
+              "time": 20.751881
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-cheststretch-sheet-1.jpg",
+              "time": 16.517406
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "cheststretch",
+          "videoId": "1763467661001",
+          "src": null,
+          "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+          "start": 16,
+          "end": 21,
+          "played": true,
+          "before": {
+            "time": 16.058157708666652,
+            "video": {
+              "video_id": "1763467661001",
+              "title": "NHS Strength and flexibility: chest stretch",
+              "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/"
+            },
+            "remaining": 120000,
+            "duration": 29.8
+          },
+          "after": {
+            "time": 17.861374250333313,
+            "state": 1,
+            "remaining": 118382
+          },
+          "screens": [
+            {
+              "file": "webkit-player-cheststretch.jpg",
+              "time": 17.861374250333313
+            }
+          ],
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-cheststretch-16.jpg",
+              "time": 16
+            },
+            {
+              "file": "webkit-cheststretch-18.jpg",
+              "time": 18.282025291666642
+            },
+            {
+              "file": "webkit-cheststretch-20.jpg",
+              "time": 20.705784667333337
+            },
+            {
+              "file": "webkit-cheststretch-20.2.jpg",
+              "time": 20.886681333000045
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-cheststretch-sheet-1.jpg",
+              "time": 16
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "stretch",
+      "videoId": "1763945821001",
+      "src": null,
+      "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+      "variant": "Standing upper-back stretch with hands in front",
+      "start": 17,
+      "end": 28,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human standing upper-back stretch with hands joined in front and arms reaching forward.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "stretch",
+          "videoId": "1763945821001",
+          "src": null,
+          "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+          "start": 17,
+          "end": 28,
+          "played": true,
+          "before": {
+            "time": 17.027104,
+            "video": {
+              "video_id": "1763945821001",
+              "title": "NHS Strength and flexibility: upper back stretch",
+              "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/"
+            },
+            "remaining": 120000,
+            "duration": 35.306666
+          },
+          "after": {
+            "time": 18.800469,
+            "state": 1,
+            "remaining": 118183.09999999998
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-stretch-17.jpg",
+              "time": 17.561439
+            },
+            {
+              "file": "chromium-stretch-19.jpg",
+              "time": 19.629898
+            },
+            {
+              "file": "chromium-stretch-21.jpg",
+              "time": 21.519207
+            },
+            {
+              "file": "chromium-stretch-23.jpg",
+              "time": 23.494345
+            },
+            {
+              "file": "chromium-stretch-25.jpg",
+              "time": 25.501912
+            },
+            {
+              "file": "chromium-stretch-27.jpg",
+              "time": 27.518093
+            },
+            {
+              "file": "chromium-stretch-27.2.jpg",
+              "time": 27.721628
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-stretch-sheet-1.jpg",
+              "time": 17.561439
+            },
+            {
+              "file": "chromium-stretch-sheet-2.jpg",
+              "time": 27.721628
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "stretch",
+          "videoId": "1763945821001",
+          "src": null,
+          "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+          "start": 17,
+          "end": 28,
+          "played": true,
+          "before": {
+            "time": 17.09705150000003,
+            "video": {
+              "video_id": "1763945821001",
+              "title": "NHS Strength and flexibility: upper back stretch",
+              "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/"
+            },
+            "remaining": 120000,
+            "duration": 35.24
+          },
+          "after": {
+            "time": 18.902869375666633,
+            "state": 1,
+            "remaining": 118178
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-stretch-17.jpg",
+              "time": 17.434491957666655
+            },
+            {
+              "file": "webkit-stretch-19.jpg",
+              "time": 19.795118999666695
+            },
+            {
+              "file": "webkit-stretch-21.jpg",
+              "time": 21.70387745833333
+            },
+            {
+              "file": "webkit-stretch-23.jpg",
+              "time": 23.80757812466668
+            },
+            {
+              "file": "webkit-stretch-25.jpg",
+              "time": 25.70277324999997
+            },
+            {
+              "file": "webkit-stretch-27.jpg",
+              "time": 27.667899416666682
+            },
+            {
+              "file": "webkit-stretch-27.2.jpg",
+              "time": 28.04618612533333
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-stretch-sheet-1.jpg",
+              "time": 17.434491957666655
+            },
+            {
+              "file": "webkit-stretch-sheet-2.jpg",
+              "time": 28.04618612533333
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "calfhold",
+      "videoId": "1763467667001",
+      "src": null,
+      "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+      "variant": "Standing calf stretch, straight rear knee and heel down",
+      "start": 23,
+      "end": 35,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human standing split stance; rear knee straight, rear heel grounded, front knee bent. Written cue reminds the user to switch sides.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "calfhold",
+          "videoId": "1763467667001",
+          "src": null,
+          "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+          "start": 23,
+          "end": 35,
+          "played": true,
+          "before": {
+            "time": 23.012649,
+            "video": {
+              "video_id": "1763467667001",
+              "title": "NHS Strength and flexibility: calf stretch",
+              "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/"
+            },
+            "remaining": 120000,
+            "duration": 42.8
+          },
+          "after": {
+            "time": 24.770448,
+            "state": 1,
+            "remaining": 118197
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-calfhold-23.jpg",
+              "time": 23.51307
+            },
+            {
+              "file": "chromium-calfhold-25.jpg",
+              "time": 25.761947
+            },
+            {
+              "file": "chromium-calfhold-27.jpg",
+              "time": 27.671677
+            },
+            {
+              "file": "chromium-calfhold-29.jpg",
+              "time": 29.753133
+            },
+            {
+              "file": "chromium-calfhold-31.jpg",
+              "time": 31.63653
+            },
+            {
+              "file": "chromium-calfhold-33.jpg",
+              "time": 33.690368
+            },
+            {
+              "file": "chromium-calfhold-34.2.jpg",
+              "time": 34.702332
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-calfhold-sheet-1.jpg",
+              "time": 23.51307
+            },
+            {
+              "file": "chromium-calfhold-sheet-2.jpg",
+              "time": 34.702332
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "calfhold",
+          "videoId": "1763467667001",
+          "src": null,
+          "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/",
+          "start": 23,
+          "end": 35,
+          "played": true,
+          "before": {
+            "time": 23.000862875,
+            "video": {
+              "video_id": "1763467667001",
+              "title": "NHS Strength and flexibility: calf stretch",
+              "source": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/"
+            },
+            "remaining": 120000,
+            "duration": 42.8
+          },
+          "after": {
+            "time": 24.87939491666664,
+            "state": 1,
+            "remaining": 118178
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-calfhold-23.jpg",
+              "time": 23.294104958333314
+            },
+            {
+              "file": "webkit-calfhold-25.jpg",
+              "time": 25.77656379200003
+            },
+            {
+              "file": "webkit-calfhold-27.jpg",
+              "time": 27.68333916666669
+            },
+            {
+              "file": "webkit-calfhold-29.jpg",
+              "time": 29.737952708333307
+            },
+            {
+              "file": "webkit-calfhold-31.jpg",
+              "time": 31.693560749999975
+            },
+            {
+              "file": "webkit-calfhold-33.jpg",
+              "time": 33.75843037499998
+            },
+            {
+              "file": "webkit-calfhold-34.2.jpg",
+              "time": 34.907753791000026
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-calfhold-sheet-1.jpg",
+              "time": 23.294104958333314
+            },
+            {
+              "file": "webkit-calfhold-sheet-2.jpg",
+              "time": 34.907753791000026
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    },
+    {
+      "id": "breath",
+      "videoId": "lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI",
+      "src": "https://stream.mux.com/lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI.m3u8",
+      "source": "https://www.hingehealth.com/resources/articles/diaphragmatic-breathing/",
+      "variant": "Comfortable relaxed belly breathing, no holds or forced breaths",
+      "start": 26,
+      "end": 46,
+      "humanReview": {
+        "exactVariant": true,
+        "demonstrationVisibleAtStart": true,
+        "notes": "Human lying supine with bent knees and hands at chest/abdomen; breathing position remains stable throughout the excerpt. Written cue specifies natural, unforced breathing without holds.",
+        "method": "Visual inspection of actual browser screenshots, including the selected excerpt's start and end."
+      },
+      "playback": {
+        "chromium": {
+          "id": "breath",
+          "videoId": "lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI",
+          "src": "https://stream.mux.com/lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/diaphragmatic-breathing/",
+          "start": 26,
+          "end": 46,
+          "played": true,
+          "before": {
+            "time": 26.175221,
+            "video": {
+              "video_id": "lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI",
+              "title": "How to Do Diaphragmatic Breathing: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI.m3u8",
+              "currentSrc": "blob:http://127.0.0.1:49179/bb21d4ae-2e9e-4ef6-94a8-4685a2b83ca8"
+            },
+            "remaining": 120000,
+            "duration": 70.78
+          },
+          "after": {
+            "time": 27.856151,
+            "state": 1,
+            "remaining": 118258.19999999995
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "chromium-breath-26.jpg",
+              "time": 26.46994
+            },
+            {
+              "file": "chromium-breath-28.jpg",
+              "time": 28.452871
+            },
+            {
+              "file": "chromium-breath-30.jpg",
+              "time": 30.389634
+            },
+            {
+              "file": "chromium-breath-32.jpg",
+              "time": 32.628412
+            },
+            {
+              "file": "chromium-breath-34.jpg",
+              "time": 34.412772
+            },
+            {
+              "file": "chromium-breath-36.jpg",
+              "time": 36.682903
+            },
+            {
+              "file": "chromium-breath-38.jpg",
+              "time": 38.496049
+            },
+            {
+              "file": "chromium-breath-40.jpg",
+              "time": 40.456188
+            },
+            {
+              "file": "chromium-breath-42.jpg",
+              "time": 42.576034
+            },
+            {
+              "file": "chromium-breath-44.jpg",
+              "time": 44.284532
+            },
+            {
+              "file": "chromium-breath-45.2.jpg",
+              "time": 45.715499
+            }
+          ],
+          "sheets": [
+            {
+              "file": "chromium-breath-sheet-1.jpg",
+              "time": 26.46994
+            },
+            {
+              "file": "chromium-breath-sheet-2.jpg",
+              "time": 38.496049
+            }
+          ],
+          "loopControl": true
+        },
+        "webkit": {
+          "id": "breath",
+          "videoId": "lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI",
+          "src": "https://stream.mux.com/lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI.m3u8",
+          "source": "https://www.hingehealth.com/resources/articles/diaphragmatic-breathing/",
+          "start": 26,
+          "end": 46,
+          "played": true,
+          "before": {
+            "time": 26.000001,
+            "video": {
+              "video_id": "lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI",
+              "title": "How to Do Diaphragmatic Breathing: A Guide from Physical Therapists",
+              "source": "https://stream.mux.com/lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI.m3u8",
+              "currentSrc": "https://stream.mux.com/lKBNySeNbOZK01EZSGG6LcCyZiNsjNgEIu9Rc2200O9cI.m3u8"
+            },
+            "remaining": 120000,
+            "duration": 70.78
+          },
+          "after": {
+            "time": 27.763234250000007,
+            "state": 1,
+            "remaining": 118549
+          },
+          "pauseControl": true,
+          "resumeControl": true,
+          "frames": [
+            {
+              "file": "webkit-breath-26.jpg",
+              "time": 26.781547374999988
+            },
+            {
+              "file": "webkit-breath-28.jpg",
+              "time": 28.642681791666682
+            },
+            {
+              "file": "webkit-breath-30.jpg",
+              "time": 30.634323999999953
+            },
+            {
+              "file": "webkit-breath-32.jpg",
+              "time": 32.652402332666675
+            },
+            {
+              "file": "webkit-breath-34.jpg",
+              "time": 34.72537737433331
+            },
+            {
+              "file": "webkit-breath-36.jpg",
+              "time": 36.58966845766666
+            },
+            {
+              "file": "webkit-breath-38.jpg",
+              "time": 38.635910999333326
+            },
+            {
+              "file": "webkit-breath-40.jpg",
+              "time": 40.68654095800004
+            },
+            {
+              "file": "webkit-breath-42.jpg",
+              "time": 42.62672908400001
+            },
+            {
+              "file": "webkit-breath-44.jpg",
+              "time": 44.74960725000005
+            },
+            {
+              "file": "webkit-breath-45.2.jpg",
+              "time": 45.870702541333294
+            }
+          ],
+          "sheets": [
+            {
+              "file": "webkit-breath-sheet-1.jpg",
+              "time": 26.781547374999988
+            },
+            {
+              "file": "webkit-breath-sheet-2.jpg",
+              "time": 38.635910999333326
+            }
+          ],
+          "loopControl": true
+        }
+      }
+    }
+  ]
+}

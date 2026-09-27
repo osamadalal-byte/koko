@@ -1,7 +1,7 @@
 /* Cache only this app's public static files. Profile data remains in localStorage. */
 const PREFIX='form28::'+self.registration.scope+'::';
-const CACHE=PREFIX+'release-1.0.1';
-const ASSETS=['./index.html','./manifest.webmanifest','./coach-engine.js','./coach.js','./demos.js','./personal.js','./phone.js','./guidance.js','./release.js','./coach.css','./icons/icon-192.png','./icons/icon-512.png'];
+const CACHE=PREFIX+'release-1.2.0';
+const ASSETS=['./index.html','./manifest.webmanifest','./coach-engine.js','./coach.js','./demos.js','./personal.js','./phone.js','./guidance.js','./release.js','./experience.js','./experience.css','./playback-gate.js','./workout-videos.js','./workout-player.js','./workout-player.css','./coach.css','./icons/icon-192.png','./icons/icon-512.png'];
 const ALLOWED=new Set(ASSETS.map(p=>new URL(p,self.registration.scope).href));
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(PREFIX)&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

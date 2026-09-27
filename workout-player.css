@@ -1,0 +1,32 @@
+/* Full-screen, thumb-friendly guided workout. Provider controls remain visible. */
+#session-dialog[data-player=follow]{width:min(100%,600px);max-width:600px;max-height:100dvh;padding:0;background:#fcfbfe;border-radius:24px;overscroll-behavior:contain}
+.follow-player{padding:20px 24px 18px;color:#252031}
+.follow-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.follow-header .label{font-size:10px;letter-spacing:1.6px;color:#67567e}
+.follow-header p{margin:5px 0 0;font-size:12px;color:#777081}
+.follow-header .icon-btn{min-width:44px;min-height:44px;border:1px solid #e7e2ed;border-radius:50%}
+.follow-stages{display:flex;gap:6px;margin:16px 0 20px}
+.follow-stages span{flex:1;border-top:3px solid #e8e3ef;padding-top:9px;font-size:11px;display:flex;align-items:center;gap:6px;color:#88828e}
+.follow-stages b{font-size:10px;border:1px solid #d7d0e1;border-radius:50%;width:18px;height:18px;display:grid;place-items:center}
+.follow-stages .current{border-color:#7950db;color:#5c2ec3;font-weight:700}.follow-stages .current b{background:#7950db;color:white;border-color:#7950db}.follow-stages .complete{border-color:#b9d992;color:#476c2d}
+.follow-heading{margin-bottom:14px}.follow-heading #session-status{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#7354a1;background:none;padding:0}
+.follow-heading h2{font-size:28px;letter-spacing:-.8px;line-height:1.12;margin:7px 0 0}
+.follow-media{width:100%;height:250px;min-height:200px;border-radius:16px;background:#171221;color:#f8f5ff;overflow:hidden}
+.follow-media iframe,.follow-media>div:not(.video-placeholder):not(.rest-message):not(.written-guidance){width:100%;height:100%;border:0}
+.follow-media video{display:block;width:100%;height:100%;object-fit:contain;background:#f6f5f8}.follow-credit{font-size:10px;color:#82788d;margin:4px 0 0}
+.video-placeholder,.rest-message,.written-guidance{height:100%;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.play-outline{font-size:46px;color:#c8b5f0}.video-placeholder p{font-size:13px;color:#d6cce6;margin:0}.rest-message span{font-size:11px;letter-spacing:3px;color:#c4e2a5}.rest-message h3{font-size:32px;color:white;margin:0}.rest-message p{font-size:14px;line-height:1.5;color:#d8cfdf;max-width:240px;margin:0}
+.written-guidance{background:#f0eaf9;color:#392651;gap:9px}.written-guidance h3{margin:0;font-size:20px}.written-guidance p{margin:0;font-size:13px;line-height:1.5}.written-guidance .label{font-size:10px;letter-spacing:1px}
+.follow-media-message{font-size:11px;line-height:1.4;min-height:18px;padding-top:7px;color:#756985}
+.follow-clock{display:flex;align-items:center;gap:18px;margin-top:9px}.follow-clock .timer{font-size:58px;line-height:1;letter-spacing:-3px;font-variant-numeric:tabular-nums;margin:0;color:#292132}.follow-clock b{font-size:13px}.follow-clock p{font-size:11px;margin:6px 0 0;color:#7b7185}
+.follow-cue{font-size:13px;line-height:1.5;color:#63586f;margin:12px 0 15px;min-height:20px}
+.follow-actions{display:flex;gap:10px}.follow-actions .btn{min-height:50px;border-radius:14px}.follow-actions .primary{flex:1;background:#7950db;color:white}.follow-actions .outline{min-width:72px}
+.follow-next{display:flex;align-items:center;gap:10px;background:#f0edf5;border-radius:13px;margin:15px 0;padding:13px 14px}.follow-next>span{font-size:8px;font-weight:800;letter-spacing:1px;color:#857a95;white-space:nowrap}.follow-next b{font-size:12px;flex:1}.follow-next small{display:flex;align-items:center;font-size:11px;color:#7d6d91;gap:6px}.follow-next svg{width:15px;height:15px}
+.follow-instructions{margin:12px 0;padding:0;border-top:1px solid #e6deef;border-bottom:1px solid #e6deef}.follow-instructions summary{padding:14px 0;font-size:12px;color:#5b4779}.follow-instructions .steps{margin:0 0 15px;padding-left:22px}.follow-instructions .steps li{font-size:13px}.follow-instructions .easier{margin-bottom:14px;font-size:13px}
+.follow-options{display:flex;justify-content:center;flex-wrap:wrap;gap:2px 16px}.follow-options .text-btn{min-height:44px;font-size:11px;color:#725393}.follow-options [hidden]{display:none}
+.follow-footnote{font-size:10px;color:#89808f;line-height:1.5;text-align:center;margin:10px 0 0}.follow-player .screen-controls{padding:8px 0 0;background:none}.follow-player .screen-controls .small{font-size:10px;margin:4px 0}
+@media(max-width:640px){#session-dialog[data-player=follow]{width:100%;max-width:100%;height:100dvh;max-height:100dvh;max-height:100%;margin:0;border-radius:0}.follow-player{padding:calc(14px + env(safe-area-inset-top)) 20px calc(16px + env(safe-area-inset-bottom))}.follow-media{height:220px}.follow-heading h2{font-size:26px}.follow-stages{margin:12px 0 16px}}
+@media(max-width:640px) and (max-height:740px){.follow-player{padding-top:calc(8px + env(safe-area-inset-top))}.follow-stages{margin:8px 0 12px;padding:0}.follow-heading{margin-bottom:10px}.follow-heading h2{font-size:24px}.follow-media{height:200px}.follow-clock{margin-top:7px}.follow-clock .timer{font-size:46px}.follow-cue{margin:9px 0 11px}.follow-next{margin:10px 0}.follow-header .icon-btn{min-height:40px}.follow-media-message{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.follow-player *{animation:none!important;transition:none!important}}
+
+.follow-media > .video-js{width:100%;height:100%;padding:0;max-height:100%}
