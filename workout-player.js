@@ -6,7 +6,7 @@ const updateBeforePlayer=updateTimerUI,startBeforePlayer=startSession,finishBefo
 let workoutMedia=null,workoutMediaReady=false,mediaLoadTimer=null,mediaWatchdog=null;
 let youtubeLoad=null,videoMuted=true,mediaFailure='',mediaAttempt=0,workoutMediaError=null;
 let hlsLoad=null;
-let brightcoveLoad=null;
+let publicVideoConfig=null;
 // Safari does not consistently send a fresh PLAYING event after a seek in an
 // already-playing video. Confirm media-time progress before starting the clock,
 // including after looping, and stop spending workout time on a frozen picture.
@@ -26,38 +26,26 @@ function monitorWorkoutMedia(media,valid,token,clip){
     }
   },200);
 }
-function brightcoveAPI(){
-  if(window.bc)return Promise.resolve(window.bc);
-  if(brightcoveLoad)return brightcoveLoad;
-  brightcoveLoad=new Promise((resolve,reject)=>{
-    const script=document.createElement('script');let finished=false;
-    const timer=setTimeout(()=>finish(Error('Video player timed out')),12000);
-    function finish(error){if(finished)return;finished=true;clearTimeout(timer);if(error){script.remove();brightcoveLoad=null;reject(error)}else resolve(window.bc)}
-    script.src='https://players.brightcove.net/79855382001/EkC1XU82e_default/index.min.js';script.async=true;
-    script.onload=()=>window.bc?finish():finish(Error('Video player unavailable'));
-    script.onerror=()=>finish(Error('Video player unavailable'));document.head.appendChild(script);
-  });return brightcoveLoad;
-}
-async function brightcoveWorkoutMedia(clip,token,attempt,owner){
-  const valid=()=>token===workoutPlayback.generation&&attempt===mediaAttempt&&session===owner&&workoutPlayback.active;
-  const fail=error=>{if(!valid())return;clearTimeout(mediaLoadTimer);workoutMediaError={code:error?.code||error?.name||'brightcove',videoId:clip.mediaId};mediaFailure='This video could not play. Retry, or follow the written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
-  try{
-    const bc=await brightcoveAPI();if(!valid())return;
-    const host=$('#workout-video-host');if(!host)return;host.innerHTML='';
-    const video=document.createElement('video');video.id='workout-brightcove-'+attempt;video.className='video-js';video.controls=true;video.muted=videoMuted;video.playsInline=true;
-    for(const [name,value] of Object.entries({'data-account':'79855382001','data-player':'EkC1XU82e','data-embed':'default','data-video-id':clip.mediaId,'playsinline':'','aria-label':EX[owner.steps[owner.index].id].name+' — human demonstration'}))video.setAttribute(name,value);
-    host.appendChild(video);const player=bc(video);
-    const play=()=>{if(valid()&&workoutPlayback.wanted&&!document.hidden)player.play()?.catch(fail)};
-    workoutMedia={playVideo:play,pauseVideo(){player.pause()},mute(){player.muted(true)},unMute(){player.muted(false)},seekTo(time){player.currentTime(time)},getCurrentTime(){return player.currentTime()},getDuration(){return player.duration()},getPlayerState(){return player.ended()?0:player.paused()?2:player.readyState()<3?3:1},getVideoData(){return {video_id:String(player.mediainfo?.id||''),title:player.mediainfo?.name,source:clip.source}},destroy(){player.dispose()}};
-    monitorWorkoutMedia(workoutMedia,valid,token,clip);
-    player.on('playing',()=>{if(valid()&&(!workoutPlayback.wanted||document.hidden))workoutPlayback.event('playing',token)});
-    player.on('waiting',()=>{if(valid()&&workoutPlayback.wanted){workoutPlayback.event('buffering',token);armMediaTimeout()}});
-    player.on('pause',()=>{if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
-    player.on('ended',()=>{if(valid())workoutPlayback.event('ended',token)});
-    player.on('error',()=>fail(player.error()));
-    player.on('timeupdate',()=>{if(valid()&&clip.end&&player.currentTime()>=clip.end&&workoutPlayback.wanted)workoutPlayback.event('ended',token)});
-    player.on('loadedmetadata',()=>{if(!valid())return;workoutMediaReady=true;player.muted(videoMuted);if(clip.start>0)player.currentTime(clip.start);play()});
-  }catch(error){fail(error)}
+// Resolve the provider's current public rendition through its documented
+// Playback API. No player SDK, hard-coded signed media URL or proxy is used.
+// Provider access restrictions remain enforced on the browser's own origin.
+async function resolveWorkoutClip(clip){
+  if(!clip.brightcove)return clip;
+  const json=async(url,headers={})=>{
+    const response=await fetch(url,{headers,credentials:'omit',cache:'no-store',signal:AbortSignal.timeout(10000)});
+    if(!response.ok)throw Error('Video provider returned HTTP '+response.status);
+    return response.json();
+  };
+  if(!publicVideoConfig)publicVideoConfig=json('https://players.brightcove.net/79855382001/EkC1XU82e_default/config.json').catch(error=>{publicVideoConfig=null;throw error});
+  const config=await publicVideoConfig,key=config.video_cloud?.policy_key;
+  if(!key)throw Error('Public video configuration is unavailable');
+  const data=await json('https://edge.api.brightcove.com/playback/v1/accounts/79855382001/videos/'+clip.mediaId,{Accept:'application/json;pk='+key});
+  if(String(data.id)!==String(clip.mediaId))throw Error('Video identity did not match');
+  const sources=(data.sources||[]).filter(x=>/^https:\/\//.test(x.src||'')&&!x.key_systems&&!x.drm);
+  const mp4=sources.filter(x=>x.container==='MP4'||x.type==='video/mp4').sort((a,b)=>Math.abs((a.height||480)-480)-Math.abs((b.height||480)-480));
+  const source=mp4[0]||sources.find(x=>/mpegurl/i.test(x.type||''));
+  if(!source)throw Error('No supported public video rendition');
+  return {...clip,src:source.src,hls:/mpegurl/i.test(source.type||''),brightcove:false};
 }
 function hlsAPI(){
   if(window.Hls)return Promise.resolve(window.Hls);
@@ -96,7 +84,7 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
   video.addEventListener('loadedmetadata',()=>{if(valid()&&clip.start>0)video.currentTime=clip.start});
   video.addEventListener('timeupdate',()=>{if(valid()&&clip.end&&video.currentTime>=clip.end&&workoutPlayback.wanted){workoutPlayback.event('ended',token)}});
   try{
-    if(clip.src.includes('.m3u8')){
+    if(clip.hls||clip.src.includes('.m3u8')){
       // Safari/WebKit has a native HLS pipeline. Keep its video element on that
       // pipeline instead of constructing a second MSE player. Chromium's
       // canPlayType result alone is not reliable for HLS, so it uses HLS.js.
@@ -157,7 +145,11 @@ async function loadWorkoutMedia(){
   if(!/^https?:$/.test(location.protocol)){mediaFailure='Open the HTTPS app to play videos. Written guidance works in this downloaded preview.';workoutPlayback.event('error',token);return}
   destroyWorkoutMedia();const attempt=mediaAttempt;mediaFailure='';workoutMediaError=null;armMediaTimeout();
   if(clip.src){await nativeWorkoutMedia(clip,token,attempt,owner);return}
-  if(clip.brightcove){await brightcoveWorkoutMedia(clip,token,attempt,owner);return}
+  if(clip.brightcove){
+    try{const resolved=await resolveWorkoutClip(clip);if(token!==workoutPlayback.generation||attempt!==mediaAttempt||session!==owner||!workoutPlayback.active)return;await nativeWorkoutMedia(resolved,token,attempt,owner)}
+    catch(error){if(token===workoutPlayback.generation&&attempt===mediaAttempt&&session===owner){workoutMediaError={code:error.message,videoId:clip.mediaId};clearMediaTimers();mediaFailure='This video could not load. Retry here, or follow the written guidance.';workoutPlayback.event('error',token)}}
+    return;
+  }
   try{
     const YT=await youtubeAPI();
     if(attempt!==mediaAttempt||token!==workoutPlayback.generation||session!==owner||!workoutPlayback.active||!workoutPlayback.wanted)return;
@@ -299,7 +291,7 @@ function pauseExercisePreview(){
   const p=exercisePreview;if(!p)return;p.wanted=false;clearTimeout(p.timeout);p.media?.pause();previewStatus(p,'paused','Paused · play when you’re ready');
 }
 async function startExercisePreview(id){
-  destroyExercisePreview();const clip=WORKOUT_VIDEOS[id],host=$('#preview-video-host');if(!clip||!host)return;
+  destroyExercisePreview();let clip=WORKOUT_VIDEOS[id];const host=$('#preview-video-host');if(!clip||!host)return;
   const p={id,clip,token:previewGeneration,wanted:true,muted:true,media:null,status:'loading'};exercisePreview=p;
   const valid=()=>exercisePreview===p&&p.token===previewGeneration&&$('#detail-dialog').open;
   const fail=error=>{if(!valid())return;clearTimeout(p.timeout);p.wanted=false;try{p.media?.pause()}catch{};previewStatus(p,error?.name==='NotAllowedError'?'blocked':'error',error?.name==='NotAllowedError'?'Tap to play the demonstration here.':'Video unavailable. Retry here, or follow the written steps below.');};
@@ -332,16 +324,11 @@ async function startExercisePreview(id){
   if(!/^https?:$/.test(location.protocol)){p.wanted=false;previewStatus(p,'blocked','Open the HTTPS app to play this video here. Written steps are available below.');return}
   previewStatus(p,'loading','Loading demonstration…');p.timeout=setTimeout(()=>fail(Error('Loading timed out')),15000);
   try{
-    if(clip.brightcove){
-      const bc=await brightcoveAPI();if(!valid())return;
-      host.innerHTML='';const video=document.createElement('video');video.id='preview-brightcove-'+p.token;video.className='video-js';video.muted=true;video.playsInline=true;
-      for(const [key,value] of Object.entries({'data-account':'79855382001','data-player':'EkC1XU82e','data-embed':'default','data-video-id':clip.mediaId,'playsinline':'','aria-label':EX[id].name+' — human demonstration'}))video.setAttribute(key,value);
-      host.appendChild(video);const player=bc(video,{controls:false});player.muted(true);player.controls(false);
-      bind({play:()=>player.play(),pause:()=>player.pause(),seek:t=>player.currentTime(t),time:()=>player.currentTime(),mute:value=>player.muted(value),destroy:()=>player.dispose()},(name,handler)=>player.on(name,handler));
-    }else if(clip.src){
+    clip=await resolveWorkoutClip(clip);if(!valid())return;
+    if(clip.src){
       host.innerHTML='';const video=document.createElement('video');video.muted=true;video.playsInline=true;video.preload='auto';video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[id].name+' — human demonstration');host.appendChild(video);let stream=null;
       bind({play:()=>video.play(),pause:()=>video.pause(),seek:t=>{video.currentTime=t},time:()=>video.currentTime,mute:value=>{video.muted=value},destroy:()=>{stream?.destroy();video.pause();video.removeAttribute('src');video.load();video.remove()}},(name,handler)=>video.addEventListener(name,handler));
-      if(clip.src.includes('.m3u8')&&!(video.canPlayType('application/vnd.apple.mpegurl')&&/AppleWebKit/.test(navigator.userAgent)&&!/(Chrome|Chromium|Edg|OPR)\//.test(navigator.userAgent))){
+      if((clip.hls||clip.src.includes('.m3u8'))&&!(video.canPlayType('application/vnd.apple.mpegurl')&&/AppleWebKit/.test(navigator.userAgent)&&!/(Chrome|Chromium|Edg|OPR)\//.test(navigator.userAgent))){
         const Hls=await hlsAPI();if(!valid())return;
         if(!Hls.isSupported())throw Error('Streaming unavailable');
         stream=new Hls({startPosition:clip.start,maxBufferLength:15});stream.on(Hls.Events.ERROR,(_,data)=>{if(data.fatal)fail(Error(data.details))});stream.on(Hls.Events.MANIFEST_PARSED,p.play);stream.loadSource(clip.src);stream.attachMedia(video);

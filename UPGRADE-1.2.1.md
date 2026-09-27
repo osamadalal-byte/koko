@@ -2,7 +2,9 @@
 
 The guided workout in 1.2.0 used inline video, but the exercise library and workout-preflight cards still called an older detail dialog. That dialog offered external NHS, YouTube and other provider links. The earlier playback audit only exercised the timed workout, so it missed this user-facing route.
 
-All current exercise guides now use the same reviewed media and exact excerpts as the timed workout. Opening a card plays the human demonstration inside its guide, with Pause, Replay and sound controls. Demonstrations repeat within their reviewed boundaries. External watch buttons and the old YouTube iframe are absent from these guides. Provider credits remain visible.
+All current exercise guides now use the same reviewed media and exact excerpts as the timed workout. Opening a card plays the human demonstration inside its guide, with Pause, Replay and sound controls. Demonstrations repeat within their reviewed boundaries. External watch buttons and the old YouTube iframe are absent from these guides. Provider credits remain visible. The NHS player SDK is removed: the app resolves the same public videos through Brightcove’s documented Playback API and plays them with the standard in-app video element. Signed rendition URLs are resolved at runtime; videos are not bundled or rehosted. Provider restrictions remain enforced.
+
+Implementation references: [non-Brightcove players](https://player.support.brightcove.com/publish/using-non-brightcove-player.html), [public player configuration](https://player.support.brightcove.com/troubleshooting/debug-player/viewing-player-configuration.html), [Playback API](https://apis.support.brightcove.com/playback/getting-started/overview-playback-api.html).
 
 The preview controller is separate from workout timing and persistence. Closing a guide disposes its media; switching away pauses it. A failed or offline video leaves the written technique and easier option available in the app. Existing progress, unfinished workouts, favorites, backups, profiles and cycle history retain their data formats.
 
