@@ -125,7 +125,7 @@ const server=http.createServer((req,res)=>{
      await page.locator(`[data-exercise="${clip.id}"]`).click();
      await page.waitForFunction(()=>exercisePreview?.status==='playing',{},{timeout:20000});
      const before=await page.evaluate(()=>exercisePreview.media.time());await page.waitForTimeout(700);
-     const after=await page.evaluate(()=>exercisePreview.media.time());
+     const after=await page.evaluate(()=>exercisePreview.media.time());Object.assign(preview,{before,after,start:clip.start,end:clip.end});
      if(before<clip.start-.1||after<=before+.2)throw Error('Preview is not advancing inside its reviewed excerpt: '+clip.id);
      if(await page.locator('#detail-dialog a[href], #detail-dialog iframe').count())throw Error('Preview exposes an external page: '+clip.id);
      await page.locator('#preview-toggle').click();await page.waitForTimeout(250);

@@ -311,7 +311,9 @@ async function startExercisePreview(id){
   const bind=(media,on)=>{
     p.media=media;media.mute(p.muted);
     on('loadedmetadata',()=>{if(valid()){media.seek(clip.start);if(p.wanted)p.play()}});
-    on('playing',()=>{if(!valid()||!p.wanted||document.hidden){media.pause();return}clearTimeout(p.timeout);previewStatus(p,'playing','Follow the demonstration · repeats automatically');});
+    // A provider can emit playing before its initial seek completes. The
+    // watchdog confirms advancing frames inside the reviewed excerpt first.
+    on('playing',()=>{if(!valid()||!p.wanted||document.hidden)media.pause()});
     on('waiting',()=>{if(valid()&&p.wanted){previewStatus(p,'loading','Loading demonstration…');clearTimeout(p.timeout);p.timeout=setTimeout(()=>fail(Error('Buffering timed out')),15000)}});
     on('error',()=>fail(Error('Video unavailable')));
     on('ended',()=>{if(valid()&&p.wanted){media.seek(clip.start);p.play()}});
