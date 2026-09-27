@@ -108,5 +108,5 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
   if(b.hasAttribute('data-play-source')){const id=b.dataset.playSource,s=DEMO_SOURCES[id];if(s?.embed){if(session)pause();if(navigator.onLine===false){showToast('Videos need an internet connection. The written steps are available below.');return}const slot=$('#human-player');slot.innerHTML=`<div class="video-shell"><iframe title="${esc(EX[id].name)} demonstration by ${esc(s.provider)}" src="https://www.youtube-nocookie.com/embed/${s.embed}" allow="fullscreen; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;}}
 });
 coachDialog.addEventListener('close',()=>{coachDialog.innerHTML=''});
-$('#detail-dialog').addEventListener('close',()=>{$('#detail-content').innerHTML=''});
+$('#detail-dialog').addEventListener('close',()=>{if(typeof destroyExercisePreview==='function')destroyExercisePreview();$('#detail-content').innerHTML=''});
 persist();render();

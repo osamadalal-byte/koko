@@ -14,4 +14,4 @@ Validation required before release:
 
 The media URLs and reviewed exercise variants are unchanged from 1.2.0. Existing exact-variant evidence still applies; the new browser runs validate the additional player surface. Videos require internet. Physical iPhone autoplay, sound, app switching and installation require a device check.
 
-Publication: merge the reviewed fix, then run **Test and publish FORM 28** on `main`. A pushed branch is not a deployed release. The installed app offers an update when its new service worker is ready; apply it outside a workout. Do not clear browser data to update, because that would erase locally saved progress.
+Publication: merge the reviewed fix, then run **Test and publish FORM 28** on `main`. A pushed branch is not a deployed release. After publication, fully close and reopen the installed app so it can load the new offline cache; refresh outside a workout if the old interface remains. Do not clear browser data to update, because that would erase locally saved progress.

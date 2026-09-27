@@ -132,6 +132,11 @@ const server=http.createServer((req,res)=>{
      const paused=await page.evaluate(()=>exercisePreview.media.time());await page.waitForTimeout(500);
      if(Math.abs(await page.evaluate(()=>exercisePreview.media.time())-paused)>.25)throw Error('Preview pause failed: '+clip.id);
      await page.locator('#preview-toggle').click();await page.waitForFunction(()=>exercisePreview?.status==='playing');
+     // Page-cache suspension keeps a resumable controller and never autoplays.
+     await page.evaluate(()=>window.dispatchEvent(new Event('pagehide')));
+     const hiddenAt=await page.evaluate(()=>exercisePreview.media.time());await page.waitForTimeout(500);
+     if(await page.evaluate(()=>exercisePreview.wanted)||Math.abs(await page.evaluate(()=>exercisePreview.media.time())-hiddenAt)>.25)throw Error('Preview did not pause on page suspension: '+clip.id);
+     await page.locator('#preview-toggle').click();await page.waitForFunction(()=>exercisePreview?.status==='playing');
      await page.evaluate(end=>exercisePreview.media.seek(end-.4),clip.end);
      await page.waitForFunction(start=>exercisePreview.media.time()>=start-.1&&exercisePreview.media.time()<start+2&&exercisePreview.status==='playing',clip.start,{timeout:18000});
      await page.locator('#preview-restart').click();
@@ -143,7 +148,7 @@ const server=http.createServer((req,res)=>{
      await page.locator('[data-close="detail-dialog"]').click();
      await page.waitForFunction(()=>exercisePreview===null&&document.querySelector('#detail-content').innerHTML==='');
      if(page.url()!==previewURL||popups!==0||context.pages().length!==1)throw Error('Preview navigated out of the app: '+clip.id);
-     Object.assign(preview,{passed:true,pause:true,replay:true,loop:true,noNavigation:true,disposed:true});
+     Object.assign(preview,{passed:true,pause:true,replay:true,loop:true,noNavigation:true,disposed:true,pageHidePause:true});
     }
     if(await page.evaluate(()=>JSON.stringify(state))!==savedBefore)throw Error('Preview changed saved workout progress');
     engine.previewFlow={passed:true,count:engine.previews.length,popups,path:new URL(page.url()).pathname,progressUnchanged:true};

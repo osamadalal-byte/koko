@@ -293,7 +293,7 @@ function previewStatus(p,status,message){
   p.status=status;
   const label=$('#preview-video-status'),button=$('#preview-toggle');
   if(label)label.textContent=message;
-  if(button)button.innerHTML=p.wanted?icon('pause')+' Pause':icon('play')+(status==='error'?'Retry video':status==='blocked'?'Tap to play':'Play demonstration');
+  if(button)button.innerHTML=p.wanted?icon('pause')+' Pause':icon('play')+(status==='error'?'Retry video':status==='blocked'?'Tap to play':'Play');
 }
 function pauseExercisePreview(){
   const p=exercisePreview;if(!p)return;p.wanted=false;clearTimeout(p.timeout);p.media?.pause();previewStatus(p,'paused','Paused · play when you’re ready');
@@ -309,7 +309,7 @@ async function startExercisePreview(id){
     p.media.play()?.catch(error=>{if(error.name!=='AbortError')fail(error)});
   };
   const bind=(media,on)=>{
-    p.media=media;
+    p.media=media;media.mute(p.muted);
     on('loadedmetadata',()=>{if(valid()){media.seek(clip.start);if(p.wanted)p.play()}});
     on('playing',()=>{if(!valid()||!p.wanted||document.hidden){media.pause();return}clearTimeout(p.timeout);previewStatus(p,'playing','Follow the demonstration · repeats automatically');});
     on('waiting',()=>{if(valid()&&p.wanted){previewStatus(p,'loading','Loading demonstration…');clearTimeout(p.timeout);p.timeout=setTimeout(()=>fail(Error('Buffering timed out')),15000)}});
@@ -350,7 +350,7 @@ detail=function(id){destroyExercisePreview();detailBeforeInlineVideo(id);$('#det
 $('#detail-dialog').addEventListener('close',destroyExercisePreview);
 $('#detail-dialog').addEventListener('cancel',pauseExercisePreview);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseExercisePreview()});
-window.addEventListener('pagehide',destroyExercisePreview);
+window.addEventListener('pagehide',pauseExercisePreview);
 window.addEventListener('offline',()=>{if(exercisePreview){pauseExercisePreview();previewStatus(exercisePreview,'error','You’re offline. Written steps are saved here; videos need internet.')}});
 document.addEventListener('click',event=>{
   const button=event.target.closest('button'),p=exercisePreview;if(!button||!p)return;

@@ -24,7 +24,7 @@ async function run(browserType,device,name,folder,basePath){
     const context=await browser.newContext({...device,serviceWorkers:'allow',acceptDownloads:true});
     context.setDefaultTimeout(15000);page=await context.newPage();
     const errors=[],failedAssets=[];
-    page.on('pageerror',error=>errors.push(error.message));
+    page.on('pageerror',error=>errors.push(error.stack||error.message));
     page.on('dialog',dialog=>dialog.accept());
     page.on('response',response=>{if(response.url().startsWith(url)&&response.status()>=400)failedAssets.push(response.url())});
     // Third-party playback is a separate audit; do not report a routed iframe as a playing video.
