@@ -42,7 +42,7 @@ const server=http.createServer((req,res)=>{
    const engine={name,clips:[]};report.engines.push(engine);let browser;
    try{
     browser=await type.launch();const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
-    await page.goto(url);const clips=await page.evaluate(()=>Object.entries(WORKOUT_VIDEOS).map(([id,c])=>({id,videoId:c.mediaId||c.videoId,src:c.src||null,source:c.source,start:c.start,end:c.end??null})));
+    await page.goto(url);const clips=await page.evaluate(()=>Object.entries(WORKOUT_VIDEOS).sort(([,a],[,b])=>Number(!!b.brightcove)-Number(!!a.brightcove)).map(([id,c])=>({id,videoId:c.mediaId||c.videoId,src:c.src||null,source:c.source,start:c.start,end:c.end??null})));
     for(const clip of clips){
      const row={...clip,played:false,humanReview:'Pending visual inspection'};engine.clips.push(row);
      try{
