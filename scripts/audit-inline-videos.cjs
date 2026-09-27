@@ -140,7 +140,9 @@ const server=http.createServer((req,res)=>{
      await page.evaluate(end=>exercisePreview.media.seek(end-.4),clip.end);
      await page.waitForFunction(start=>exercisePreview.media.time()>=start-.1&&exercisePreview.media.time()<start+2&&exercisePreview.status==='playing',clip.start,{timeout:18000});
      await page.locator('#preview-restart').click();
-     await page.waitForFunction(start=>exercisePreview.media.time()>=start-.1&&exercisePreview.media.time()<start+2,clip.start);
+     await page.waitForFunction(start=>exercisePreview.media.time()>=start+.6&&exercisePreview.media.time()<start+2.5&&exercisePreview.status==='playing',clip.start);
+     preview.videoBox=await page.locator('#preview-video-host video').first().evaluate(v=>({width:v.getBoundingClientRect().width,height:v.getBoundingClientRect().height,videoWidth:v.videoWidth,videoHeight:v.videoHeight,seeking:v.seeking,readyState:v.readyState}));
+     if(preview.videoBox.width<100||preview.videoBox.height<100||!preview.videoBox.videoWidth||preview.videoBox.seeking||preview.videoBox.readyState<2)throw Error('Preview has no visible decoded video frame: '+clip.id);
      if(['cheststretch','stretch','calfhold'].includes(clip.id)){
       const file=`${name}-preview-${clip.id}.jpg`;await page.screenshot({path:path.join(out,file),type:'jpeg',quality:55,scale:'css'});
       engine.clips.find(c=>c.id===clip.id).screens??=[];engine.clips.find(c=>c.id===clip.id).screens.push({file,time:await page.evaluate(()=>exercisePreview.media.time())});
