@@ -1,5 +1,8 @@
 # FORM / 28
 
+Current fix: **1.2.1**, keeping exercise-library and preflight videos inside the app. See [UPGRADE-1.2.1.md](UPGRADE-1.2.1.md) for the cause, fix and required checks. Deployment is a separate manual workflow.
+
+
 A personal strength and mobility PWA with three weekly strength sessions and an optional mobility session. The conservative starting plan includes warm-up and cool-down within a 15/20-minute guided budget. Pauses and video loading add time.
 
 The **1.2 continuous-player upgrade** is in [PR #2](https://github.com/osamadalal-byte/koko/pull/2). It is not deployed yet. The [existing app](https://osamadalal-byte.github.io/koko/) remains on the earlier release until this upgrade is merged and published.
@@ -39,3 +42,4 @@ The workflow publishes only `dist/` after the release checks pass. A separate po
 On iPhone: open the HTTPS app in Safari → Share → Add to Home Screen → Open as Web App (if shown) → Add. Open online first. After an upgrade, close and reopen the app to load the new installed release. Keep a JSON backup of important progress.
 
 External video sources do not endorse this app. Third-party video files are streamed from their public providers and are not bundled, rehosted or cached for offline use.
+

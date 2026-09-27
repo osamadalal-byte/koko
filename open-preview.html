@@ -82,6 +82,14 @@ body{background:var(--paper)}button,a{touch-action:manipulation}h1,h2,h3{letter-
 
 .follow-media > .video-js{width:100%;height:100%;padding:0;max-height:100%}
 
+/* Exercise previews share the workout's media surface and stay inside the app. */
+.inline-preview{padding:0;background:transparent;border:0}
+.inline-preview .follow-media{height:auto;min-height:0;aspect-ratio:16/10}
+.inline-preview .follow-actions{margin:8px 0 0}
+.inline-preview .text-btn{min-height:44px;font-size:12px}
+.inline-preview .small{line-height:1.5;margin-top:0}
+#detail-dialog:has(.inline-preview){overscroll-behavior:contain}
+
 </style>
 </head>
 <body>
@@ -268,6 +276,7 @@ function sourcePanel(id,compact=false){const s=DEMO_SOURCES[id];return `<div cla
 demoVideo=function(id,controls=true){return sourcePanel(id,!controls)};
 detail=function(id){if(session)pause();const e=EX[id];$('#detail-content').innerHTML=`<div class="modal-head"><h2 id="detail-title">${e.name}</h2><button class="icon-btn" data-close="detail-dialog" aria-label="Close exercise instructions">${icon('close')}</button></div>${sourcePanel(id)}<p class="label muted">${e.area}</p><ol class="steps">${e.steps.map(s=>'<li>'+s+'</li>').join('')}</ol><div class="easier"><b>Make it easier</b><br>${e.easy}</div><p class="small">Stay within a comfortable range. Stop before your form breaks down.</p>`;$('#detail-dialog').showModal()};
 
+
 </script>
 <script>
 'use strict';
@@ -360,6 +369,7 @@ sourcePanel=function(id,compact=false){
 };
 renderMoves=function(){return `<div class="intro"><div><div class="label">Learn before you begin</div><h1>Your movement library.</h1></div></div><p class="plan-desc">${PLANNED_EXERCISES.length} movements for your plan, each with video guidance, written steps and an easier option. Some videos open on the provider’s website. Warm-up videos cover several movements.</p><div class="moves-grid">${PLANNED_EXERCISES.map(id=>`<button class="move-card" data-exercise="${id}"><div class="move-art">${pose(id)}</div><span class="video-label">${icon('play')} Video guide</span><h3>${esc(EX[id].name)}</h3><p class="small">${esc(EX[id].area)}</p></button>`).join('')}</div>`};
 document.addEventListener('click',event=>{if(event.target.closest('a[data-demo-link]')&&session)pause()});
+
 
 </script>
 <script>
@@ -506,7 +516,7 @@ window.addEventListener('pagehide',releaseWorkoutScreen);
 </script>
 <script>
 'use strict';
-const APP_RELEASE='1.2.0';
+const APP_RELEASE='1.2.1';
 const baseStateValidator=validState;
 function validCycle(c){return c&&typeof c.date==='string'&&Number.isFinite(Date.parse(c.date))&&baseStateValidator({version:1,name:'',pace:'beginner',sound:false,completed:c.completed})&&Object.keys(c.completed).length===28}
 validState=function(s){return baseStateValidator(s)&&(!('cycles' in s)||(Array.isArray(s.cycles)&&s.cycles.length<=12&&s.cycles.every(validCycle)))};
@@ -740,6 +750,7 @@ for(const entry of Object.values(WORKOUT_VIDEOS)){
   entry.source=entry.source||'https://www.youtube.com/watch?v='+entry.videoId;
   entry.review={matched:true,playsInline:true,reviewedAt:'2026-09-22',evidence:'validation/player-2026-09-22/video-review.json'};
 }
+
 
 </script>
 <script>
@@ -1018,6 +1029,100 @@ window.addEventListener('pagehide',()=>{workoutPlayback.pause();destroyWorkoutMe
 window.addEventListener('offline',()=>{if(workoutPlayback.active&&workoutPlayback.kind==='video'){mediaFailure='You’re offline. Your progress is saved. Use written guidance to continue here.';workoutPlayback.event('error')}});
 $('#session-dialog').addEventListener('close',()=>{workoutPlayback.close();destroyWorkoutMedia();$('#session-dialog').removeAttribute('data-player')});
 
+
+// Exercise cards and preflight previews use the same reviewed clips as workouts.
+// This controller owns only preview media: it never starts or saves a workout.
+const detailBeforeInlineVideo=detail;
+let exercisePreview=null,previewGeneration=0;
+sourcePanel=function(id,compact=false){
+  const clip=WORKOUT_VIDEOS[id];
+  if(!clip)return '<div class="source-panel"><span class="label">Saved exercise</span><p>Use the written steps below. This movement is from an earlier version of the plan.</p></div>';
+  if(compact)return `<div class="source-panel compact-demo"><div><span class="label">Video guidance</span><h3>${esc(EX[id].name)}</h3></div><button class="btn outline" type="button" data-exercise="${id}">${icon('play')} Learn this move</button></div>`;
+  return `<div class="source-panel inline-preview" data-inline-exercise="${id}"><div class="follow-media" id="preview-video-host"><div class="video-placeholder"><span class="play-outline">▷</span><p>Your demonstration plays here</p></div></div><p class="follow-credit">Video: ${esc(clip.provider)}</p><p id="preview-video-status" class="follow-media-message" role="status">Loading demonstration…</p><div class="follow-actions"><button class="btn primary" id="preview-toggle" type="button">${icon('pause')} Pause</button><button class="btn outline" id="preview-restart" type="button">Replay</button></div><button class="text-btn" id="preview-mute" type="button" aria-pressed="false">Video sound off</button><p class="small">Follow this movement at your own pace. The demonstration repeats. Written steps stay available below.</p></div>`;
+};
+function destroyExercisePreview(){
+  previewGeneration++;const old=exercisePreview;exercisePreview=null;
+  if(old){old.wanted=false;clearTimeout(old.timeout);clearInterval(old.watchdog);try{old.media?.destroy()}catch{}}
+}
+function previewStatus(p,status,message){
+  if(exercisePreview!==p)return;
+  p.status=status;
+  const label=$('#preview-video-status'),button=$('#preview-toggle');
+  if(label)label.textContent=message;
+  if(button)button.innerHTML=p.wanted?icon('pause')+' Pause':icon('play')+(status==='error'?'Retry video':status==='blocked'?'Tap to play':'Play demonstration');
+}
+function pauseExercisePreview(){
+  const p=exercisePreview;if(!p)return;p.wanted=false;clearTimeout(p.timeout);p.media?.pause();previewStatus(p,'paused','Paused · play when you’re ready');
+}
+async function startExercisePreview(id){
+  destroyExercisePreview();const clip=WORKOUT_VIDEOS[id],host=$('#preview-video-host');if(!clip||!host)return;
+  const p={id,clip,token:previewGeneration,wanted:true,muted:true,media:null,status:'loading'};exercisePreview=p;
+  const valid=()=>exercisePreview===p&&p.token===previewGeneration&&$('#detail-dialog').open;
+  const fail=error=>{if(!valid())return;clearTimeout(p.timeout);p.wanted=false;try{p.media?.pause()}catch{};previewStatus(p,error?.name==='NotAllowedError'?'blocked':'error',error?.name==='NotAllowedError'?'Tap to play the demonstration here.':'Video unavailable. Retry here, or follow the written steps below.');};
+  p.play=()=>{
+    if(!valid()||document.hidden||!p.wanted||!p.media)return;
+    clearTimeout(p.timeout);p.timeout=setTimeout(()=>fail(Error('Playback timed out')),15000);
+    p.media.play()?.catch(error=>{if(error.name!=='AbortError')fail(error)});
+  };
+  const bind=(media,on)=>{
+    p.media=media;
+    on('loadedmetadata',()=>{if(valid()){media.seek(clip.start);if(p.wanted)p.play()}});
+    on('playing',()=>{if(!valid()||!p.wanted||document.hidden){media.pause();return}clearTimeout(p.timeout);previewStatus(p,'playing','Follow the demonstration · repeats automatically');});
+    on('waiting',()=>{if(valid()&&p.wanted){previewStatus(p,'loading','Loading demonstration…');clearTimeout(p.timeout);p.timeout=setTimeout(()=>fail(Error('Buffering timed out')),15000)}});
+    on('error',()=>fail(Error('Video unavailable')));
+    on('ended',()=>{if(valid()&&p.wanted){media.seek(clip.start);p.play()}});
+    // Keep previews within the reviewed excerpt, including after manual replay.
+    let previous=-1;
+    p.watchdog=setInterval(()=>{
+      if(!valid()||!p.wanted||document.hidden)return;
+      const time=media.time();
+      if(time>=clip.end){media.seek(clip.start);p.play()}
+      else if(time>=clip.start&&time>previous&&time-previous<1){clearTimeout(p.timeout);if(p.status!=='playing')previewStatus(p,'playing','Follow the demonstration · repeats automatically')}
+      previous=time;
+    },100);
+  };
+  if(navigator.onLine===false||networkAvailable===false){fail(Error('Offline'));previewStatus(p,'error','You’re offline. Written steps are saved here; videos need internet.');return}
+  if(!/^https?:$/.test(location.protocol)){p.wanted=false;previewStatus(p,'blocked','Open the HTTPS app to play this video here. Written steps are available below.');return}
+  previewStatus(p,'loading','Loading demonstration…');p.timeout=setTimeout(()=>fail(Error('Loading timed out')),15000);
+  try{
+    if(clip.brightcove){
+      const bc=await brightcoveAPI();if(!valid())return;
+      host.innerHTML='';const video=document.createElement('video');video.id='preview-brightcove-'+p.token;video.className='video-js';video.muted=true;video.playsInline=true;
+      for(const [key,value] of Object.entries({'data-account':'79855382001','data-player':'EkC1XU82e','data-embed':'default','data-video-id':clip.mediaId,'playsinline':'','aria-label':EX[id].name+' — human demonstration'}))video.setAttribute(key,value);
+      host.appendChild(video);const player=bc(video,{controls:false});player.muted(true);player.controls(false);
+      bind({play:()=>player.play(),pause:()=>player.pause(),seek:t=>player.currentTime(t),time:()=>player.currentTime(),mute:value=>player.muted(value),destroy:()=>player.dispose()},(name,handler)=>player.on(name,handler));
+    }else if(clip.src){
+      host.innerHTML='';const video=document.createElement('video');video.muted=true;video.playsInline=true;video.preload='auto';video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[id].name+' — human demonstration');host.appendChild(video);let stream=null;
+      bind({play:()=>video.play(),pause:()=>video.pause(),seek:t=>{video.currentTime=t},time:()=>video.currentTime,mute:value=>{video.muted=value},destroy:()=>{stream?.destroy();video.pause();video.removeAttribute('src');video.load();video.remove()}},(name,handler)=>video.addEventListener(name,handler));
+      if(clip.src.includes('.m3u8')&&!(video.canPlayType('application/vnd.apple.mpegurl')&&/AppleWebKit/.test(navigator.userAgent)&&!/(Chrome|Chromium|Edg|OPR)\//.test(navigator.userAgent))){
+        const Hls=await hlsAPI();if(!valid())return;
+        if(!Hls.isSupported())throw Error('Streaming unavailable');
+        stream=new Hls({startPosition:clip.start,maxBufferLength:15});stream.on(Hls.Events.ERROR,(_,data)=>{if(data.fatal)fail(Error(data.details))});stream.on(Hls.Events.MANIFEST_PARSED,p.play);stream.loadSource(clip.src);stream.attachMedia(video);
+      }else{video.src=clip.src;p.play()}
+    }else fail(Error('No inline media'));
+  }catch(error){fail(error)}
+}
+detail=function(id){destroyExercisePreview();detailBeforeInlineVideo(id);$('#detail-dialog').scrollTop=0;startExercisePreview(id)};
+$('#detail-dialog').addEventListener('close',destroyExercisePreview);
+$('#detail-dialog').addEventListener('cancel',pauseExercisePreview);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseExercisePreview()});
+window.addEventListener('pagehide',destroyExercisePreview);
+window.addEventListener('offline',()=>{if(exercisePreview){pauseExercisePreview();previewStatus(exercisePreview,'error','You’re offline. Written steps are saved here; videos need internet.')}});
+document.addEventListener('click',event=>{
+  const button=event.target.closest('button'),p=exercisePreview;if(!button||!p)return;
+  if(button.id==='preview-toggle'){
+    if(p.wanted)pauseExercisePreview();
+    else if(p.status==='error'||!p.media)startExercisePreview(p.id);
+    else{p.wanted=true;previewStatus(p,'loading','Loading demonstration…');p.play()}
+  }
+  if(button.id==='preview-restart'){
+    if(!p.media||p.status==='error')startExercisePreview(p.id);
+    else{p.media.seek(p.clip.start);p.wanted=true;p.play()}
+  }
+  if(button.id==='preview-mute'){p.muted=!p.muted;p.media?.mute(p.muted);button.setAttribute('aria-pressed',String(!p.muted));button.textContent=p.muted?'Video sound off':'Video sound on'}
+});
+
 </script>
 </body>
 </html>
+

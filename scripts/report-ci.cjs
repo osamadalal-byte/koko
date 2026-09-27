@@ -13,7 +13,7 @@ async function check(name,conclusion,output){
   if(!fs.existsSync(file))throw Error('Inline audit did not produce a report');
   const audit=JSON.parse(fs.readFileSync(file,'utf8'));
   for(const engine of audit.engines){
-   const pass=engine.clips.length===18&&engine.clips.every(c=>c.played)&&engine.flow?.passed===true;
+   const pass=engine.clips.length===18&&engine.clips.every(c=>c.played)&&engine.flow?.passed===true&&engine.previewFlow?.passed===true&&engine.previews?.length===18&&engine.previews.every(p=>p.passed);
    await check('Inline playback: '+engine.name,pass?'success':'failure',{title:'Actual embedded video playback — '+engine.name,summary:'Observed media progress only. Human variant and cue points require visual review.',text:JSON.stringify(engine,null,2).slice(0,65000)});
    for(const clip of engine.clips)for(const frame of [...(clip.sheets?.length?clip.sheets:clip.frames||[]),...(clip.screens||[])]){
     const bytes=fs.readFileSync(dir+'/'+frame.file);if(bytes.length>45000)continue;
@@ -43,3 +43,4 @@ async function check(name,conclusion,output){
  }
  console.log('Browser diagnostics and available UI previews published to GitHub Checks.');
 })().catch(error=>{console.error(error.message);process.exitCode=1});
+

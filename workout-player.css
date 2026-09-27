@@ -30,3 +30,11 @@
 @media(prefers-reduced-motion:reduce){.follow-player *{animation:none!important;transition:none!important}}
 
 .follow-media > .video-js{width:100%;height:100%;padding:0;max-height:100%}
+
+/* Exercise previews share the workout's media surface and stay inside the app. */
+.inline-preview{padding:0;background:transparent;border:0}
+.inline-preview .follow-media{height:auto;min-height:0;aspect-ratio:16/10}
+.inline-preview .follow-actions{margin:8px 0 0}
+.inline-preview .text-btn{min-height:44px;font-size:12px}
+.inline-preview .small{line-height:1.5;margin-top:0}
+#detail-dialog:has(.inline-preview){overscroll-behavior:contain}

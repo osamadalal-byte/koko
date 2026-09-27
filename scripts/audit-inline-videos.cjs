@@ -115,8 +115,42 @@ const server=http.createServer((req,res)=>{
     engine.flow=await page.evaluate(()=>{clearInterval(flowPoll);return {phases:observedFlow,dialogs:document.querySelectorAll('dialog[open]').length,path:location.pathname}});
     if(engine.flow.phases.join(',')!=='Warm-up,Work,Rest,Cool-down'||engine.flow.dialogs!==1||engine.flow.path!=='/koko/')throw Error('Continuous real-video session did not complete in one screen');
     engine.flow.passed=true;
+    // Use the actual library buttons, not direct calls to the preview loader.
+    await page.locator('#finish-exit').click();
+    await page.locator('.nav [data-tab="moves"]').click();
+    const previewURL=page.url(),savedBefore=await page.evaluate(()=>JSON.stringify(state));let popups=0;
+    page.on('popup',()=>popups++);engine.previews=[];
+    for(const clip of clips){
+     const preview={id:clip.id,passed:false};engine.previews.push(preview);
+     await page.locator(`[data-exercise="${clip.id}"]`).click();
+     await page.waitForFunction(()=>exercisePreview?.status==='playing',{},{timeout:20000});
+     const before=await page.evaluate(()=>exercisePreview.media.time());await page.waitForTimeout(700);
+     const after=await page.evaluate(()=>exercisePreview.media.time());
+     if(before<clip.start-.1||after<=before+.2)throw Error('Preview is not advancing inside its reviewed excerpt: '+clip.id);
+     if(await page.locator('#detail-dialog a[href], #detail-dialog iframe').count())throw Error('Preview exposes an external page: '+clip.id);
+     await page.locator('#preview-toggle').click();await page.waitForTimeout(250);
+     const paused=await page.evaluate(()=>exercisePreview.media.time());await page.waitForTimeout(500);
+     if(Math.abs(await page.evaluate(()=>exercisePreview.media.time())-paused)>.25)throw Error('Preview pause failed: '+clip.id);
+     await page.locator('#preview-toggle').click();await page.waitForFunction(()=>exercisePreview?.status==='playing');
+     await page.evaluate(end=>exercisePreview.media.seek(end-.4),clip.end);
+     await page.waitForFunction(start=>exercisePreview.media.time()>=start-.1&&exercisePreview.media.time()<start+2&&exercisePreview.status==='playing',clip.start,{timeout:18000});
+     await page.locator('#preview-restart').click();
+     await page.waitForFunction(start=>exercisePreview.media.time()>=start-.1&&exercisePreview.media.time()<start+2,clip.start);
+     if(['cheststretch','stretch','calfhold'].includes(clip.id)){
+      const file=`${name}-preview-${clip.id}.jpg`;await page.screenshot({path:path.join(out,file),type:'jpeg',quality:55,scale:'css'});
+      engine.clips.find(c=>c.id===clip.id).screens??=[];engine.clips.find(c=>c.id===clip.id).screens.push({file,time:await page.evaluate(()=>exercisePreview.media.time())});
+     }
+     await page.locator('[data-close="detail-dialog"]').click();
+     await page.waitForFunction(()=>exercisePreview===null&&document.querySelector('#detail-content').innerHTML==='');
+     if(page.url()!==previewURL||popups!==0||context.pages().length!==1)throw Error('Preview navigated out of the app: '+clip.id);
+     Object.assign(preview,{passed:true,pause:true,replay:true,loop:true,noNavigation:true,disposed:true});
+    }
+    if(await page.evaluate(()=>JSON.stringify(state))!==savedBefore)throw Error('Preview changed saved workout progress');
+    engine.previewFlow={passed:true,count:engine.previews.length,popups,path:new URL(page.url()).pathname,progressUnchanged:true};
+
    }catch(error){engine.error=error.message.split('\n')[0];process.exitCode=1}
    finally{if(browser)await browser.close()}
   }));
  }finally{await new Promise(resolve=>server.close(resolve));fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(report,null,2))}
 })().catch(error=>{console.error(error);process.exitCode=1});
+
