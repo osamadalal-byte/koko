@@ -62,7 +62,7 @@ function hlsAPI(){
 async function nativeWorkoutMedia(clip,token,attempt,owner){
   const valid=()=>token===workoutPlayback.generation&&attempt===mediaAttempt&&session===owner&&workoutPlayback.active;
   const host=$('#workout-video-host');if(!host||!valid())return;
-  const video=document.createElement('video');video.controls=true;video.playsInline=true;video.muted=videoMuted;video.preload='auto';
+  const video=document.createElement('video');video.controls=true;video.playsInline=true;video.muted=videoMuted;video.preload='auto';setDemoRate(video,owner.steps[owner.index].id);
   video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[owner.steps[owner.index].id].name+' — human demonstration');
   host.innerHTML='';host.appendChild(video);let streaming=null,disposed=false;
   const fail=error=>{if(!valid())return;clearTimeout(mediaLoadTimer);workoutMediaError={code:error?.code||error?.name||'media',mediaId:clip.mediaId};mediaFailure='This video could not play. Retry, or use written guidance here.';workoutPlayback.event(error?.name==='NotAllowedError'?'blocked':'error',token)};
@@ -101,8 +101,9 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
   }catch(error){fail(error)}
 }
 function currentVideo(){return session?WORKOUT_VIDEOS[session.steps[session.index].id]:null}
-function stopWorkoutClock(){clockPauseBeforePlayer()}
+function stopWorkoutClock(reason){if(reason==='loop')pauseBeforeExperience();else clockPauseBeforePlayer()}
 function startWorkoutClock(){
+  if(coachingScope==='lesson')stopVoice();
   if(!session||document.hidden||!$('#timer-toggle'))return;
   if(session.awaiting){if(state.autoAdvance){advance(false);if($('#timer-toggle'))workoutPlayback.play()}return}
   if(session.paused)clockToggleBeforePlayer();
@@ -110,13 +111,13 @@ function startWorkoutClock(){
 function pauseWorkoutMedia(){if(workoutMediaReady)try{workoutMedia.pauseVideo()}catch{}}
 const workoutPlayback=new PlaybackGate({
   start:startWorkoutClock,stop:stopWorkoutClock,pause:pauseWorkoutMedia,
-  change:()=>{if(session)updateTimerUI()},
+  change:()=>{if(session)updateTimerUI();syncWorkoutAudio()},
   play:()=>{if(workoutMediaReady){armMediaTimeout();workoutMedia.playVideo()}else loadWorkoutMedia()},
   replay:()=>{if(workoutMediaReady){armMediaTimeout();workoutMedia.seekTo(currentVideo()?.start||0,true);workoutMedia.playVideo()}}
 });
 function clearMediaTimers(){clearTimeout(mediaLoadTimer);clearInterval(mediaWatchdog);mediaLoadTimer=null;mediaWatchdog=null}
 function destroyWorkoutMedia(){
-  mediaAttempt++;clearMediaTimers();const old=workoutMedia;workoutMedia=null;workoutMediaReady=false;
+  stopMusic();stopVoice();mediaAttempt++;clearMediaTimers();const old=workoutMedia;workoutMedia=null;workoutMediaReady=false;
   if(old)try{old.destroy()}catch{}
 }
 function youtubeAPI(){
@@ -164,7 +165,7 @@ async function loadWorkoutMedia(){
           if(!valid()){event.target.destroy();return}
           workoutMedia=event.target;workoutMediaReady=true;
           const frame=event.target.getIframe();frame.setAttribute('title',EX[session.steps[session.index].id].name+' — human demonstration');frame.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen');frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
-          videoMuted?event.target.mute():event.target.unMute();
+          videoMuted?event.target.mute():event.target.unMute();event.target.setPlaybackRate?.(demoRate(session.steps[session.index].id));
           if(workoutPlayback.wanted&&!document.hidden)event.target.playVideo();
           else event.target.pauseVideo();
           // Stop if the media stalls without delivering a BUFFERING event.
@@ -208,8 +209,10 @@ renderSession=function(){
     <p class="follow-cue">${rest?'Relax, breathe and get set for the next move.':esc(e.cue)}</p>
     <div class="follow-actions"><button class="btn primary" id="timer-toggle">${icon('play')} Start workout</button><button class="btn outline" id="timer-next" aria-label="${next?'Skip this interval':'Finish early'}">${next?'Skip':'Finish'}</button></div>
     <div class="follow-next"><span>UP NEXT</span><b>${next?esc(next.id==='rest'?'Rest & reset':EX[next.id].name):'Save your check-in'}</b>${next?`<small>${next.seconds}s ${icon('arrow')}</small>`:''}</div>
-    ${rest?'':`<details class="follow-instructions" id="player-instructions"><summary>Technique & easier option</summary><ol class="steps">${e.steps.map(text=>'<li>'+esc(text)+'</li>').join('')}</ol><div class="easier"><b>Make it easier</b><br>${esc(e.easy)}</div></details>`}
+    ${rest?'':paceControls(step.id)}
+    ${rest?'':`<details class="follow-instructions" id="player-instructions"><summary>Technique & easier option</summary><ol class="steps">${e.steps.map(text=>'<li>'+esc(text)+'</li>').join('')}</ol><div class="easier"><b>Make it easier</b><br>${esc(e.easy)}</div><button type="button" class="btn outline wide" id="workout-explain" aria-pressed="false" ${voiceAvailable()?'':'disabled'}>Explain the technique</button><p class="small">Device voice · workout stays paused while you listen.</p></details>`}
     <div class="follow-options">${rest?'':`<button class="text-btn" id="video-mute" aria-pressed="${!videoMuted}">${videoMuted?'Video sound off':'Video sound on'}</button><button class="text-btn" id="written-mode">Use written guidance</button><button class="text-btn" id="video-mode" hidden>Return to video</button>`}<button class="text-btn" id="voice-toggle" aria-pressed="${state.experience.voice}" ${voiceAvailable()?'':'disabled'}>${state.experience.voice?'Voice cues on':'Voice cues off'}</button></div>
+    ${audioControls()}
     <p class="follow-footnote">${state.autoAdvance?'Intervals continue automatically.':'Auto-next is off in Settings.'} Pause whenever you need. Stop for pain or dizziness.</p>
     <div class="screen-controls"><p class="small" id="screen-message"></p><button class="text-btn" id="screen-toggle" type="button"></button></div>
   </div>`;
@@ -258,7 +261,8 @@ document.addEventListener('click',event=>{
   }
   if(button.id==='written-mode'&&session){pause();destroyWorkoutMedia();session.guidanceMode='written';workoutPlayback.select('timer');showWrittenGuidance();updateTimerUI()}
   if(button.id==='video-mode'&&session){pause();session.guidanceMode='video';renderSession();workoutPlayback.play()}
-  if(button.id==='video-mute'&&session){videoMuted=!videoMuted;if(workoutMediaReady)videoMuted?workoutMedia.mute():workoutMedia.unMute();button.setAttribute('aria-pressed',String(!videoMuted));button.textContent=videoMuted?'Video sound off':'Video sound on';updateTimerUI()}
+  if(button.id==='voice-toggle'&&state.experience.voice){videoMuted=true;workoutMedia?.mute();const sound=$('#video-mute');if(sound){sound.textContent='Video sound off';sound.setAttribute('aria-pressed','false')}adjustMusic()}
+  if(button.id==='video-mute'&&session){videoMuted=!videoMuted;if(!videoMuted){stopVoice();state.experience.voice=false;persist();const voice=$('#voice-toggle');if(voice){voice.textContent='Voice cues off';voice.setAttribute('aria-pressed','false')}}adjustMusic();if(workoutMediaReady)videoMuted?workoutMedia.mute():workoutMedia.unMute();button.setAttribute('aria-pressed',String(!videoMuted));button.textContent=videoMuted?'Video sound off':'Video sound on';updateTimerUI()}
 });
 document.addEventListener('visibilitychange',()=>{workoutPlayback.visibility(document.hidden)});
 window.addEventListener('pagehide',()=>{workoutPlayback.pause();destroyWorkoutMedia()});
@@ -274,10 +278,10 @@ sourcePanel=function(id,compact=false){
   const clip=WORKOUT_VIDEOS[id];
   if(!clip)return '<div class="source-panel"><span class="label">Saved exercise</span><p>Use the written steps below. This movement is from an earlier version of the plan.</p></div>';
   if(compact)return `<div class="source-panel compact-demo"><div><span class="label">Video guidance</span><h3>${esc(EX[id].name)}</h3></div><button class="btn outline" type="button" data-exercise="${id}">${icon('play')} Learn this move</button></div>`;
-  return `<div class="source-panel inline-preview" data-inline-exercise="${id}"><div class="follow-media" id="preview-video-host"><div class="video-placeholder"><span class="play-outline">▷</span><p>Your demonstration plays here</p></div></div><p class="follow-credit">Video: ${esc(clip.provider)}</p><p id="preview-video-status" class="follow-media-message" role="status">Loading demonstration…</p><div class="follow-actions"><button class="btn primary" id="preview-toggle" type="button">${icon('pause')} Pause</button><button class="btn outline" id="preview-restart" type="button">Replay</button></div><button class="text-btn" id="preview-mute" type="button" aria-pressed="false">Video sound off</button><p class="small">Follow this movement at your own pace. The demonstration repeats. Written steps stay available below.</p></div>`;
+  return `<div class="source-panel inline-preview" data-inline-exercise="${id}"><div class="follow-media" id="preview-video-host"><div class="video-placeholder"><span class="play-outline">▷</span><p>Your demonstration plays here</p></div></div><p class="follow-credit">Video: ${esc(clip.provider)}</p><p id="preview-video-status" class="follow-media-message" role="status">Loading demonstration…</p><div class="follow-actions"><button class="btn primary" id="preview-toggle" type="button">${icon('pause')} Pause</button><button class="btn outline" id="preview-restart" type="button">Replay</button></div><button class="text-btn" id="preview-mute" type="button" aria-pressed="false">Video sound off</button>${paceControls(id,true)}<button class="btn outline wide" id="preview-explain" type="button" aria-pressed="false" ${voiceAvailable()?'':'disabled'}>Explain the technique</button><p class="small">Explanation uses your device’s synthetic voice. Written steps are below.</p><p class="small">Follow this movement at your own pace. The demonstration repeats. Written steps stay available below.</p></div>`;
 };
 function destroyExercisePreview(){
-  previewGeneration++;const old=exercisePreview;exercisePreview=null;
+  if(coachingScope==='preview')stopVoice();previewGeneration++;const old=exercisePreview;exercisePreview=null;
   if(old){old.wanted=false;clearTimeout(old.timeout);clearInterval(old.watchdog);try{old.media?.destroy()}catch{}}
 }
 function previewStatus(p,status,message){
@@ -288,7 +292,7 @@ function previewStatus(p,status,message){
   if(button)button.innerHTML=p.wanted?icon('pause')+' Pause':icon('play')+(status==='error'?'Retry video':status==='blocked'?'Tap to play':'Play');
 }
 function pauseExercisePreview(){
-  const p=exercisePreview;if(!p)return;p.wanted=false;clearTimeout(p.timeout);p.media?.pause();previewStatus(p,'paused','Paused · play when you’re ready');
+  if(coachingScope==='preview')stopVoice();const p=exercisePreview;if(!p)return;p.wanted=false;clearTimeout(p.timeout);p.media?.pause();previewStatus(p,'paused','Paused · play when you’re ready');
 }
 async function startExercisePreview(id){
   destroyExercisePreview();let clip=WORKOUT_VIDEOS[id];const host=$('#preview-video-host');if(!clip||!host)return;
@@ -326,7 +330,7 @@ async function startExercisePreview(id){
   try{
     clip=await resolveWorkoutClip(clip);if(!valid())return;
     if(clip.src){
-      host.innerHTML='';const video=document.createElement('video');video.muted=true;video.playsInline=true;video.preload='auto';video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[id].name+' — human demonstration');host.appendChild(video);let stream=null;
+      host.innerHTML='';const video=document.createElement('video');video.muted=true;video.playsInline=true;video.preload='auto';setDemoRate(video,id);video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[id].name+' — human demonstration');host.appendChild(video);let stream=null;
       bind({play:()=>video.play(),pause:()=>video.pause(),seek:t=>{video.currentTime=t},time:()=>video.currentTime,mute:value=>{video.muted=value},destroy:()=>{stream?.destroy();video.pause();video.removeAttribute('src');video.load();video.remove()}},(name,handler)=>video.addEventListener(name,handler));
       if((clip.hls||clip.src.includes('.m3u8'))&&!(video.canPlayType('application/vnd.apple.mpegurl')&&/AppleWebKit/.test(navigator.userAgent)&&!/(Chrome|Chromium|Edg|OPR)\//.test(navigator.userAgent))){
         const Hls=await hlsAPI();if(!valid())return;
@@ -353,5 +357,5 @@ document.addEventListener('click',event=>{
     if(!p.media||p.status==='error')startExercisePreview(p.id);
     else{p.media.seek(p.clip.start);p.wanted=true;p.play()}
   }
-  if(button.id==='preview-mute'){p.muted=!p.muted;p.media?.mute(p.muted);button.setAttribute('aria-pressed',String(!p.muted));button.textContent=p.muted?'Video sound off':'Video sound on'}
+  if(button.id==='preview-mute'){p.muted=!p.muted;if(!p.muted)stopVoice();p.media?.mute(p.muted);button.setAttribute('aria-pressed',String(!p.muted));button.textContent=p.muted?'Video sound off':'Video sound on'}
 });

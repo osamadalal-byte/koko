@@ -91,7 +91,7 @@ document.addEventListener('submit',e=>{
     const rec=FORMCOACH.recommend(state.coach,r,pendingMode,state.pace==='gentle');if(rec.blocked){displayError('readiness-error',rec.blocked);return}
     const resume=e.target.dataset.resume==='true';
     if(resume&&(r.energy==='low'||r.soreness==='mild')){displayError('readiness-error','Your saved session keeps its original workload. Close this check-in, choose Start fresh, and use a lighter session today.');return}
-    currentReadiness=r;closeCoach();launchFromReadiness=true;try{startSession(pendingMode,resume)}finally{launchFromReadiness=false}
+    currentReadiness=r;closeCoach();if(typeof unlockMusic==='function')unlockMusic();launchFromReadiness=true;try{startSession(pendingMode,resume)}finally{launchFromReadiness=false}
   }
   if(e.target.id==='measure-form'){
     e.preventDefault();const kind=$('#measure-kind').value,value=Number($('#measure-value').value),date=$('#measure-date').value;

@@ -43,3 +43,7 @@ On iPhone: open the HTTPS app in Safari → Share → Add to Home Screen → Ope
 
 External video sources do not endorse this app. Third-party video files are streamed from their public providers and are not bundled, rehosted or cached for offline use.
 
+
+## Pace and optional audio (1.3.0)
+
+Moving demos start at 1.25× with an Original-speed option. Holds and breathing remain at 1×. Full technique explanations use your device’s synthetic voice, and optional locally generated music has its own volume. The workout timer and saved history are unchanged. See [UPGRADE-1.3.0.md](UPGRADE-1.3.0.md) for behavior, validation and the remaining recorded-narration work.

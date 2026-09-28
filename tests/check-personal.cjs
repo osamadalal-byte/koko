@@ -1,7 +1,7 @@
 process.chdir(require('path').resolve(__dirname,'..'));
 const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
 const source=fs.readFileSync('index.html','utf8');
-const script=source.match(/<script>([\s\S]*?)<\/script>/)[1]+'\n'+['coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','experience.js','playback-gate.js','workout-videos.js','workout-player.js'].map(f=>fs.readFileSync(f,'utf8')).join('\n');
+const script=source.match(/<script>([\s\S]*?)<\/script>/)[1]+'\n'+['coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','experience.js','playback-gate.js','workout-videos.js','workout-audio.js','workout-player.js'].map(f=>fs.readFileSync(f,'utf8')).join('\n');
 const storage=new Map();let wallNow=Date.parse('2026-09-14T09:00:00Z'),monoNow=0;
 class ClockDate extends Date{constructor(...args){super(...(args.length?args:[wallNow]))}static now(){return wallNow}}
 function fixture(){
@@ -21,7 +21,17 @@ function fixture(){
  return {run,click,doc,listeners};
 }
 
-let f=fixture();const run=s=>f.run(s),click=s=>f.click(s),field=(s,v)=>{const el=f.doc.querySelector(s);assert(el,'Field exists: '+s);el.value=v},submit=s=>{const target=f.doc.querySelector(s);assert(target,'Form exists: '+s);f.listeners.submit.forEach(fn=>fn({target,preventDefault(){}}))};
+let f=fixture();
+assert.equal(f.run('state.experience.demoPace'),1.25);
+assert.equal(f.run('state.experience.music'),false);
+assert.equal(f.run('demoRate("breath")'),1);
+assert.equal(f.run('demoRate("plankknees")'),1);
+assert.equal(f.run('demoRate("march")'),1.25);
+assert.equal(f.run('validState({...state,experience:{...state.experience,demoPace:4}})'),false);
+assert.equal(f.run('validState({...state,experience:{...state.experience,music:"yes"}})'),false);
+assert.equal(f.run('validState({...state,experience:{...state.experience,musicVolume:2}})'),false);
+assert.equal(f.run('experienceDefaults({voice:true,favorites:[]}).demoPace'),1.25);
+const run=s=>f.run(s),click=s=>f.click(s),field=(s,v)=>{const el=f.doc.querySelector(s);assert(el,'Field exists: '+s);el.value=v},submit=s=>{const target=f.doc.querySelector(s);assert(target,'Form exists: '+s);f.listeners.submit.forEach(fn=>fn({target,preventDefault(){}}))};
 function toggleWritten(){if(run('session && session.guidanceMode!=="written"')&&f.doc.querySelector("#written-mode"))click("#written-mode");click("#timer-toggle")}
 const profile=JSON.parse(run('JSON.stringify(state.coach.profile)'));
 assert.equal(profile.age,35);assert.equal(profile.days,4);assert.equal(profile.minutes,20);assert.equal(profile.activity,'unassessed');assert.equal(profile.device,'iphone');assert.equal(profile.health,'clear');assert.equal(run('state.coach.level'),0);assert.equal(run('state.autoAdvance'),true);
