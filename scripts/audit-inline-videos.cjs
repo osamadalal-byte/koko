@@ -65,10 +65,12 @@ const server=http.createServer((req,res)=>{
       row.played=row.before.time>=clip.start-.1&&row.after.time>row.before.time+.5&&row.after.remaining<row.before.remaining&&row.before.video.video_id===clip.videoId;
       if(!row.played)throw Error('Media identity, advancing frames and workout clock did not agree');
       if(['march','cheststretch'].includes(clip.id)){const file=`${name}-player-${clip.id}.jpg`;await page.screenshot({path:path.join(out,file),type:'jpeg',quality:65,scale:'css'});row.screens=[{file,time:row.after.time}];}
-      await page.locator('#timer-toggle').click();await page.waitForTimeout(250);
-      const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
+      // Hold the real press across at least one 200 ms timer render.
+      await page.locator('#timer-toggle').click({delay:350});await page.waitForTimeout(250);
+      const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused,wanted:workoutPlayback.wanted,status:workoutPlayback.status}));
       await page.waitForTimeout(800);
-      const still=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
+      const still=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused,wanted:workoutPlayback.wanted,status:workoutPlayback.status}));
+      row.pauseObservation={paused,still};
       row.pauseControl=paused.paused&&still.paused&&still.remaining===paused.remaining&&Math.abs(still.time-paused.time)<.3;
       if(!row.pauseControl)throw Error('Pause did not stop both media and workout clock');
       await page.locator('#timer-toggle').click();

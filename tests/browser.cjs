@@ -120,6 +120,7 @@ async function run(browserType,device,name,folder,basePath){
     assert.equal(await page.evaluate(()=>window.voiceTest.at(-1).event),'cancel');await page.locator('#voice-toggle').click();
     assert.equal(await page.evaluate(()=>state.experience.voice),false);checks.push('spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)');
     await page.waitForTimeout(350);assert.equal(await page.evaluate(()=>session.remaining),pausedRemaining);
+    await require('./button-input-browser.cjs')(page,checks);
     await require('./audio-browser.cjs')(page,checks);
     await page.locator('#session-exit').click();const remaining=await page.evaluate(()=>state.draft.remaining);
     await page.reload();await page.locator('[data-action="resume"]').click();await readiness();assert.equal(await page.evaluate(()=>session.remaining),remaining);
