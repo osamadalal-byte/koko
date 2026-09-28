@@ -961,6 +961,7 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
   video.addEventListener('pause',()=>{if(valid()&&workoutPlayback.status==='playing')workoutPlayback.event('paused',token)});
   video.addEventListener('ended',()=>{if(valid())workoutPlayback.event('ended',token)});
   video.addEventListener('error',()=>fail(video.error));
+  video.addEventListener('volumechange',()=>{if(valid())setWorkoutSound(video.muted||video.volume===0)});
   video.addEventListener('loadedmetadata',()=>{if(valid()&&clip.start>0)video.currentTime=clip.start});
   video.addEventListener('timeupdate',()=>{if(valid()&&clip.end&&video.currentTime>=clip.end&&workoutPlayback.wanted){workoutPlayback.event('ended',token)}});
   try{
@@ -981,6 +982,14 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
   }catch(error){fail(error)}
 }
 function currentVideo(){return session?WORKOUT_VIDEOS[session.steps[session.index].id]:null}
+function setWorkoutSound(muted){
+  videoMuted=muted;
+  if(!muted){stopVoice();if(state.experience.voice){state.experience.voice=false;persist()}}
+  const sound=$('#video-mute'),voice=$('#voice-toggle');
+  if(sound){sound.textContent=muted?'Video sound off':'Video sound on';sound.setAttribute('aria-pressed',String(!muted))}
+  if(voice){voice.textContent=state.experience.voice?'Voice cues on':'Voice cues off';voice.setAttribute('aria-pressed',String(state.experience.voice))}
+  adjustMusic();updateTimerUI();
+}
 function stopWorkoutClock(reason){if(reason==='loop')pauseBeforeExperience();else clockPauseBeforePlayer()}
 function startWorkoutClock(){
   if(coachingScope==='lesson')stopVoice();
@@ -1142,7 +1151,7 @@ document.addEventListener('click',event=>{
   if(button.id==='written-mode'&&session){pause();destroyWorkoutMedia();session.guidanceMode='written';workoutPlayback.select('timer');showWrittenGuidance();updateTimerUI()}
   if(button.id==='video-mode'&&session){pause();session.guidanceMode='video';renderSession();workoutPlayback.play()}
   if(button.id==='voice-toggle'&&state.experience.voice){videoMuted=true;workoutMedia?.mute();const sound=$('#video-mute');if(sound){sound.textContent='Video sound off';sound.setAttribute('aria-pressed','false')}adjustMusic()}
-  if(button.id==='video-mute'&&session){videoMuted=!videoMuted;if(!videoMuted){stopVoice();state.experience.voice=false;persist();const voice=$('#voice-toggle');if(voice){voice.textContent='Voice cues off';voice.setAttribute('aria-pressed','false')}}adjustMusic();if(workoutMediaReady)videoMuted?workoutMedia.mute():workoutMedia.unMute();button.setAttribute('aria-pressed',String(!videoMuted));button.textContent=videoMuted?'Video sound off':'Video sound on';updateTimerUI()}
+  if(button.id==='video-mute'&&session){setWorkoutSound(!videoMuted);if(workoutMediaReady)videoMuted?workoutMedia.mute():workoutMedia.unMute()}
 });
 document.addEventListener('visibilitychange',()=>{workoutPlayback.visibility(document.hidden)});
 window.addEventListener('pagehide',()=>{workoutPlayback.pause();destroyWorkoutMedia()});

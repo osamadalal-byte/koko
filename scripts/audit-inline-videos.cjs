@@ -74,6 +74,13 @@ const server=http.createServer((req,res)=>{
       row.demoPace=await page.evaluate(()=>{const v=document.querySelector('#workout-video-host video'),id=session.steps[session.index].id;return {id,requested:demoRate(id),actual:v.playbackRate,pitch:v.preservesPitch??v.webkitPreservesPitch}});
       if(row.demoPace.actual!==row.demoPace.requested||row.demoPace.pitch!==true)throw Error('Demo pace or voice pitch preservation failed');
       if(clip.id==='march'){
+       // Native control changes emit volumechange, independently of our button.
+       await page.evaluate(()=>{state.experience.voice=true;document.querySelector('#session-title').addEventListener('click',()=>{document.querySelector('#workout-video-host video').muted=false},{once:true})});
+       await page.locator('#session-title').click();
+       await page.waitForFunction(()=>!state.experience.voice&&!videoMuted&&document.querySelector('#video-mute').getAttribute('aria-pressed')==='true');
+       await page.locator('#workout-video-host video').evaluate(v=>{v.muted=true});
+       await page.waitForFunction(()=>videoMuted&&document.querySelector('#video-mute').getAttribute('aria-pressed')==='false');
+       row.nativeSoundControl=true;
        await page.locator('#workout-pace').selectOption('1');
        if(await page.locator('#workout-video-host video').evaluate(v=>v.playbackRate)!==1)throw Error('Original pace control failed');
        await page.locator('#workout-pace').selectOption('1.25');
@@ -178,4 +185,3 @@ const server=http.createServer((req,res)=>{
   }));
  }finally{await new Promise(resolve=>server.close(resolve));fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(report,null,2))}
 })().catch(error=>{console.error(error);process.exitCode=1});
-
