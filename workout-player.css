@@ -38,3 +38,10 @@
 .inline-preview .text-btn{min-height:44px;font-size:12px}
 .inline-preview .small{line-height:1.5;margin-top:0}
 #detail-dialog:has(.inline-preview){overscroll-behavior:contain}
+.pace-controls{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 12px;padding:10px 12px;border:1px solid #e4dced;border-radius:12px;margin:10px 0}
+.pace-controls label{font-size:13px;font-weight:650;color:#4a365e}.pace-controls select{min-height:44px;max-width:175px;font:inherit;font-size:13px;border:0;background:#eee6f7;color:#4a365e;border-radius:8px;padding:6px 9px}
+.pace-controls .small{grid-column:1/-1;font-size:11px;margin:0;color:#74677e;line-height:1.5}
+.music-controls{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:8px 12px;background:#f5f0fa;border-radius:12px;margin:8px 0}
+.music-controls label{font-size:11px;color:#665274}.music-controls input{flex:1;min-width:80px;max-width:150px;accent-color:#8060ab;min-height:44px}
+.music-controls .small{flex-basis:100%;font-size:10px;line-height:1.5;color:#74677e;margin:0 0 4px}.music-controls .text-btn{min-height:44px;font-size:12px}
+#preview-explain{font-size:13px;margin:8px 0}

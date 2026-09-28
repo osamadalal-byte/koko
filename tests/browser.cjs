@@ -105,7 +105,7 @@ async function run(browserType,device,name,folder,basePath){
     await page.locator('.nav [data-tab="today"]').click();await page.locator('[data-review-workout]').click();
     assert(await page.locator('[data-review-exercise="march"]').count());await page.locator('.preview-moves [data-review-exercise="march"]').click();
     assert(await page.locator('#detail-dialog').evaluate(e=>e.open));await page.locator('[data-close="detail-dialog"]').click();
-    await page.evaluate(()=>{window.voiceTest=[];Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{cancel(){window.voiceTest.push({event:'cancel'})},speak(utterance){window.voiceTest.push({event:'speak',text:utterance.text})}}});window.SpeechSynthesisUtterance=class{constructor(text){this.text=text}}});
+    await page.evaluate(()=>{window.voiceTest=[];Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{cancel(){window.voiceTest.push({event:'cancel'})},speak(utterance){window.voiceTest.push({event:'speak',text:utterance.text,utterance})}}});window.SpeechSynthesisUtterance=class{constructor(text){this.text=text}}});
     await page.locator('[data-action="start"]').click();await page.locator('#ready-energy').selectOption('normal');
     await page.locator('#ready-soreness').selectOption('none');await page.locator('#ready-pain').selectOption('yes');
     await page.locator('#readiness-form button[type=submit]').click();assert.equal(await page.evaluate(()=>session),null);await readiness();
@@ -120,6 +120,7 @@ async function run(browserType,device,name,folder,basePath){
     assert.equal(await page.evaluate(()=>window.voiceTest.at(-1).event),'cancel');await page.locator('#voice-toggle').click();
     assert.equal(await page.evaluate(()=>state.experience.voice),false);checks.push('spoken cues opt-in, correct interval announcement, and cancellation on pause (speech API stub; audible voice remains a device check)');
     await page.waitForTimeout(350);assert.equal(await page.evaluate(()=>session.remaining),pausedRemaining);
+    await require('./audio-browser.cjs')(page,checks);
     await page.locator('#session-exit').click();const remaining=await page.evaluate(()=>state.draft.remaining);
     await page.reload();await page.locator('[data-action="resume"]').click();await readiness();assert.equal(await page.evaluate(()=>session.remaining),remaining);
     const timerButton=await page.locator('#timer-toggle').boundingBox();
@@ -164,6 +165,9 @@ async function run(browserType,device,name,folder,basePath){
     assert.equal(await page.evaluate(()=>state.completed[1].note),'Browser-verified check-in');assert.equal(await page.evaluate(()=>state.experience.favorites.length),0);
     await page.locator('#settings-open').click();await page.locator('#import-file').setInputFiles({name:'backup.json',mimeType:'application/json',buffer:backup});
     await page.waitForFunction(()=>!document.querySelector('#settings-dialog').open);assert.equal(await page.evaluate(()=>state.experience.favorites.includes('bridge')),true);
+    assert.equal(await page.evaluate(()=>state.experience.demoPace),parsed.experience.demoPace);
+    assert.equal(await page.evaluate(()=>state.experience.musicVolume),parsed.experience.musicVolume);
+    assert.equal(await page.evaluate(()=>state.experience.music),parsed.experience.music);
     checks.push('old backups migrate without losing check-ins; upgraded backups restore favorites and setup');
     checks.push('downloaded JSON backup, profile edits, file-input restore, invalid backup rejection and reload');
     const manifestResponse=await context.request.get(url+'manifest.webmanifest');assert.equal(manifestResponse.status(),200);

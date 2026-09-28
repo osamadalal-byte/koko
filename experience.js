@@ -2,12 +2,12 @@
 // Presentation and optional coaching tools. The training engine and saved workout schema stay intact.
 function experienceDefaults(value){
   const v=value&&typeof value==='object'?value:{};
-  return {setupDone:v.setupDone===true,voice:v.voice===true,favorites:[...new Set(Array.isArray(v.favorites)?v.favorites.filter(id=>PLANNED_EXERCISES.includes(id)):[])]};
+  return {setupDone:v.setupDone===true,voice:v.voice===true,demoPace:[1,1.25].includes(v.demoPace)?v.demoPace:1.25,music:v.music===true,musicVolume:Number.isFinite(v.musicVolume)&&v.musicVolume>=.05&&v.musicVolume<=.35?v.musicVolume:.15,favorites:[...new Set(Array.isArray(v.favorites)?v.favorites.filter(id=>PLANNED_EXERCISES.includes(id)):[])]};
 }
 state.experience=experienceDefaults(state.experience);
 icons.search='<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>';
 const validateBeforeExperience=validState;
-validState=function(s){return validateBeforeExperience(s)&&(!('experience' in s)||(s.experience&&typeof s.experience.setupDone==='boolean'&&typeof s.experience.voice==='boolean'&&Array.isArray(s.experience.favorites)&&s.experience.favorites.length<=18&&s.experience.favorites.every(id=>PLANNED_EXERCISES.includes(id))))};
+validState=function(s){return validateBeforeExperience(s)&&(!('experience' in s)||(s.experience&&typeof s.experience.setupDone==='boolean'&&typeof s.experience.voice==='boolean'&&Array.isArray(s.experience.favorites)&&s.experience.favorites.length<=18&&s.experience.favorites.every(id=>PLANNED_EXERCISES.includes(id))&&(!('demoPace' in s.experience)||[1,1.25].includes(s.experience.demoPace))&&(!('music' in s.experience)||typeof s.experience.music==='boolean')&&(!('musicVolume' in s.experience)||(Number.isFinite(s.experience.musicVolume)&&s.experience.musicVolume>=.05&&s.experience.musicVolume<=.35))))};
 const phaseLabels={'Warm-up':'Prepare','Work':'Strength','Rest':'Rest','Easy movement':'Mobility','Cool-down':'Reset'};
 function phaseTotals(n){const steps=buildSteps(n,'full');return ['Warm-up','Main','Cool-down'].map(phase=>({phase,seconds:steps.filter(s=>phase==='Main'?['Work','Rest','Easy movement'].includes(s.phase):s.phase===phase).reduce((sum,s)=>sum+s.seconds,0)}))}
 function clockLabel(seconds){return Number.isInteger(seconds/60)?seconds/60+' min':Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}

@@ -41,7 +41,10 @@ const server=http.createServer((req,res)=>{
   await Promise.all([['chromium',chromium,{viewport:{width:390,height:844}}],['webkit',webkit,devices['iPhone 13']]].map(async ([name,type,device])=>{
    const engine={name,clips:[]};report.engines.push(engine);let browser;
    try{
-    browser=await type.launch();const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
+    // Exercise native sound controls with Chromium's normal audio pipeline.
+    // Playwright globally mutes headless Chromium unless this default is removed.
+    // Autoplay policy and every playback assertion remain unchanged.
+    browser=await type.launch(name==='chromium'?{ignoreDefaultArgs:['--mute-audio']}:{});const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
     await page.goto(url);const clips=await page.evaluate(()=>Object.entries(WORKOUT_VIDEOS).sort(([,a],[,b])=>Number(!!b.brightcove)-Number(!!a.brightcove)).map(([id,c])=>({id,videoId:c.mediaId||c.videoId,src:c.src||null,source:c.source,start:c.start,end:c.end??null})));
     for(const clip of clips){
      const row={...clip,played:false,humanReview:'Pending visual inspection'};engine.clips.push(row);
@@ -71,6 +74,32 @@ const server=http.createServer((req,res)=>{
       await page.locator('#timer-toggle').click();
       await page.waitForFunction(()=>workoutMedia.getPlayerState()===1&&!session.paused,{},{timeout:18000});
       row.resumeControl=true;
+      row.demoPace=await page.evaluate(()=>{const v=document.querySelector('#workout-video-host video'),id=session.steps[session.index].id;return {id,requested:demoRate(id),actual:v.playbackRate,pitch:v.preservesPitch??v.webkitPreservesPitch}});
+      if(row.demoPace.actual!==row.demoPace.requested||row.demoPace.pitch!==true)throw Error('Demo pace or voice pitch preservation failed');
+      if(clip.id==='march'){
+       // Native control changes emit volumechange, independently of our button.
+       await page.evaluate(()=>{state.experience.voice=true;document.querySelector('#session-title').addEventListener('click',()=>{document.querySelector('#workout-video-host video').muted=false},{once:true})});
+       await page.locator('#session-title').click();
+       await page.waitForFunction(()=>!state.experience.voice&&!videoMuted&&document.querySelector('#video-mute').getAttribute('aria-pressed')==='true');
+       await page.locator('#workout-video-host video').evaluate(v=>{v.muted=true});
+       await page.waitForFunction(()=>videoMuted&&document.querySelector('#video-mute').getAttribute('aria-pressed')==='false');
+       row.nativeSoundControl=true;
+       await page.locator('#workout-pace').selectOption('1');
+       if(await page.locator('#workout-video-host video').evaluate(v=>v.playbackRate)!==1)throw Error('Original pace control failed');
+       await page.locator('#workout-pace').selectOption('1.25');
+       await page.evaluate(()=>workoutMedia.seekTo(3));
+       await page.waitForFunction(()=>{const v=document.querySelector('#workout-video-host video');return !v.seeking&&v.readyState>=3&&v.playbackRate===1.25&&workoutPlayback.status==='playing'});
+       await page.waitForTimeout(1500);
+       const start=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
+       // Five seconds averages the decoder/audio clock's short scheduling
+       // bursts, while remaining inside the same reviewed demonstration loop.
+       await page.waitForTimeout(5000);
+       const end=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
+       const seconds=(end.wall-start.wall)/1000;
+       row.tempoTiming={start,end,videoRatio:(end.media-start.media)/seconds,timerRatio:(start.remaining-end.remaining)/(seconds*1000)};
+       if(row.tempoTiming.videoRatio<1.12||row.tempoTiming.videoRatio>1.4||row.tempoTiming.timerRatio<.88||row.tempoTiming.timerRatio>1.12)throw Error('Brisk video and real-time workout clock diverged');
+      }
+
       row.frames=[];
       // Sample the beginning plus early demonstration positions, always recording
       // actual positions. These are visual frame samples, not a full audiovisual review.
@@ -124,6 +153,8 @@ const server=http.createServer((req,res)=>{
      const preview={id:clip.id,passed:false};engine.previews.push(preview);
      await page.locator(`[data-exercise="${clip.id}"]`).click();
      await page.waitForFunction(()=>exercisePreview?.status==='playing',{},{timeout:20000});
+     preview.demoPace=await page.evaluate(()=>{const v=document.querySelector('#preview-video-host video');return {requested:demoRate(exercisePreview.id),actual:v.playbackRate}});
+     if(preview.demoPace.actual!==preview.demoPace.requested)throw Error('Preview demo pace failed: '+clip.id);
      const before=await page.evaluate(()=>exercisePreview.media.time());await page.waitForTimeout(700);
      const after=await page.evaluate(()=>exercisePreview.media.time());Object.assign(preview,{before,after,start:clip.start,end:clip.end});
      if(before<clip.start-.1||after<=before+.2)throw Error('Preview is not advancing inside its reviewed excerpt: '+clip.id);
@@ -160,4 +191,3 @@ const server=http.createServer((req,res)=>{
   }));
  }finally{await new Promise(resolve=>server.close(resolve));fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(report,null,2))}
 })().catch(error=>{console.error(error);process.exitCode=1});
-

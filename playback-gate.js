@@ -21,7 +21,7 @@
       }else if(name==='buffering'){
         this.hooks.stop();if(this.wanted)this.status='buffering';
       }else if(name==='ended'){
-        this.hooks.stop();if(this.wanted&&!this.hidden){this.status='loading';this.hooks.replay()}else this.status='paused';
+        this.hooks.stop('loop');if(this.wanted&&!this.hidden){this.status='loading';this.hooks.replay()}else this.status='paused';
       }else if(name==='paused'){
         this.hooks.stop();this.wanted=false;this.status='paused';
       }else if(name==='blocked'||name==='error'){

@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'dist');
-const assets=['index.html','coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','experience.js','experience.css','playback-gate.js','workout-videos.js','workout-player.js','workout-player.css','coach.css','service-worker.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
+const assets=['index.html','coach-engine.js','demos.js','personal.js','guidance.js','coach.js','phone.js','release.js','experience.js','experience.css','playback-gate.js','workout-videos.js','workout-audio.js','workout-player.js','workout-player.css','coach.css','service-worker.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
 // Only publish the allowlisted assets, including after a rebuild of an older dist/.
 fs.rmSync(out,{recursive:true,force:true});
 fs.mkdirSync(out,{recursive:true});
