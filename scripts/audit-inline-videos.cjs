@@ -41,7 +41,10 @@ const server=http.createServer((req,res)=>{
   await Promise.all([['chromium',chromium,{viewport:{width:390,height:844}}],['webkit',webkit,devices['iPhone 13']]].map(async ([name,type,device])=>{
    const engine={name,clips:[]};report.engines.push(engine);let browser;
    try{
-    browser=await type.launch();const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
+    // Exercise native sound controls with Chromium's normal audio pipeline.
+    // Playwright globally mutes headless Chromium unless this default is removed.
+    // Autoplay policy and every playback assertion remain unchanged.
+    browser=await type.launch(name==='chromium'?{ignoreDefaultArgs:['--mute-audio']}:{});const context=await browser.newContext(device);const page=await context.newPage();page.setDefaultTimeout(6000);
     await page.goto(url);const clips=await page.evaluate(()=>Object.entries(WORKOUT_VIDEOS).sort(([,a],[,b])=>Number(!!b.brightcove)-Number(!!a.brightcove)).map(([id,c])=>({id,videoId:c.mediaId||c.videoId,src:c.src||null,source:c.source,start:c.start,end:c.end??null})));
     for(const clip of clips){
      const row={...clip,played:false,humanReview:'Pending visual inspection'};engine.clips.push(row);
@@ -88,7 +91,9 @@ const server=http.createServer((req,res)=>{
        await page.waitForFunction(()=>{const v=document.querySelector('#workout-video-host video');return !v.seeking&&v.readyState>=3&&v.playbackRate===1.25&&workoutPlayback.status==='playing'});
        await page.waitForTimeout(1500);
        const start=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
-       await page.waitForTimeout(2000);
+       // Five seconds averages the decoder/audio clock's short scheduling
+       // bursts, while remaining inside the same reviewed demonstration loop.
+       await page.waitForTimeout(5000);
        const end=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
        const seconds=(end.wall-start.wall)/1000;
        row.tempoTiming={start,end,videoRatio:(end.media-start.media)/seconds,timerRatio:(start.remaining-end.remaining)/(seconds*1000)};
