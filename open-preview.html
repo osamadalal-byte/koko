@@ -972,7 +972,10 @@ async function nativeWorkoutMedia(clip,token,attempt,owner){
   video.addEventListener('ended',()=>{if(valid())workoutPlayback.event('ended',token)});
   video.addEventListener('error',()=>fail(video.error));
   video.addEventListener('volumechange',()=>{if(valid())setWorkoutSound(video.muted||video.volume===0)});
-  video.addEventListener('loadedmetadata',()=>{if(valid()&&clip.start>0)video.currentTime=clip.start});
+  video.addEventListener('loadedmetadata',()=>{if(valid()){setDemoRate(video,owner.steps[owner.index].id);if(clip.start>0)video.currentTime=clip.start}});
+  // Native decoding can re-establish its clock after a seek. Apply the chosen
+  // rate after that clock exists, as well as when the element is created.
+  video.addEventListener('seeked',()=>{if(valid())setDemoRate(video,owner.steps[owner.index].id)});
   video.addEventListener('timeupdate',()=>{if(valid()&&clip.end&&video.currentTime>=clip.end&&workoutPlayback.wanted){workoutPlayback.event('ended',token)}});
   try{
     if(clip.hls||clip.src.includes('.m3u8')){
@@ -1230,6 +1233,8 @@ async function startExercisePreview(id){
     clip=await resolveWorkoutClip(clip);if(!valid())return;
     if(clip.src){
       host.innerHTML='';const video=document.createElement('video');video.muted=true;video.playsInline=true;video.preload='auto';setDemoRate(video,id);video.setAttribute('playsinline','');video.setAttribute('aria-label',EX[id].name+' — human demonstration');host.appendChild(video);let stream=null;
+      video.addEventListener('loadedmetadata',()=>{if(valid())setDemoRate(video,id)});
+      video.addEventListener('seeked',()=>{if(valid())setDemoRate(video,id)});
       bind({play:()=>video.play(),pause:()=>video.pause(),seek:t=>{video.currentTime=t},time:()=>video.currentTime,mute:value=>{video.muted=value},destroy:()=>{stream?.destroy();video.pause();video.removeAttribute('src');video.load();video.remove()}},(name,handler)=>video.addEventListener(name,handler));
       if((clip.hls||clip.src.includes('.m3u8'))&&!(video.canPlayType('application/vnd.apple.mpegurl')&&/AppleWebKit/.test(navigator.userAgent)&&!/(Chrome|Chromium|Edg|OPR)\//.test(navigator.userAgent))){
         const Hls=await hlsAPI();if(!valid())return;
