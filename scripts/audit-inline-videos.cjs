@@ -85,12 +85,13 @@ const server=http.createServer((req,res)=>{
        if(await page.locator('#workout-video-host video').evaluate(v=>v.playbackRate)!==1)throw Error('Original pace control failed');
        await page.locator('#workout-pace').selectOption('1.25');
        await page.evaluate(()=>workoutMedia.seekTo(3));
-       await page.waitForTimeout(700);
-       const start=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining}));
+       await page.waitForFunction(()=>{const v=document.querySelector('#workout-video-host video');return !v.seeking&&v.readyState>=3&&v.playbackRate===1.25&&workoutPlayback.status==='playing'});
+       await page.waitForTimeout(1500);
+       const start=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
        await page.waitForTimeout(2000);
-       const end=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining}));
+       const end=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
        const seconds=(end.wall-start.wall)/1000;
-       row.tempoTiming={videoRatio:(end.media-start.media)/seconds,timerRatio:(start.remaining-end.remaining)/(seconds*1000)};
+       row.tempoTiming={start,end,videoRatio:(end.media-start.media)/seconds,timerRatio:(start.remaining-end.remaining)/(seconds*1000)};
        if(row.tempoTiming.videoRatio<1.12||row.tempoTiming.videoRatio>1.4||row.tempoTiming.timerRatio<.88||row.tempoTiming.timerRatio>1.12)throw Error('Brisk video and real-time workout clock diverged');
       }
 

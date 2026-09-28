@@ -846,8 +846,18 @@ document.addEventListener('change',event=>{
   const value=Number(event.target.value);if(![1,1.25].includes(value))return;
   state.experience.demoPace=value;persist();
   const v=$('#workout-video-host video'),p=$('#preview-video-host video');
-  if(v&&session)setDemoRate(v,session.steps[session.index].id);
-  if(p&&exercisePreview)setDemoRate(p,exercisePreview.id);
+  if(v&&session){
+    // Re-establish the native playback clock when changing rate. This also
+    // keeps any brief decoder transition out of the workout timer.
+    const playing=workoutPlayback.wanted;
+    if(playing)workoutPlayback.pause();
+    setDemoRate(v,session.steps[session.index].id);
+    if(playing)workoutPlayback.play();
+  }
+  if(p&&exercisePreview){
+    const playing=exercisePreview.wanted;p.pause();setDemoRate(p,exercisePreview.id);
+    if(playing)exercisePreview.play();
+  }
 });
 document.addEventListener('input',event=>{
   if(event.target.id!=='music-volume')return;
