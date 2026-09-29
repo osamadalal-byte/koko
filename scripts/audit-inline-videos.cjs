@@ -65,10 +65,12 @@ const server=http.createServer((req,res)=>{
       row.played=row.before.time>=clip.start-.1&&row.after.time>row.before.time+.5&&row.after.remaining<row.before.remaining&&row.before.video.video_id===clip.videoId;
       if(!row.played)throw Error('Media identity, advancing frames and workout clock did not agree');
       if(['march','cheststretch'].includes(clip.id)){const file=`${name}-player-${clip.id}.jpg`;await page.screenshot({path:path.join(out,file),type:'jpeg',quality:65,scale:'css'});row.screens=[{file,time:row.after.time}];}
-      await page.locator('#timer-toggle').click();await page.waitForTimeout(250);
-      const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
+      // Hold the real press across at least one 200 ms timer render.
+      await page.locator('#timer-toggle').click({delay:350});await page.waitForTimeout(250);
+      const paused=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused,wanted:workoutPlayback.wanted,status:workoutPlayback.status}));
       await page.waitForTimeout(800);
-      const still=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused}));
+      const still=await page.evaluate(()=>({time:workoutMedia.getCurrentTime(),remaining:session.remaining,paused:session.paused,wanted:workoutPlayback.wanted,status:workoutPlayback.status}));
+      row.pauseObservation={paused,still};
       row.pauseControl=paused.paused&&still.paused&&still.remaining===paused.remaining&&Math.abs(still.time-paused.time)<.3;
       if(!row.pauseControl)throw Error('Pause did not stop both media and workout clock');
       await page.locator('#timer-toggle').click();
@@ -90,13 +92,24 @@ const server=http.createServer((req,res)=>{
        await page.evaluate(()=>workoutMedia.seekTo(3));
        await page.waitForFunction(()=>{const v=document.querySelector('#workout-video-host video');return !v.seeking&&v.readyState>=3&&v.playbackRate===1.25&&workoutPlayback.status==='playing'});
        await page.waitForTimeout(1500);
-       const start=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
+       const start=await page.evaluate(()=>{
+        const v=document.querySelector('#workout-video-host video');
+        window.tempoFrames=[];window.tempoSamples=[];
+        const frame=(now,meta)=>{tempoFrames.push({wall:now,display:meta.expectedDisplayTime,media:meta.mediaTime});window.tempoFrame=v.requestVideoFrameCallback(frame)};
+        window.tempoFrame=v.requestVideoFrameCallback(frame);
+        window.tempoPoll=setInterval(()=>tempoSamples.push({wall:performance.now(),media:v.currentTime,paused:v.paused,seeking:v.seeking,ready:v.readyState,status:workoutPlayback.status,rate:v.playbackRate}),250);
+        return {media:v.currentTime,wall:performance.now(),remaining:session.remaining,rate:v.playbackRate};
+       });
        // Five seconds averages the decoder/audio clock's short scheduling
        // bursts, while remaining inside the same reviewed demonstration loop.
        await page.waitForTimeout(5000);
-       const end=await page.evaluate(()=>({media:workoutMedia.getCurrentTime(),wall:performance.now(),remaining:session.remaining,rate:document.querySelector('#workout-video-host video').playbackRate}));
+       const end=await page.evaluate(()=>{
+        const v=document.querySelector('#workout-video-host video');clearInterval(tempoPoll);v.cancelVideoFrameCallback(tempoFrame);
+        return {media:v.currentTime,wall:performance.now(),remaining:session.remaining,rate:v.playbackRate};
+       });
        const seconds=(end.wall-start.wall)/1000;
-       row.tempoTiming={start,end,videoRatio:(end.media-start.media)/seconds,timerRatio:(start.remaining-end.remaining)/(seconds*1000)};
+       const observations=await page.evaluate(()=>({frames:tempoFrames,samples:tempoSamples})),first=observations.frames[0],last=observations.frames.at(-1);
+       row.tempoTiming={start,end,videoRatio:(end.media-start.media)/seconds,timerRatio:(start.remaining-end.remaining)/(seconds*1000),frameRatio:first&&last?(last.media-first.media)/((last.display-first.display)/1000):null,...observations};
        if(row.tempoTiming.videoRatio<1.12||row.tempoTiming.videoRatio>1.4||row.tempoTiming.timerRatio<.88||row.tempoTiming.timerRatio>1.12)throw Error('Brisk video and real-time workout clock diverged');
       }
 

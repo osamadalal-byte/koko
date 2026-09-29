@@ -244,10 +244,16 @@ function showWrittenGuidance(){
   $('#written-mode').hidden=true;$('#video-mode').hidden=false;$('#video-mute').hidden=true;
   $('#session-dialog').scrollTop=0;
 }
+function setPlayerButtonLabel(button,label){
+  // Keep the exact hit target alive between pointer-down and pointer-up.
+  // Timer and buffering updates must not replace an unchanged button label.
+  if(button&&button.playerLabel!==label){button.innerHTML=label;button.playerLabel=label}
+}
 updateTimerUI=function(){
-  updateBeforePlayer();if(!session||!$('#timer-toggle')||!workoutPlayback.active)return;
+  updateBeforePlayer(false);if(!session||!$('#timer-toggle')||!workoutPlayback.active)return;
   const gate=workoutPlayback,step=session.steps[session.index],b=$('#timer-toggle'),message=$('#video-message');
-  if(!session.awaiting)b.innerHTML=gate.wanted?icon('pause')+' Pause':icon('play')+(gate.status==='error'?'Retry video':gate.status==='blocked'?'Tap to play':session.elapsed===0?'Start workout':'Resume');
+  const label=session.awaiting?(session.index===session.steps.length-1?'Finish session':'Next interval '+icon('arrow')):gate.wanted?icon('pause')+' Pause':icon('play')+(gate.status==='error'?'Retry video':gate.status==='blocked'?'Tap to play':session.elapsed===0?'Start workout':'Resume');
+  setPlayerButtonLabel(b,label);
   const messages={loading:'Loading video · timer paused',buffering:'Video buffering · timer paused',blocked:'Tap to play. Your timer waits until the video starts.',error:mediaFailure||'Video unavailable · timer paused',ready:'Press Start to follow along',paused:'Paused · continue when you’re ready',playing:gate.kind==='video'?'Follow the demonstration · video sound '+(videoMuted?'off':'on'):step.id==='rest'?'Recovery interval':'Following written guidance'};
   if(message)message.textContent=messages[gate.status]||'';
   const status=$('#session-status');if(status&&!session.awaiting)status.textContent=step.phase+(step.round?' · Round '+step.round:'');
@@ -301,7 +307,7 @@ function previewStatus(p,status,message){
   p.status=status;
   const label=$('#preview-video-status'),button=$('#preview-toggle');
   if(label)label.textContent=message;
-  if(button)button.innerHTML=p.wanted?icon('pause')+' Pause':icon('play')+(status==='error'?'Retry video':status==='blocked'?'Tap to play':'Play');
+  setPlayerButtonLabel(button,p.wanted?icon('pause')+' Pause':icon('play')+(status==='error'?'Retry video':status==='blocked'?'Tap to play':'Play'));
 }
 function pauseExercisePreview(){
   if(coachingScope==='preview')stopVoice();const p=exercisePreview;if(!p)return;p.wanted=false;clearTimeout(p.timeout);p.media?.pause();previewStatus(p,'paused','Paused · play when you’re ready');
